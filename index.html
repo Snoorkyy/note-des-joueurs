@@ -1,6 +1,16 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Notes des joueurs · EuroLeague France</title>
 <script>
+/* Vue du site : ?vue=notes (sans Fantasy) ou ?vue=fantasy (Fantasy seule) */
+var VUE=(function(){try{return new URLSearchParams(location.search).get("vue")||""}catch(e){return""}})();
+document.documentElement.setAttribute("data-vue",VUE);
+document.addEventListener("DOMContentLoaded",function(){if(VUE==="fantasy"){var t=document.querySelector(".brand .tag");if(t)t.innerHTML="FANTASY <span>CHALLENGE</span>"}});
+</script>
+<style>
+html[data-vue="notes"] #tabs a[href="#fantasy"]{display:none}
+html[data-vue="fantasy"] #tabs{display:none}
+</style>
+<script>
 /* Téléchargements hors Claude : enregistrement classique par le navigateur */
 if(!window.claude){window.claude={use:async function(n){if(n!=="downloads")return null;return{save:async function(o){var u=URL.createObjectURL(o.data),a=document.createElement("a");a.href=u;a.download=o.filename;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)}}}}}
 </script>
@@ -1949,6 +1959,8 @@ button.gslot:disabled{cursor:default;opacity:.6}
           ${rows.map(y=>`<div class="prow">${face(y.pid,y.club,"xs")}<span class="pn"><button data-player="${y.pid}">${esc(D.players[y.pid].name)}</button>${flag(y.pid)}</span><small>${Math.round(y.min)}′ · ${y.pir} éval</small><span class="fxd ${y.d==null?"":y.d>=0?"p":"m"}">${y.d==null?"":"Δ "+sgn(Math.round(y.d*10)/10)}</span>${chip(y.note)}</div>`).join("")||'<div class="prow"><small>Aucun '+FPOS[P].toLowerCase()+' noté</small></div>'}</div>`}).join("")}</div>`;
     el.innerHTML=h}
   function route(){const h=location.hash.replace("#","");
+    if(VUE==="fantasy"&&!h.startsWith("fantasy")){location.replace("#fantasy");return}
+    if(VUE==="notes"&&h.startsWith("fantasy")){location.replace("#");return}
     if(h==="classement")classement();else if(h.startsWith("fantasy"))fantasy();else if(h.startsWith("jeu"))jeu();else if(h.startsWith("francais"))francais(parseInt(h.split("-")[1])||0);else if(h==="admin")ADMIN?visuals(D.maxRound):lock(D.maxRound);else if(h.startsWith("visuels"))visuals(parseInt(h.split("-")[1])||D.maxRound);else if(h.startsWith("journee"))rounds(parseInt(h.split("-")[1])||D.maxRound);else if(h.startsWith("club-"))club(h.slice(5));else home();
     domVis();enApply();
     document.querySelectorAll("#tabs a").forEach(a=>{const k=a.getAttribute("href").slice(1),sec=["journee","visuels","francais","jeu","fantasy"];const on=k===""?!sec.some(x=>h.startsWith(x)):k==="journees"?(h.startsWith("journee")||h.startsWith("visuels")):h.startsWith(k);if(on)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});}
