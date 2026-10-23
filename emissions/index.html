@@ -112,7 +112,7 @@ dialog::backdrop{background:rgba(5,10,30,.82)}
     return `<button class="v${feat?" feat":""}" data-id="${esc(v.id)}" data-t="${esc(v.title)}"><div class="th"><img src="https://i.ytimg.com/vi/${esc(v.id)}/${feat?"maxresdefault":"hqdefault"}.jpg" alt="" loading="${feat?"eager":"lazy"}" onload="if(this.naturalWidth<200&&!this.dataset.f){this.dataset.f=1;this.src='https://i.ytimg.com/vi/${esc(v.id)}/hqdefault.jpg'}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='https://i.ytimg.com/vi/${esc(v.id)}/hqdefault.jpg'}">${isNew?'<span class="new">Nouveau</span>':""}${v.len?`<span class="dur">${dur(v.len)}</span>`:""}<span class="play"><i></i></span></div>
       <div class="meta"><div class="kick">${esc(s.k)}</div><div class="ttl">${esc(s.t)}</div><div class="date">${dateFr(v.date)}</div>${feat?'<span class="cta">▶ Regarder la dernière émission</span>':""}</div></button>`}
   const tc=n=>{const h=Math.floor(n/3600),m=Math.floor(n%3600/60),s=n%60;return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(s).padStart(2,"0")};
-  const tops=v=>!v.top||!v.top.length?"":`<div class="tops"><h3>Le top 3 <span>de l'émission</span></h3><div class="tpg">${v.top.map((x,i)=>`<button class="tp" data-id="${esc(v.id)}" data-t="${esc(v.title)}" data-s="${x.t}">${x.img?`<span class="ti"><img src="${esc(x.img)}" alt="" loading="lazy"><span class="play"><i></i></span></span>`:""}<span class="tx"><span class="tc">${["🥇","🥈","🥉"][i]||""} ${tc(x.t)}</span><b>${esc(x.title)}</b><small>${esc(x.txt)}</small></span></button>`).join("")}</div></div>`;
+  const tops=v=>!v.top||!v.top.length?"":`<div class="tops"><h3>Le top 3 <span>de l'émission</span></h3><div class="tpg">${v.top.map((x,i)=>`<button class="tp" data-id="${esc(v.id)}" data-t="${esc(v.title)}" data-s="${x.t}">${x.img?`<span class="ti"><img src="${esc(x.img)}" alt="" loading="lazy"><span class="play"><i></i></span></span>`:""}<span class="tx"><span class="tc">${["1️⃣","2️⃣","3️⃣"][i]||""} ${tc(x.t)}</span><b>${esc(x.title)}</b><small>${esc(x.txt)}</small></span></button>`).join("")}</div></div>`;
   function render(list){list.sort((a,b)=>b.date.localeCompare(a.date));
     if(!list.length){$("#app").innerHTML='<p class="empty">Aucune vidéo pour le moment.</p>';return}
     const fresh=Date.now()-new Date(list[0].date+"Z").getTime()<8*864e5;
@@ -121,7 +121,7 @@ dialog::backdrop{background:rgba(5,10,30,.82)}
     const cy=ssn(list[0].date),cur=list.filter(v=>ssn(v.date)===cy),old=list.filter(v=>ssn(v.date)!==cy);
     const yrs=[...new Set(old.map(v=>ssn(v.date)))].sort((a,b)=>b-a);
     const n=k=>`${k} émission${k>1?"s":""}`;
-    $("#app").innerHTML=`<section class="cur"><h2>${lab(cy)} <span class="count">${n(cur.length)} · la plus récente en premier</span></h2>
+    $("#app").innerHTML=`<section class="cur"><h2>${lab(cy)} <span class="count">${n(cur.length)}</span></h2>
         ${card(cur[0],true,fresh)}${tops(cur[0])}
         ${cur.length>1?`<div class="grid" style="margin-top:16px">${cur.slice(1).map(v=>card(v,false,false)).join("")}</div>`:""}</section>
       ${yrs.map(y=>{const L=old.filter(v=>ssn(v.date)===y);return `<section class="past"><h2>${lab(y)} <span class="count">${n(L.length)}</span></h2><div class="grid">${L.map(v=>card(v,false,false)).join("")}</div></section>`}).join("")}`}
