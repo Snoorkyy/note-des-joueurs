@@ -63,6 +63,10 @@ section{margin-top:28px}
 .badge.lg{width:56px;height:56px;font-size:20px}
 .tabs{display:flex;gap:6px;margin:0 0 18px;flex-wrap:wrap}
 .tabs a{font-family:var(--f-display,inherit);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:15px;padding:8px 14px;border-radius:8px;text-decoration:none;color:var(--brand-blue,#002395);background:#fff;border:1px solid rgba(0,35,149,.18)}
+.tabs .tabinj{font-family:var(--f-display,inherit);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:15px;padding:8px 12px;border-radius:8px;border:1px solid transparent;background:var(--brand-red,#ED2939);color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.tabs .tabinj:hover,.tabs .tabinj:focus-visible{background:var(--brand-blue,#002395);outline:none}
+.tabs .tabinj .injn{background:#fff;color:var(--brand-red,#ED2939);border-radius:999px;min-width:22px;padding:0 6px;font-size:13px;line-height:20px;text-align:center}
+.tabs .tabinj:hover .injn,.tabs .tabinj:focus-visible .injn{color:var(--brand-blue,#002395)}
 .tabs a[aria-current="page"]{background:var(--brand-blue,#002395);color:#fff;border-color:transparent}
 .rtabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:0 0 16px}
 .rtabs button{flex:none;font:inherit;font-weight:700;padding:6px 12px;border-radius:999px;border:1px solid rgba(0,35,149,.2);background:#fff;color:var(--brand-blue,#002395);cursor:pointer}
@@ -340,6 +344,8 @@ footer{margin-top:36px;color:var(--muted);font-size:12px;border-top:1px solid va
 .injtab .injn{writing-mode:horizontal-tb;background:#fff;color:var(--brand-red);border-radius:999px;min-width:22px;padding:1px 5px;font-size:12px;line-height:18px;text-align:center}
 .injtab:hover .injn,.injtab:focus-visible .injn{color:var(--brand-blue)}
 html:not(.domon) .injtab{top:50%;transform:translateY(-50%)}
+html:not([data-vue="fantasy"]) .injtab{display:none}
+.injvis{margin:0 0 8px}
 .injside{position:fixed;top:0;right:0;bottom:0;width:min(400px,94vw);z-index:58;background:var(--surface);color:var(--ink);border-left:1px solid var(--line);box-shadow:-14px 0 34px rgba(8,17,43,.28);transform:translateX(105%);transition:transform .2s ease;display:flex;flex-direction:column}
 .injside.open{transform:none}
 .injveil{position:fixed;inset:0;z-index:57;background:rgba(8,17,43,.35)}
@@ -492,7 +498,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     <div class="brand"><h1><img src="logo.png" alt="EuroLeague France" width="640" height="155"></h1><span class="tag">La note <span>/10</span></span></div>
     <div class="hright"><nav class="socials" aria-label="Nos réseaux sociaux"><a class="soc s-x" href="https://x.com/EuroLeagueFr" target="_blank" rel="noopener" aria-label="EuroLeague France sur X" title="X" style="--sc:#000000"><svg viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg></a><a class="soc s-instagram" href="https://www.instagram.com/euroleague_fr/" target="_blank" rel="noopener" aria-label="EuroLeague France sur Instagram" title="Instagram" style="--sc:#E1306C"><svg viewBox="0 0 448 512" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a><a class="soc s-facebook" href="https://www.facebook.com/EuroLeagueFrance" target="_blank" rel="noopener" aria-label="EuroLeague France sur Facebook" title="Facebook" style="--sc:#1877F2"><svg viewBox="0 0 320 512" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z"/></svg></a><a class="soc s-twitch" href="https://www.twitch.tv/euroleaguefrance" target="_blank" rel="noopener" aria-label="EuroLeague France sur Twitch" title="Twitch" style="--sc:#9146FF"><svg viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M391.17,103.47H352.54v109.7h38.63ZM285,103H246.37V212.75H285ZM120.83,0,24.31,91.42V420.58H140.14V512l96.53-91.42h77.25L487.69,256V0ZM449.07,237.75l-77.22,73.12H294.61l-67.6,64v-64H140.14V36.58H449.07Z"/></svg></a><a class="soc s-youtube" href="https://www.youtube.com/@EuroLeagueFrance" target="_blank" rel="noopener" aria-label="EuroLeague France sur YouTube" title="YouTube" style="--sc:#FF0000"><svg viewBox="0 0 576 512" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></svg></a></nav><div class="meta" id="meta">Saison 2026-27 · chargement des notes…</div></div>
   </header>
-  <nav class="tabs" id="tabs" aria-label="Sections"><a href="#">Clubs &amp; classements</a><a href="#journees">Journées</a><a href="#francais">Les Français</a><a href="#jeu">Top à l'aveugle</a><a href="#fantasy">Fantasy</a></nav>
+  <nav class="tabs" id="tabs" aria-label="Sections"><a href="#">Clubs &amp; classements</a><a href="#journees">Journées</a><a href="#francais">Les Français</a><a href="#jeu">Top à l'aveugle</a><a href="#fantasy">Fantasy</a><button type="button" class="tabinj" id="tabinj" aria-controls="injside" hidden>🚑 Blessés <span class="injn"></span></button></nav>
   <main id="app"><p class="empty-state">Chargement des notes…</p></main>
   <section id="standings" class="stand" aria-labelledby="h-st" hidden></section>
   <footer>
@@ -801,6 +807,63 @@ button.gslot:disabled{cursor:default;opacity:.6}
     $("#pvsh").addEventListener("click",e=>shareCanvas(cv,fname(),e.currentTarget));
     $("#pvback").addEventListener("click",()=>player(pid));
     if(!dlg.open)dlg.showModal();await draw()}
+  /* ---------- Visuel « Infirmerie » : absents et incertains, classés par match de la prochaine journée ---------- */
+  function injData(){const N=D.news,K={out:0,doubt:1,dtd:2},L=(N&&N.list||[]).filter(x=>D.clubs[x.c]&&x.s in K);
+    const seen=new Set(),M=[];Object.keys(D.clubs).forEach(c=>{if(seen.has(c))return;const n=nextOf(c);if(n){const h=n.home?c:n.opp,a=n.home?n.opp:c;seen.add(h);seen.add(a);M.push({r:n.round,d:n.date,h,a})}else{seen.add(c);M.push({r:99,d:"9999",h:c,a:null})}});
+    M.sort((x,y)=>x.r-y.r||x.d.localeCompare(y.d)||D.clubs[x.h].name.localeCompare(D.clubs[y.h].name));
+    const nm=x=>x.p&&D.players[x.p]?short(D.players[x.p].name):(()=>{const w=x.n.trim().split(/\s+/);return (w.length>1?w[0][0]+". "+w.slice(1).join(" "):w[0]).toUpperCase()})();
+    const B=[];M.forEach(m=>[[m.h,m.a,true],[m.a,m.h,false]].forEach(([c,o,home])=>{if(!c)return;const A=L.filter(x=>x.c===c).sort((a,b)=>K[a.s]-K[b.s]||nm(a).localeCompare(nm(b)));
+      if(A.length)B.push({c,o,home,r:m.r,d:m.d,A:A.map(x=>({s:x.s,n:nm(x),fr:x.p&&isFr(x.p),t:x.t}))})}));
+    const rd=Math.min(...M.filter(m=>m.a).map(m=>m.r));
+    return {B,n:L.length,nOut:L.filter(x=>x.s==="out").length,round:isFinite(rd)?rd:null}}
+  async function drawInj(cv,f){
+    const x=cv.getContext("2d");await fontsReady();const tw=f.tag==="x",W=f.W,H=f.H,V=injData();
+    const {top,bottom}=await frame(x,f,"L'INFIRMERIE",V.round?"BLESSÉS · J"+V.round:"BLESSÉS","Absents et incertains · point au "+D.news.updated.replace(" "," à ").replace(":","h"));
+    const fh=tw?58:66;x.fillStyle=FOOT;x.fillRect(0,H-fh+3,W*.62,fh-3);
+    txt(x,`${V.nOut} absents · ${V.n-V.nOut} incertains · sources : BasketNews, BasketballSphere, clubs`,40,H-fh/2+8,{s:tw?19:21,w:600,f:FB,c:MUT,max:W*.58});
+    const cols=tw?3:2,gx=tw?18:20,pad=tw?28:32,cw=(W-2*pad-(cols-1)*gx)/cols,y0=top+(tw?18:24),avail=bottom-(tw?12:18)-y0;
+    const units=V.B.reduce((s,b)=>s+1.15+b.A.length,0)+V.B.length*.35;
+    let rh=Math.min(tw?40:48,avail/(units/cols)*0.985);
+    // répartition en colonnes sans couper un club
+    const place=rh=>{const C=[[]];let y=0;for(const b of V.B){const h=(1.15+b.A.length)*rh+.35*rh;if(y+h>avail+0.5&&C[C.length-1].length){C.push([]);y=0}C[C.length-1].push(b);y+=h}return C};
+    let C=place(rh);while(C.length>cols&&rh>14){rh-=1;C=place(rh)}
+    const SC={out:["ABSENT","#C62828","#fff"],doubt:["INCERTAIN","#E0A21B","#1b1300"],dtd:["DÉC. TARDIVE","#E0A21B","#1b1300"]};
+    for(let ci=0;ci<C.length;ci++){let y=y0;const X=pad+ci*(cw+gx);
+      for(const b of C[ci]){const hh=rh*1.15,bh=hh+b.A.length*rh;
+        rr(x,X,y,cw,bh,10);x.fillStyle=ROW2;x.fill();
+        rr(x,X,y,cw,hh,10);x.fillStyle=ROW;x.fill();x.fillStyle=D.clubs[b.c].color||BLUE;x.fillRect(X,y+4,5,hh-8);
+        const lr=hh*.36;await logoDisc(x,X+16+lr,y+hh/2,lr,b.c);
+        const tx=X+16+2*lr+12;
+        const opp=b.o?`${b.home?"vs":"@"} ${D.clubs[b.o].name}`:"";
+        x.font=`600 ${Math.round(hh*.36)}px ${FB}`;const ow=Math.min(opp?x.measureText(opp).width:0,cw*.42);
+        txt(x,D.clubs[b.c].name.toUpperCase(),tx,y+hh*.66,{s:Math.round(hh*.5),w:800,max:cw-(tx-X)-ow-24});
+        if(opp)txt(x,opp,X+cw-12,y+hh*.64,{s:Math.round(hh*.36),w:600,f:FB,c:MUT,a:"right",max:cw*.42});
+        let yy=y+hh;
+        for(const e of b.A){const [lab,bg,fg]=SC[e.s],chW=Math.round(rh*3.15),chH=Math.round(rh*.6),cy=yy+(rh-chH)/2;
+          rr(x,X+12,cy,chW,chH,chH/2);x.fillStyle=bg;x.fill();txt(x,lab,X+12+chW/2,cy+chH*.72,{s:Math.round(chH*.62),w:800,c:fg,a:"center",ls:.5,max:chW-8});
+          const nx=X+12+chW+12;txt(x,e.n,nx,yy+rh*.68,{s:Math.round(rh*.52),w:800,max:cw*.42});
+          x.font=`800 ${Math.round(rh*.52)}px ${FD}`;let nw=Math.min(x.measureText(e.n).width,cw*.42);
+          if(e.fr){cflag(x,nx+nw+8,yy+rh*.28,rh*.5,rh*.34);nw+=rh*.5+8}
+          const rx=nx+nw+14,rw=X+cw-12-rx;if(rw>40){const fs=Math.round(rh*.4);x.font=`600 ${fs}px ${FB}`;let t=e.t;if(x.measureText(t).width>rw){while(t.length>4&&x.measureText(t+"…").width>rw)t=t.slice(0,-1);t=t.replace(/[\s·(]+$/,"")+"…"}txt(x,t,rx,yy+rh*.66,{s:fs,w:600,f:FB,c:MUT})}
+          yy+=rh}
+        y+=bh+rh*.35}}
+    if(!V.B.length)txt(x,"Aucun blessé ni incertain signalé.",W/2,(top+bottom)/2,{s:40,w:800,a:"center"})}
+  async function injVisual(){
+    const dlg=$("#dlg");let fmt=VF==="x"?"x":"insta";const PF={insta:FMT.insta,x:FMT.x};
+    const V=injData(),fname=()=>`blesses${V.round?"_J"+V.round:""}_${PF[fmt].tag}.png`;
+    dlg.dataset.pid="";
+    dlg.innerHTML=`<div class="dhead"><div><h3 id="dlg-title">Visuel · Infirmerie${V.round?" J"+V.round:""}</h3><div class="label" id="pvlab"></div></div><button class="x" id="x" aria-label="Fermer">×</button></div>
+      <div class="dbody shr"><span class="seg sm" role="group" aria-label="Format">${Object.keys(PF).map(k=>`<button data-pvf="${k}" aria-pressed="${k===fmt}">${k==="x"?"X / Twitter":"Instagram"}</button>`).join("")}</span>
+      <div class="vfig pvfig"><canvas id="pvc"></canvas></div>
+      <div class="shrlinks"><button class="vbtn" id="pvdl">Télécharger PNG</button><button class="vbtn ghost" id="pvsh">Partager</button><button class="vbtn ghost" id="pvback">← Infirmerie</button></div>
+      <p class="label" id="pvmsg" role="status" style="min-height:1.2em;text-transform:none;letter-spacing:0">${V.n} joueurs absents ou incertains · point au ${esc(D.news.updated)}</p></div>`;
+    const cv=$("#pvc");const draw=async()=>{const f=PF[fmt];cv.width=f.W;cv.height=f.H;$("#pvlab").textContent=f.label;await drawInj(cv,f)};
+    $("#x").addEventListener("click",()=>dlg.close());
+    dlg.querySelectorAll("[data-pvf]").forEach(b=>b.addEventListener("click",()=>{fmt=b.dataset.pvf;dlg.querySelectorAll("[data-pvf]").forEach(z=>z.setAttribute("aria-pressed",z===b));draw()}));
+    $("#pvdl").addEventListener("click",()=>downloadPNG(cv,fname(),t=>$("#pvmsg").textContent=t));
+    $("#pvsh").addEventListener("click",e=>shareCanvas(cv,fname(),e.currentTarget));
+    $("#pvback").addEventListener("click",()=>{dlg.close();const b=$("#tabinj");(b&&!b.hidden&&b.offsetParent?b:$("#injtab")).click()});
+    if(!dlg.open)dlg.showModal();await draw()}
   async function downloadPNG(cv,name,say){
     const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
     let dl=null;try{dl=window.claude&&window.claude.use?await window.claude.use("downloads"):null}catch(e){}
@@ -978,7 +1041,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const GR={out:"inj",doubt:"inj",dtd:"inj",exp:"ret",back:"ret",coach:"rot",comp:"rot"},ORD={out:0,doubt:1,dtd:2,exp:3,back:4,coach:5,comp:6};
     const L=N.list.filter(x=>D.clubs[x.c]&&ST[x.s]);
     const nInj=L.filter(x=>GR[x.s]==="inj").length;
-    tab.querySelector(".injn").textContent=nInj;tab.setAttribute("aria-label",`Blessés : ${nInj} absents ou incertains`);tab.hidden=false;
+    const tb=$("#tabinj");[tab,tb].forEach(b=>{if(!b)return;b.querySelector(".injn").textContent=nInj;b.setAttribute("aria-label",`Blessés : ${nInj} absents ou incertains`);b.hidden=false});
     let F="inj",open=false;
     const nm=x=>x.p&&D.players[x.p]?D.players[x.p].name:x.n;
     const li=x=>`<li><span class="fst ${ST[x.s][1]}">${ST[x.s][0]}</span><span class="injt">${x.p&&D.players[x.p]?`<button type="button" data-player="${x.p}">${esc(nm(x))}</button>${flag(x.p)}${stFp(x.p)}`:`<b>${esc(x.n)}</b>`}<small>${esc(x.t)}</small></span></li>`;
@@ -992,20 +1055,21 @@ button.gslot:disabled{cursor:default;opacity:.6}
       M.sort((x,y)=>x.r-y.r||x.d.localeCompare(y.d)||D.clubs[x.h].name.localeCompare(D.clubs[y.h].name));
       const cnt=g=>L.filter(x=>GR[x.s]===g).length,cOut=L.filter(x=>x.s==="out").length,cDb=L.filter(x=>x.s==="doubt"||x.s==="dtd").length;
       const FB=[["inj","Blessés & incertains"],["ret","Retours"],["rot","Hors rotation"],["all","Tout"]];
-      el.innerHTML=`<div class="dshd"><div class="dshr"><h2 class="dstt">🚑 Infirmerie</h2><button type="button" class="x" id="injx" aria-label="Fermer le panneau">×</button></div>
+      el.innerHTML=`<div class="dshd"><div class="dshr"><h2 class="dstt">🚑 Infirmerie</h2><button type="button" class="vbtn injvis" id="injpng" style="margin:0 0 0 auto;padding:6px 12px;font-size:13.5px">📸 Visuel PNG</button><button type="button" class="x" id="injx" style="margin-left:8px" aria-label="Fermer le panneau">×</button></div>
         <p class="gbsub" style="margin:2px 0 6px">Point au ${esc(N.updated)} · classé par match de la prochaine journée</p>
         <div class="injk"><div class="k-r"><b>${cOut}</b>absents</div><div class="k-o"><b>${cDb}</b>incertains</div><div class="k-g"><b>${cnt("ret")}</b>retours</div></div>
         <div class="injf" role="group" aria-label="Filtrer">${FB.map(([k,t])=>`<button type="button" data-injf="${k}" aria-pressed="${F===k}">${t}</button>`).join("")}</div>
         <input id="injq" type="search" placeholder="Filtrer : club ou joueur" autocomplete="off"></div>
         <div class="dsbody">${M.map(m=>`<section class="injm"><div class="injmh">${m.a?`J${m.r} · ${dateFr(m.d)} · ${esc(D.clubs[m.h].name)} – ${esc(D.clubs[m.a].name)}`:"Pas de match programmé"}</div>${club(m.h,m.a?"dom.":"")}${m.a?club(m.a,"ext."):""}</section>`).join("")}
         <p class="injsrc">Sources : ${esc(N.src||"")}. Statuts : Absent = forfait annoncé · Incertain = incertain ou douteux · Décision tardive = au jour le jour · Probable = attendu après une absence · Hors rotation = choix du coach.</p></div>`;
-      $("#injx").addEventListener("click",()=>{set(false);tab.focus()});
+      $("#injx").addEventListener("click",()=>{set(false);(tb&&!tb.hidden?tb:tab).focus()});
+      $("#injpng").addEventListener("click",()=>{set(false);injVisual()});
       el.querySelectorAll("[data-injf]").forEach(b=>b.addEventListener("click",()=>{F=b.dataset.injf;const q=$("#injq").value;render();$("#injq").value=q;filt(q)}));
       $("#injq").addEventListener("input",e=>filt(e.target.value))};
     const filt=v=>{const q=v.trim().toLowerCase();el.querySelectorAll(".injm").forEach(m=>{let any=false;m.querySelectorAll(".injc").forEach(c=>{const ok=!q||c.dataset.q.includes(q);c.hidden=!ok;any=any||ok});m.hidden=!any})};
-    const set=v=>{open=v;el.classList.toggle("open",v);veil.hidden=!v;el.setAttribute("aria-hidden",String(!v));tab.setAttribute("aria-expanded",String(v));if("inert" in el)el.inert=!v};
+    const set=v=>{open=v;el.classList.toggle("open",v);veil.hidden=!v;el.setAttribute("aria-hidden",String(!v));tab.setAttribute("aria-expanded",String(v));if(tb)tb.setAttribute("aria-expanded",String(v));if("inert" in el)el.inert=!v};
     render();set(false);
-    tab.addEventListener("click",()=>{render();set(true);setTimeout(()=>$("#injq").focus(),220)});
+    [tab,tb].forEach(b=>b&&b.addEventListener("click",()=>{render();set(true);setTimeout(()=>$("#injq").focus(),220)}));
     veil.addEventListener("click",()=>set(false));
     document.addEventListener("keydown",e=>{if(e.key==="Escape"&&open&&!$("#dlg").open)set(false)});
     el.addEventListener("click",e=>{if(e.target.closest("[data-club]"))set(false)});
@@ -1410,7 +1474,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
    [/(arrières|ailiers|pivots) absents chez l'adversaire/,(m,p)=>`opposing ${pos2(p)} out`],
    [/(\d+) min · (-?\d+) d'éval/,"$1 min · $2 PIR"],
    [/Risque élevé/,"High risk"],[/Risque moyen et \+/,"Medium risk +"],[/Risque moyen/,"Medium risk"],[/Risque modéré/,"Moderate risk"],[/Risque faible/,"Low risk"],[/Aucun signal/,"No signal"],
-   [/^Absent$/,"Out"],[/^Incertain$/,"Doubtful"],[/^Décision tardive$/,"Game-time decision"],[/^Hors rotation$/,"Out of rotation"],[/^Minutes menacées$/,"Minutes at risk"],[/^De retour$/,"Back"],
+   [/^Absent$/,"Out"],[/🚑 Blessés/,"🚑 Injuries"],[/🚑 Infirmerie/,"🚑 Injury report"],[/📸 Visuel PNG/,"📸 PNG visual"],[/^Blessés & incertains$/,"Injured & doubtful"],[/^Retours$/,"Returns"],[/^Tout$/,"All"],[/^(\d+) blessés?\/incertains?$/,"$1 injured/doubtful"],[/^effectif complet$/,"full roster"],[/^Aucun blessé signalé\.$/,"No injuries reported."],[/^Rien à signaler\.$/,"Nothing to report."],[/^absents$/,"out"],[/^incertains$/,"doubtful"],[/^retours$/,"returns"],[/^Incertain$/,"Doubtful"],[/^Décision tardive$/,"Game-time decision"],[/^Hors rotation$/,"Out of rotation"],[/^Minutes menacées$/,"Minutes at risk"],[/^De retour$/,"Back"],
    [/(^|· )(Absent|Incertain|Décision tardive|Hors rotation|Minutes menacées|Probable|De retour) : /g,(m,pre,a)=>pre+({"Absent":"Out","Incertain":"Doubtful","Décision tardive":"Game-time decision","Hors rotation":"Out of rotation","Minutes menacées":"Minutes at risk","Probable":"Probable","De retour":"Back"}[a])+": "],
    // projection détaillée
    [/^Base /,"Base "],[/calibrage/g,"calibration"],[/forme championnat/g,"domestic form"],[/coéquipiers absents/g,"teammates out"],[/adversaires absents/g,"opponents out"],[/minutes menacées/g,"minutes at risk"],
