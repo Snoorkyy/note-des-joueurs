@@ -335,6 +335,40 @@ footer{margin-top:36px;color:var(--muted);font-size:12px;border-top:1px solid va
 .dsl{list-style:none;margin:0;padding:0}.dsl li{display:flex;align-items:center;gap:8px;padding:3px 0;border-top:1px solid var(--line);font-size:13px}
 .dsn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center}.dsn button{background:none;border:0;padding:0;font:inherit;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;overflow:hidden;text-overflow:ellipsis}.dsn button:hover{color:var(--accent)}
 .dsl small{color:var(--muted);font-size:11.5px;white-space:nowrap}.dsl b{min-width:30px;text-align:right;font-family:var(--f-display);font-size:17px}.dsl b.dshi{color:#1E8E3E}.dsl b.dsnv{color:var(--muted)}
+.injtab{position:fixed;right:0;top:calc(50% - 96px);transform:translateY(-100%);writing-mode:vertical-rl;z-index:55;background:var(--brand-red);color:#fff;border:0;border-radius:10px 0 0 10px;padding:12px 7px;font-family:var(--f-display);font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:15px;cursor:pointer;box-shadow:-4px 4px 14px rgba(8,17,43,.25);display:flex;align-items:center;gap:6px}
+.injtab:hover,.injtab:focus-visible{background:var(--brand-blue);outline:none}
+.injtab .injn{writing-mode:horizontal-tb;background:#fff;color:var(--brand-red);border-radius:999px;min-width:22px;padding:1px 5px;font-size:12px;line-height:18px;text-align:center}
+.injtab:hover .injn,.injtab:focus-visible .injn{color:var(--brand-blue)}
+html:not(.domon) .injtab{top:50%;transform:translateY(-50%)}
+.injside{position:fixed;top:0;right:0;bottom:0;width:min(400px,94vw);z-index:58;background:var(--surface);color:var(--ink);border-left:1px solid var(--line);box-shadow:-14px 0 34px rgba(8,17,43,.28);transform:translateX(105%);transition:transform .2s ease;display:flex;flex-direction:column}
+.injside.open{transform:none}
+.injveil{position:fixed;inset:0;z-index:57;background:rgba(8,17,43,.35)}
+.injside .dshd{border-bottom-color:var(--brand-red)}
+.injk{display:flex;gap:6px;margin:4px 0 8px}
+.injk div{flex:1;border-radius:8px;padding:5px 4px;text-align:center;font-size:11px;font-weight:700;line-height:1.2}
+.injk b{display:block;font-family:var(--f-display);font-size:22px;line-height:1.05}
+.injk .k-r{background:#C62828;color:#fff}.injk .k-o{background:#E0A21B;color:#1b1300}.injk .k-g{background:#1E8E3E;color:#fff}
+.injf{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.injf button{font:inherit;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.injf button[aria-pressed="true"]{background:var(--brand-blue);border-color:var(--brand-blue);color:#fff}
+#injq{width:100%;font:inherit;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.injm{border:1px solid var(--line);border-radius:10px;margin-top:10px;overflow:hidden}
+.injmh{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--brand-pale);font-size:12px;font-weight:700;color:var(--muted)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .injmh{background:var(--line)}}:root[data-theme="dark"] .injmh{background:var(--line)}
+.injc{padding:6px 10px 4px}.injc+.injc{border-top:1px dashed var(--line)}
+.injch{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.injch small{margin-left:auto;color:var(--muted);font-weight:600;font-size:11.5px}
+.injl{list-style:none;margin:4px 0 2px;padding:0}
+.injl li{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px solid var(--line)}
+.injl .fst{margin:2px 0 0;flex:none;min-width:74px;text-align:center}
+.injl .injt{flex:1;min-width:0;font-size:13px;line-height:1.3}
+.injl .injt b,.injl .injt button{font-weight:700}
+.injl .injt button{background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;text-align:left}
+.injl .injt button:hover{color:var(--accent)}
+.injl small{display:block;color:var(--muted);font-size:12px}
+.injnone{font-size:12.5px;color:var(--muted);margin:4px 0 6px}
+.injsrc{font-size:11.5px;color:var(--muted);margin:12px 2px 0}
+@media (max-width:560px){.injtab{font-size:13px;padding:10px 6px}}
 .dsmore summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--head);padding:4px 0}
 .ptabs{margin:4px 0 8px}.ptbl{margin-top:0}.ptbl .grid td,.ptbl .grid th{padding:5px 6px}.ptbl .grid td.pl{white-space:normal}
 .fxbd{font-size:12.5px;color:var(--muted);margin-top:6px;max-width:80ch}.fxbd b{color:var(--ink)}.faup{color:#1E8E3E;font-weight:700}
@@ -468,6 +502,9 @@ button.gslot:disabled{cursor:default;opacity:.6}
 
 <button type="button" id="domtab" class="domtab" aria-controls="domside" aria-expanded="false" hidden>🏀 Championnat</button>
 <aside id="domside" class="domside" aria-label="Matchs de championnat du week-end" aria-hidden="true"></aside>
+<button type="button" id="injtab" class="injtab" aria-controls="injside" aria-expanded="false" hidden>🚑 Blessés <span class="injn"></span></button>
+<div id="injveil" class="injveil" hidden></div>
+<aside id="injside" class="injside" aria-label="Blessés et absents" aria-hidden="true"></aside>
 <dialog id="dlg" aria-labelledby="dlg-title"></dialog>
 <dialog id="promo" aria-labelledby="promo-t"><button class="px" data-pclose aria-label="Fermer">×</button><div class="pk">EuroLeague Fantasy Challenge</div><h3 id="promo-t">Rejoignez le championnat EuroLeague France</h3><p>Composez votre équipe, affrontez notre communauté toute la saison et <b>gagnez des lots chaque mois</b>.</p><a class="go" id="promo-go" autofocus href="https://euroleaguefantasy.euroleaguebasketball.net/10/fantasy/2658060/192516?matchday=1533" target="_blank" rel="noopener">Rejoindre notre championnat</a></dialog>
 
@@ -913,7 +950,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
 
   /* ---------- Panneau latéral : matchs de championnat du week-end ---------- */
   let dsRender=null,dsSet=null,dsWant=false;
-  function domVis(){if(!dsSet)return;const tab=$("#domtab");if(location.hash.startsWith("#fantasy")){dsSet(dsWant)}else{dsSet(false);tab.hidden=true}}
+  function domVis(){if(!dsSet)return;const tab=$("#domtab");if(location.hash.startsWith("#fantasy")){dsSet(dsWant)}else{dsSet(false);tab.hidden=true}document.documentElement.classList.toggle("domon",!tab.hidden)}
   function domSide(){const el=$("#domside"),tab=$("#domtab");if(!D.dom||!D.dom.g||!Object.keys(D.dom.g).length)return;
     const last=a=>Array.isArray(a[0])?a[a.length-1]:a;
     const G=Object.entries(D.dom.g).filter(([c])=>D.clubs[c]).map(([c,a])=>({c,g:last(a)})).sort((x,y)=>y.g[0].localeCompare(x.g[0])||D.clubs[x.c].name.localeCompare(D.clubs[y.c].name));
@@ -931,11 +968,48 @@ button.gslot:disabled{cursor:default;opacity:.6}
       $("#dsx").addEventListener("click",()=>{set(false);dsWant=false;try{localStorage.setItem("domside","0")}catch(e){}tab.focus()});
       $("#dsq").addEventListener("input",e=>{const q=e.target.value.trim().toLowerCase();el.querySelectorAll(".dsg").forEach(g=>{g.hidden=!!q&&!g.dataset.q.includes(q)})})};
     let open=false;try{open=localStorage.getItem("domside")!=="0"&&matchMedia("(min-width:1400px)").matches}catch(e){open=matchMedia("(min-width:1400px)").matches}
-    const set=v=>{open=v;el.classList.toggle("open",v);document.body.classList.toggle("domopen",v);el.setAttribute("aria-hidden",String(!v));tab.setAttribute("aria-expanded",String(v));tab.hidden=v;if("inert" in el)el.inert=!v};
+    const set=v=>{open=v;el.classList.toggle("open",v);document.body.classList.toggle("domopen",v);el.setAttribute("aria-hidden",String(!v));tab.setAttribute("aria-expanded",String(v));tab.hidden=v;document.documentElement.classList.toggle("domon",!tab.hidden);if("inert" in el)el.inert=!v};
     dsRender();dsSet=set;dsWant=open;domVis();
     tab.addEventListener("click",()=>{set(true);dsWant=true;try{localStorage.setItem("domside","1")}catch(e){}setTimeout(()=>$("#dsq").focus(),220)});
     document.addEventListener("keydown",e=>{if(e.key==="Escape"&&open&&!matchMedia("(min-width:1400px)").matches&&!$("#dlg").open)set(false)});
     el.addEventListener("click",e=>{if(e.target.closest("[data-player]")&&!matchMedia("(min-width:1400px)").matches)set(false)})}
+  /* ---------- Bouton « Blessés » : panneau infirmerie, classé par match de la prochaine journée ---------- */
+  function injSide(){const N=D.news,el=$("#injside"),tab=$("#injtab"),veil=$("#injveil");if(!N||!N.list||!N.list.length)return;
+    const GR={out:"inj",doubt:"inj",dtd:"inj",exp:"ret",back:"ret",coach:"rot",comp:"rot"},ORD={out:0,doubt:1,dtd:2,exp:3,back:4,coach:5,comp:6};
+    const L=N.list.filter(x=>D.clubs[x.c]&&ST[x.s]);
+    const nInj=L.filter(x=>GR[x.s]==="inj").length;
+    tab.querySelector(".injn").textContent=nInj;tab.setAttribute("aria-label",`Blessés : ${nInj} absents ou incertains`);tab.hidden=false;
+    let F="inj",open=false;
+    const nm=x=>x.p&&D.players[x.p]?D.players[x.p].name:x.n;
+    const li=x=>`<li><span class="fst ${ST[x.s][1]}">${ST[x.s][0]}</span><span class="injt">${x.p&&D.players[x.p]?`<button type="button" data-player="${x.p}">${esc(nm(x))}</button>${flag(x.p)}${stFp(x.p)}`:`<b>${esc(x.n)}</b>`}<small>${esc(x.t)}</small></span></li>`;
+    const stFp=p=>{const f=D.fantasy&&D.fantasy.p&&D.fantasy.p[p];return f?` <small style="display:inline;margin-left:4px">${esc(f[0])} · ${fr(+f[1])} cr</small>`:""};
+    const club=(c,side)=>{const A=L.filter(x=>x.c===c&&(F==="all"||GR[x.s]===F)).sort((a,b)=>ORD[a.s]-ORD[b.s]||nm(a).localeCompare(nm(b)));
+      const ni=L.filter(x=>x.c===c&&GR[x.s]==="inj").length;
+      return `<div class="injc" data-q="${esc((D.clubs[c].name+" "+L.filter(x=>x.c===c).map(nm).join(" ")).toLowerCase())}"><div class="injch">${badge(c,"sm")}<button type="button" data-club="${c}" style="background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer">${esc(D.clubs[c].name)}</button>${side?`<small>${side}</small>`:""}<small>${ni?ni+" blessé"+(ni>1?"s":"")+"/incertain"+(ni>1?"s":""):"effectif complet"}</small></div>
+        ${A.length?`<ul class="injl">${A.map(li).join("")}</ul>`:`<p class="injnone">${F==="inj"?"Aucun blessé signalé.":"Rien à signaler."}</p>`}</div>`};
+    const render=()=>{const seen=new Set(),M=[];
+      Object.keys(D.clubs).forEach(c=>{if(seen.has(c))return;const n=nextOf(c);if(n){const h=n.home?c:n.opp,a=n.home?n.opp:c;seen.add(h);seen.add(a);M.push({r:n.round,d:n.date,h,a})}else{seen.add(c);M.push({r:99,d:"9999",h:c,a:null})}});
+      M.sort((x,y)=>x.r-y.r||x.d.localeCompare(y.d)||D.clubs[x.h].name.localeCompare(D.clubs[y.h].name));
+      const cnt=g=>L.filter(x=>GR[x.s]===g).length,cOut=L.filter(x=>x.s==="out").length,cDb=L.filter(x=>x.s==="doubt"||x.s==="dtd").length;
+      const FB=[["inj","Blessés & incertains"],["ret","Retours"],["rot","Hors rotation"],["all","Tout"]];
+      el.innerHTML=`<div class="dshd"><div class="dshr"><h2 class="dstt">🚑 Infirmerie</h2><button type="button" class="x" id="injx" aria-label="Fermer le panneau">×</button></div>
+        <p class="gbsub" style="margin:2px 0 6px">Point au ${esc(N.updated)} · classé par match de la prochaine journée</p>
+        <div class="injk"><div class="k-r"><b>${cOut}</b>absents</div><div class="k-o"><b>${cDb}</b>incertains</div><div class="k-g"><b>${cnt("ret")}</b>retours</div></div>
+        <div class="injf" role="group" aria-label="Filtrer">${FB.map(([k,t])=>`<button type="button" data-injf="${k}" aria-pressed="${F===k}">${t}</button>`).join("")}</div>
+        <input id="injq" type="search" placeholder="Filtrer : club ou joueur" autocomplete="off"></div>
+        <div class="dsbody">${M.map(m=>`<section class="injm"><div class="injmh">${m.a?`J${m.r} · ${dateFr(m.d)} · ${esc(D.clubs[m.h].name)} – ${esc(D.clubs[m.a].name)}`:"Pas de match programmé"}</div>${club(m.h,m.a?"dom.":"")}${m.a?club(m.a,"ext."):""}</section>`).join("")}
+        <p class="injsrc">Sources : ${esc(N.src||"")}. Statuts : Absent = forfait annoncé · Incertain = incertain ou douteux · Décision tardive = au jour le jour · Probable = attendu après une absence · Hors rotation = choix du coach.</p></div>`;
+      $("#injx").addEventListener("click",()=>{set(false);tab.focus()});
+      el.querySelectorAll("[data-injf]").forEach(b=>b.addEventListener("click",()=>{F=b.dataset.injf;const q=$("#injq").value;render();$("#injq").value=q;filt(q)}));
+      $("#injq").addEventListener("input",e=>filt(e.target.value))};
+    const filt=v=>{const q=v.trim().toLowerCase();el.querySelectorAll(".injm").forEach(m=>{let any=false;m.querySelectorAll(".injc").forEach(c=>{const ok=!q||c.dataset.q.includes(q);c.hidden=!ok;any=any||ok});m.hidden=!any})};
+    const set=v=>{open=v;el.classList.toggle("open",v);veil.hidden=!v;el.setAttribute("aria-hidden",String(!v));tab.setAttribute("aria-expanded",String(v));if("inert" in el)el.inert=!v};
+    render();set(false);
+    tab.addEventListener("click",()=>{render();set(true);setTimeout(()=>$("#injq").focus(),220)});
+    veil.addEventListener("click",()=>set(false));
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&open&&!$("#dlg").open)set(false)});
+    el.addEventListener("click",e=>{if(e.target.closest("[data-club]"))set(false)});
+    try{if(location.hash==="#blesses"){set(true)}}catch(e){}}
   function standings(){const S=D.standings,el=$("#standings");if(!S||!S.rows)return;
     const [d,t]=S.fetched.split("T"),[y,mo,dd]=d.split("-"),loc=new Date(S.fetched),hh=String(loc.getHours()).padStart(2,"0"),mi=String(loc.getMinutes()).padStart(2,"0");
     const ar=c=>c==="Up"?'<span class="tr up" title="Monte">▲</span>':c==="Down"?'<span class="tr down" title="Descend">▼</span>':"";
@@ -1518,7 +1592,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     (root.querySelectorAll?[root,...root.querySelectorAll("[title],[placeholder],[aria-label]")]:[]).forEach(e=>{if(!e.getAttribute)return;ATTRS.forEach(a=>{const v=e.getAttribute(a);if(v&&!e["_en"+a]){const t=trEN(v);e["_en"+a]=1;if(t!==v)e.setAttribute(a,t)}})})}
   const enScope=()=>LANG!=="fr"&&location.hash.startsWith("#fantasy");
   let enObs=null;
-  function enApply(){const roots=["#app","#domside","#domtab","#dlg"].map(s=>$(s)).filter(Boolean);
+  function enApply(){const roots=["#app","#domside","#domtab","#dlg","#injside","#injtab"].map(s=>$(s)).filter(Boolean);
     if(enObs){enObs.disconnect();enObs=null}
     document.documentElement.lang=enScope()?LANG:"fr";
     if(!enScope())return;
@@ -2061,7 +2135,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     D=j;index();
     const [d,t]=D.updated.split("T");const [y,m,dd]=d.split("-");
     $("#meta").textContent=`Saison ${D.season} · ${D.matches.length} matchs notés · J1 à J${D.maxRound} · mis à jour le ${dd}/${m} à ${t.replace(":","h")}`;
-    route();standings();promo();domSide();
+    route();standings();promo();domSide();injSide();
   }).catch(()=>{$("#app").innerHTML='<p class="empty-state">Les notes n\'ont pas pu être chargées. Rechargez la page dans un instant.</p>'});
 })();
 </script>
