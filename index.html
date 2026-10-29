@@ -224,6 +224,14 @@ footer{margin-top:36px;color:var(--muted);font-size:12px;border-top:1px solid va
 .frflag{display:inline-block;width:16px;height:11px;margin-left:6px;vertical-align:-1px;border-radius:2px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%);box-shadow:0 0 0 1px rgba(0,0,0,.18);flex:none}
 .fxh{font-family:var(--f-display);font-weight:800;font-size:20px;text-transform:uppercase;color:var(--head);margin:0}
 .fxa{border-top-color:var(--brand-red)}
+.ftabs{position:sticky;top:0;z-index:20;display:flex;gap:6px;overflow-x:auto;margin:0 0 16px;padding:8px 0;background:var(--bg);scrollbar-width:none}
+.ftabs::-webkit-scrollbar{display:none}
+.ftabs button{flex:1 0 auto;font-family:var(--f-display);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.02em;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--head);cursor:pointer;white-space:nowrap}
+.ftabs button[aria-selected="true"]{background:var(--brand-blue);border-color:var(--brand-blue);color:#fff;box-shadow:inset 0 -4px 0 var(--brand-red)}
+.ftabs button:focus-visible{outline:2px solid var(--brand-red);outline-offset:2px}
+.fxinfo{margin:2px 0 8px}.fxinfo summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--muted);list-style:none;display:inline-block}.fxinfo summary::-webkit-details-marker{display:none}.fxinfo summary:hover{color:var(--accent)}.fxinfo[open] summary{margin-bottom:4px}
+.fxfold>summary{cursor:pointer;list-style:none}.fxfold>summary::-webkit-details-marker{display:none}.fxfold>summary::after{content:" ▾";color:var(--muted)}.fxfold[open]>summary::after{content:" ▴"}.fxfold #fxcoach>h3{display:none}
+@media (max-width:560px){.ftabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ftabs button{font-size:14px;padding:8px 6px;white-space:normal}}
 .fxlots{border-top-color:#E0A21B;background:linear-gradient(135deg,color-mix(in srgb,#E0A21B 9%,var(--surface)),var(--surface) 60%)}
 .lotnow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;align-items:center;margin-top:8px}
 .lotnow h4{margin:0;font-family:var(--f-display);font-size:24px;text-transform:uppercase;color:var(--head);line-height:1.05}.lotnow h4 small{font-size:15px;color:var(--muted);margin-left:6px}
@@ -1062,7 +1070,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const nm=x=>x.p&&D.players[x.p]?D.players[x.p].name:x.n;
     const li=x=>`<li><span class="fst ${ST[x.s][1]}">${ST[x.s][0]}</span><span class="injt">${x.p&&D.players[x.p]?`<button type="button" data-player="${x.p}">${esc(nm(x))}</button>${flag(x.p)}${stFp(x.p)}`:`<b>${esc(x.n)}</b>`}<small>${esc(x.t)}</small></span></li>`;
     const stFp=p=>{const f=D.fantasy&&D.fantasy.p&&D.fantasy.p[p];return f?` <small style="display:inline;margin-left:4px">${esc(f[0])} · ${fr(+f[1])} cr</small>`:""};
-    const club=(c,side)=>{const A=L.filter(x=>x.c===c&&(F==="all"||GR[x.s]===F)).sort((a,b)=>ORD[a.s]-ORD[b.s]||nm(a).localeCompare(nm(b)));
+    const club=(c,side)=>{const A=L.filter(x=>x.c===c&&(F==="all"||(F==="fx"?!!(x.p&&D.fantasy&&D.fantasy.p&&D.fantasy.p[x.p]):GR[x.s]===F))).sort((a,b)=>ORD[a.s]-ORD[b.s]||nm(a).localeCompare(nm(b)));
       const ni=L.filter(x=>x.c===c&&GR[x.s]==="inj").length;
       return `<div class="injc" data-q="${esc((D.clubs[c].name+" "+L.filter(x=>x.c===c).map(nm).join(" ")).toLowerCase())}"><div class="injch">${badge(c,"sm")}<button type="button" data-club="${c}" style="background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer">${esc(D.clubs[c].name)}</button>${side?`<small>${side}</small>`:""}<small>${ni?ni+" blessé"+(ni>1?"s":"")+"/incertain"+(ni>1?"s":""):"effectif complet"}</small></div>
         ${A.length?`<ul class="injl">${A.map(li).join("")}</ul>`:`<p class="injnone">${F==="inj"?"Aucun blessé signalé.":"Rien à signaler."}</p>`}</div>`};
@@ -1070,7 +1078,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
       Object.keys(D.clubs).forEach(c=>{if(seen.has(c))return;const n=nextOf(c);if(n){const h=n.home?c:n.opp,a=n.home?n.opp:c;seen.add(h);seen.add(a);M.push({r:n.round,d:n.date,h,a})}else{seen.add(c);M.push({r:99,d:"9999",h:c,a:null})}});
       M.sort((x,y)=>x.r-y.r||x.d.localeCompare(y.d)||D.clubs[x.h].name.localeCompare(D.clubs[y.h].name));
       const cnt=g=>L.filter(x=>GR[x.s]===g).length,cOut=L.filter(x=>x.s==="out").length,cDb=L.filter(x=>x.s==="doubt"||x.s==="dtd").length;
-      const FB=[["inj","Blessés & incertains"],["ret","Retours"],["rot","Hors rotation"],["all","Tout"]];
+      const FB=[["inj","Blessés & incertains"],["ret","Retours"],["rot","Hors rotation"],["fx","Avec crédits Fantasy"],["all","Tout"]];
       el.innerHTML=`<div class="dshd"><div class="dshr"><h2 class="dstt">🚑 Infirmerie</h2><button type="button" class="vbtn injvis" id="injpng" style="margin:0 0 0 auto;padding:6px 12px;font-size:13.5px">📸 Visuel PNG</button><button type="button" class="x" id="injx" style="margin-left:8px" aria-label="Fermer le panneau">×</button></div>
         <p class="gbsub" style="margin:2px 0 6px">Point au ${esc(N.updated)} · classé par match de la prochaine journée</p>
         <div class="injk"><div class="k-r"><b>${cOut}</b>absents</div><div class="k-o"><b>${cDb}</b>incertains</div><div class="k-g"><b>${cnt("ret")}</b>retours</div></div>
@@ -1686,6 +1694,20 @@ button.gslot:disabled{cursor:default;opacity:.6}
   const langBar=()=>`<span class="seg sm flang" role="group" aria-label="Langue / Language">${LANGS.map(([k,f,c,t])=>`<button type="button" data-lang="${k}" aria-pressed="${LANG===k}" title="${t}" lang="${k}"><span aria-hidden="true">${f}</span> ${c}</button>`).join("")}</span>`;
   document.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(!b)return;const v=b.dataset.lang;if(v===LANG)return;LANG=v;try{localStorage.setItem("elflang",v)}catch(err){}
     const dl=$("#dlg"),pid=dl&&dl.open&&dl.dataset.pid;if(enObs){enObs.disconnect();enObs=null}fantasy();if(typeof dsRender==="function")dsRender();if(pid)player(pid);enApply()});
+  /* ---------- Onglets Fantasy + textes de méthode repliés ---------- */
+  const FTABS=[["eq","👤","Mon équipe"],["prep","🎯","Préparer la journée"],["bil","📊","Bilan"],["out","🔧","Outils"]];
+  (()=>{let t="eq";try{t=localStorage.getItem("fxtab")||"eq"}catch(e){}FS.tab=FTABS.some(x=>x[0]===t)?t:"eq"})();
+  function fxTab(k,scroll=true){FS.tab=k;try{localStorage.setItem("fxtab",k)}catch(e){}
+    document.querySelectorAll("[data-ft]").forEach(d=>d.hidden=d.dataset.ft!==k);
+    document.querySelectorAll("[data-ftab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.ftab===k));
+    if(scroll){const n=$(".ftabs");if(n&&n.getBoundingClientRect().top<0)n.scrollIntoView({block:"start"})}}
+  const FXI={fr:"ⓘ En savoir plus",en:"ⓘ More info",sr:"ⓘ Više informacija",el:"ⓘ Περισσότερα",tr:"ⓘ Daha fazla bilgi"};
+  function fxCompact(){const root=$("#app");if(!root||!location.hash.startsWith("#fantasy"))return;
+    root.querySelectorAll(".ft p.gbsub").forEach(p=>{if(p._fxc||p.classList.contains("fxkeep")||p.closest(".fxinfo")||p.closest("#fxlots"))return;p._fxc=1;
+      if(p.textContent.trim().length<150)return;const d=document.createElement("details");d.className="fxinfo";d.innerHTML=`<summary>${FXI[LANG]||FXI.en}</summary>`;p.replaceWith(d);d.appendChild(p)});
+    if(!fxCompact.mo){fxCompact.mo=new MutationObserver(()=>{if(fxCompact.busy)return;fxCompact.busy=1;try{fxCompact()}finally{fxCompact.busy=0}});}
+    fxCompact.mo.disconnect();fxCompact.mo.observe(root,{childList:true,subtree:true})}
+  document.addEventListener("click",e=>{const b=e.target.closest("[data-ftab]");if(b)fxTab(b.dataset.ftab)});
   /* ---------- Lots à gagner du championnat EuroLeague France (Fantasy Challenge) ---------- */
   const LOTS={
     fr:{h:"🎁 Lots à gagner",sub:"Championnat EuroLeague France du Fantasy Challenge",intro:"Chaque mois, les meilleurs joueurs de notre championnat gagnent des lots. Le score du mois repart de zéro au début de chaque mois.",now:"Ce mois-ci",all:"Voir tous les lots de la saison",done:"Terminé",cur:"En cours",join:"Rejoindre le championnat",tro:"Vainqueur de la saison",trod:"Un trophée EuroLeague miniature pour le n°1 du classement général final",
@@ -1717,14 +1739,14 @@ button.gslot:disabled{cursor:default;opacity:.6}
     if(FS.max>maxCr)FS.max=maxCr;
     $("#app").innerHTML=`<section aria-labelledby="h-fx"><div class="fxhead"><h2 id="h-fx">Fantasy</h2><button type="button" class="tabinj" data-injopen aria-controls="injside">🚑 Blessés <span class="injn">${injCount()}</span></button>${langBar()}</div>
       <p class="label" style="margin:-4px 0 14px">Crédits EuroLeague Fantasy Challenge au ${esc(D.fantasy.updated||"")} · stats J1 à J${D.maxRound} · éval = évaluation officielle (PIR)</p>
-      <div class="panel fxlots" id="fxlots" style="margin-bottom:18px"></div>
-      <div class="panel fxauto" id="fxauto"></div>
-      <div class="panel fxtips" id="fxtips" style="margin-top:18px"></div>
+      <nav class="ftabs" role="tablist" aria-label="Rubriques Fantasy">${FTABS.map(([k,i,t])=>`<button type="button" role="tab" data-ftab="${k}" aria-selected="${FS.tab===k}"><span aria-hidden="true">${i}</span> ${t}</button>`).join("")}</nav>
+      <div class="ft" data-ft="eq"><div class="panel fxlots" id="fxlots" style="margin-bottom:18px"></div>
+      <div class="panel fxauto" id="fxauto"></div></div>
+      <div class="ft" data-ft="prep"><div class="panel fxtips" id="fxtips"></div>
       <div class="panel fxbest" id="fxbest" style="margin-top:18px"></div>
-      <div class="panel fxcoach" id="fxcoach" style="margin-top:18px"></div>
-      <div class="panel fxbilan" id="fxbilan" style="margin-top:18px"></div>
-      <div class="panel fxchk" id="fxchk" style="margin-top:18px"></div>
-      <div class="panel fxa" style="margin-top:18px"><h3 class="fxh">Analyse avant la journée</h3>
+      <details class="panel fxcoach fxfold" style="margin-top:18px"><summary class="fxh">🧠 Tous les coachs</summary><div id="fxcoach"></div></details></div>
+      <div class="ft" data-ft="bil"><div class="panel fxbilan" id="fxbilan"></div></div>
+      <div class="ft" data-ft="out"><div class="panel fxa"><h3 class="fxh">Analyse avant la journée</h3>
         <p class="gbsub">Choisis un joueur et son prochain adversaire : on regarde comment ce club a défendu sur le même poste lors des matchs précédents.</p>
         <div class="cgbar"><input id="fxp" list="fxpl" placeholder="Joueur (ex. Moneke)" autocomplete="off" value="${FS.ap&&D.players[FS.ap]?esc(D.players[FS.ap].name+" ("+D.players[FS.ap].club+")"):""}">
           <datalist id="fxpl">${X.pl.slice().sort((a,b)=>D.players[a.p].name.localeCompare(D.players[b.p].name)).map(z=>`<option value="${esc(D.players[z.p].name+" ("+z.club+")")}">`).join("")}</datalist>
@@ -1743,8 +1765,8 @@ button.gslot:disabled{cursor:default;opacity:.6}
           <input id="fxq" type="search" placeholder="Rechercher" autocomplete="off" value="${esc(FS.q)}"></div>
         <p class="label" id="fxn" style="margin:0 0 6px"></p>
         <div class="scroll"><table class="grid fxt" id="fxt"></table></div><div id="fxtm"></div>
-        <p class="gbsub" style="margin-top:8px">Valeur = évaluation moyenne par crédit. Δ dans l'analyse = écart avec la moyenne habituelle du joueur.</p></div></section>`;
-    fxLots();fxAuto();fxTips();fxBest();fxCoach();fxBilan();fxChk();fxTable();fxDef();fxAna();
+        <p class="gbsub" style="margin-top:8px">Valeur = évaluation moyenne par crédit. Δ dans l'analyse = écart avec la moyenne habituelle du joueur.</p></div></div></section>`;
+    fxLots();fxAuto();fxTips();fxBest();fxCoach();fxBilan();fxTable();fxDef();fxAna();fxTab(FS.tab,false);fxCompact();
     const pick=v=>{const z=X.pl.find(z=>D.players[z.p].name+" ("+z.club+")"===v);return z&&z.p};
     const setP=p=>{FS.ap=p;FS.apos=X.F[p][0];const z=X.pl.find(y=>y.p===p);if(z&&z.nx){FS.ao=z.nx.opp;$("#fxo").value=FS.ao}fxAna()};
     $("#fxp").addEventListener("change",e=>{const p=pick(e.target.value);if(p&&p!==FS.ap)setP(p)});
@@ -1759,8 +1781,8 @@ button.gslot:disabled{cursor:default;opacity:.6}
     window.scrollTo(0,0)}
   function fxClick(e){if(!location.hash.startsWith("#fantasy"))return;
     const s=e.target.closest("[data-fxs]");if(s){const k=s.dataset.fxs;FS.dir=FS.sort===k?-FS.dir:(k==="name"||k==="cr"||k==="mu"||k==="rk"?1:-1);FS.sort=k;fxTable();return}
-    const o=e.target.closest("[data-fxo]");if(o){e.stopPropagation();FS.ao=o.dataset.fxo;$("#fxo").value=FS.ao;fxAna();$("#fxout").closest(".panel").scrollIntoView({behavior:"smooth",block:"start"});return}
-    const a=e.target.closest("[data-fxa]");if(a){FS.ap=a.dataset.fxa;FS.apos=FX.F[FS.ap][0];{const z=FX.pl.find(y=>y.p===FS.ap);if(z&&z.nx){FS.ao=z.nx.opp;$("#fxo").value=FS.ao}}$("#fxp").value=D.players[FS.ap].name+" ("+D.players[FS.ap].club+")";fxAna();$("#fxout").closest(".panel").scrollIntoView({behavior:"smooth",block:"start"});return}
+    const o=e.target.closest("[data-fxo]");if(o){e.stopPropagation();fxTab("out",false);FS.ao=o.dataset.fxo;$("#fxo").value=FS.ao;fxAna();$("#fxout").closest(".panel").scrollIntoView({behavior:"smooth",block:"start"});return}
+    const a=e.target.closest("[data-fxa]");if(a){fxTab("out",false);FS.ap=a.dataset.fxa;FS.apos=FX.F[FS.ap][0];{const z=FX.pl.find(y=>y.p===FS.ap);if(z&&z.nx){FS.ao=z.nx.opp;$("#fxo").value=FS.ao}}$("#fxp").value=D.players[FS.ap].name+" ("+D.players[FS.ap].club+")";fxAna();$("#fxout").closest(".panel").scrollIntoView({behavior:"smooth",block:"start"});return}
     const mo=e.target.closest("[data-more]");if(mo&&mo.dataset.more!=="cg"){const k=mo.dataset.more;FS["l"+k]+=10;({b:fxBest,t:fxTable,c:fxChk,v:fxBilan})[k]();return}
     const dp=e.target.closest("[data-fxdp]");if(dp){FS.dpos=dp.dataset.fxdp;document.querySelectorAll("[data-fxdp]").forEach(z=>z.setAttribute("aria-pressed",z===dp));fxDef();return}
     const t=e.target.closest("[data-fxt]");if(t){FS.apos=t.dataset.fxt;fxAna();return}}
@@ -1773,7 +1795,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const cheap=C.filter(z=>z.cr<5&&z.min>=10).sort((a,b)=>b.proj-a.proj).slice(0,5);
     const mid=C.filter(z=>z.cr>=5&&z.cr<12&&z.min>=15&&z.rk<50).sort((a,b)=>b.proj/b.cr-a.proj/a.cr).slice(0,5);
     const blk=(t,sub,list,ex)=>`<div class="fxtb"><h4>${t}</h4><p class="gbsub">${sub}</p>${list.length?list.map(z=>item(z,ex&&ex(z))).join(""):'<p class="gbsub">Aucun joueur ne remplit les critères.</p>'}</div>`;
-    el.innerHTML=`<h3 class="fxh">Conseils Fantasy · J${R}</h3>
+    el.innerHTML=`<h3 class="fxh">🎯 Les meilleurs choix · J${R}</h3>
       <p class="gbsub">Projection = moyenne de points Fantasy du joueur, corrigée par ce que son adversaire concède à son poste, sa forme en championnat le week-end (20 % de l'écart ajusté au niveau de la ligue, ±4 max ; 50 % et ±10 pour un joueur à 2 matchs d'EuroLeague ou moins), les minutes libérées par les coéquipiers absents à son poste (+8 min max) et les absents adverses au même poste (+3 max). Survole les points d'un joueur pour le détail.</p>
       <div class="fxtg">
         ${blk("👑 Capitaine","Les plus gros scores attendus (20 min et +, 3 matchs et +).",cap)}
@@ -1877,7 +1899,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     else if(avail<0)out=`<p class="empty-state">Budget dépassé de ${fr(-avail)} crédits : vérifie les coûts saisis.</p>`;
     let trades="";
     FA_T=null;if(team){const T=faTrades(R,need,avail,own,lam);FA_T=T;
-      if(T)trades=`<h4 class="fah">🔁 Transferts conseillés</h4>${T.list.length?`<p class="gbsub">Attention, il y a peut-être mieux à faire : on a testé la revente de chacun de tes ${T.n} éléments (joueurs et coach) à sa cote actuelle et qui prendre avec ces crédits${tot?" (en complétant aussi tes postes vacants)":""}. Gain = points attendus de l'équipe sur la J${R} après l'opération, par rapport à la meilleure option sans vendre. Horizon : cette journée seulement ; un joueur absent une ou deux journées peut valoir d'être gardé si tu as d'autres transferts à faire.</p>${T.list.map((x,k)=>faTradeCard(x,own,tot,k)).join("")}${T.list.length>1?`<p class="gbsub"><b>Plan complet : +${fr(r1(T.list.reduce((a,x)=>a+x.g,0)))} pts attendus</b> en ${T.list.length} transferts (4 maximum par journée, coach compris). Chaque transfert part de l'équipe obtenue après le précédent.</p>`:""}`:`<p class="gbsub">✅ Aucun transfert ne rapporte au moins 1 point attendu sur la J${R} : ton équipe tient la route.</p>`}`}
+      if(T)trades=`<h4 class="fah">🔁 Transferts conseillés</h4>${T.list.length?`<p class="gbsub fxkeep">Attention, il y a peut-être mieux à faire : on a testé la revente de chacun de tes ${T.n} éléments (joueurs et coach) à sa cote actuelle et qui prendre avec ces crédits${tot?" (en complétant aussi tes postes vacants)":""}. Gain = points attendus de l'équipe sur la J${R} après l'opération, par rapport à la meilleure option sans vendre. Horizon : cette journée seulement ; un joueur absent une ou deux journées peut valoir d'être gardé si tu as d'autres transferts à faire.</p>${T.list.map((x,k)=>faTradeCard(x,own,tot,k)).join("")}${T.list.length>1?`<p class="gbsub"><b>Plan complet : +${fr(r1(T.list.reduce((a,x)=>a+x.g,0)))} pts attendus</b> en ${T.list.length} transferts (4 maximum par journée, coach compris). Chaque transfert part de l'équipe obtenue après le précédent.</p>`:""}`:`<p class="gbsub">✅ Aucun transfert ne rapporte au moins 1 point attendu sur la J${R} : ton équipe tient la route.</p>`}`}
     if(!out){const S=faSolve(R,need,avail,own.filter(o=>o.p).map(o=>({p:o.p,club:o.club,pos:o.pos})),lam);
       out=S.err?`<p class="empty-state">${S.err}</p>`:!S.top.length?`<p class="empty-state">Aucune combinaison possible avec ${fr(avail)} crédits.</p>`:S.top.map((r,i)=>faCombo(r,i,avail,own)).join("")}
     const needTxt=PSK.filter(P=>need[P]).map(P=>`${need[P]} ${POSL(P,need[P])}`).join(", ");
@@ -1949,7 +1971,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
       <p class="gbsub">${esc(coachTip(L[0]||{}))} Prix au ${esc(D.coachUpd||"")}.</p>
       <div class="scroll" style="margin-top:6px"><table class="grid fxt"><thead><tr><th>#</th><th class="pl">Coach</th><th>Cr</th><th>Adv.</th><th>Victoire</th><th class="fxhs">Écart att.</th><th>Attendus</th><th class="fxhs">Pts/cr</th><th></th></tr></thead>
       <tbody>${L.map((k,i)=>`<tr><td><b>${i+1}</b></td><td class="pl"><span class="plbtn">${badge(k.club,"xs")}<span>${esc(k.name)}<small class="fxsub">${esc(D.clubs[k.club].name)}</small></span></span></td><td><b>${fr(k.cr)}</b></td><td><span class="fxnx">${k.nx.home?"vs":"@"} ${badge(k.nx.opp,"sm")}</span></td><td>${Math.round(k.P.w*100)} %</td><td class="fxhs">${k.P.mu>0?"+":""}${fr(r1(k.P.mu))}</td><td><b>${f5(k.e)}</b></td><td class="fxhs">${(k.e/k.cr).toFixed(2).replace(".",",")}</td><td><button type="button" class="faplus" data-coadd="${k.club}" title="Prendre ce coach dans mon équipe" aria-label="Prendre ${esc(k.name)}">＋</button></td></tr>`).join("")}</tbody></table></div>`;
-    el.querySelectorAll("[data-coadd]").forEach(b=>b.addEventListener("click",()=>{const k=coachZ(b.dataset.coadd);FA.kc=k.club;FA.coach=k.cr;faSave();fxAuto();$("#fxauto").scrollIntoView({behavior:"smooth",block:"start"});const m=$("#faaddm");if(m)m.textContent=k.name+" est ton coach.";}))}
+    el.querySelectorAll("[data-coadd]").forEach(b=>b.addEventListener("click",()=>{const k=coachZ(b.dataset.coadd);FA.kc=k.club;FA.coach=k.cr;faSave();fxAuto();fxTab("eq",false);$("#fxauto").scrollIntoView({behavior:"smooth",block:"start"});const m=$("#faaddm");if(m)m.textContent=k.name+" est ton coach.";}))}
   /* ---------- Apprentissage : le modèle se recalibre sur les journées déjà jouées ---------- */
   let CAL=null;
   const CRB=[[0,10,"faible (0-9)"],[10,25,"modéré (10-24)"],[25,40,"moyen (25-39)"],[40,70,"élevé (40-69)"],[70,101,"très élevé (70+)"]];
@@ -2013,13 +2035,14 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const tr=tl.map(o=>`<tr><td class="pl"><span class="plbtn">${badge(o.c,"xs")}<span>${esc(D.clubs[o.c].name)}<small class="fxsub">${vd(o.g.us>o.g.them)} ${o.g.us}-${o.g.them} · ${esc(D.clubs[o.g.opp].name)}</small></span></span></td><td><span class="bsd ${dc(o.d,2)}">${sg(o.d)}</span></td><td>${f5(o.e)}</td><td><b>${fr(r1(o.a))}</b></td><td class="fxhs" style="text-align:left">${o.x?`<button type="button" class="fxsb" data-player="${o.x.p}">${nm(o.x.p)}</button> <small class="fxsub" style="display:inline">${f5(o.x.e)} → ${fr(r1(o.x.a))}</small> <b class="fxd ${o.x.d>=0?"p":"m"}">${sg(o.x.d)}</b>`:""}</td><td class="fxhs">${o.k?`${f5(o.k.e)} → <b>${o.k.a}</b>`:"–"}</td></tr>`).join("");
     const pool=B.rows.filter(r=>keep(r)&&(r.e>=6||r.a>=6)),li=r=>`<li>${face(r.p,r.club,"xs")}<button type="button" data-player="${r.p}">${esc(D.players[r.p].name)}</button><small>${f5(r.e)} → ${fr(r1(r.a))}</small><span class="bsd ${dc(r.d,2)}">${sg(r.d)}</span></li>`;
     const ok=pool.filter(r=>r.min>0).sort((a,b)=>Math.abs(a.d)-Math.abs(b.d)||b.a-a.a).slice(0,5),up=pool.slice().sort((a,b)=>b.d-a.d).slice(0,5).filter(r=>r.d>0),dn=pool.slice().sort((a,b)=>a.d-b.d).slice(0,5).filter(r=>r.d<0);
-    return `<h4 class="fah">Journée par journée</h4>
+    return `<div class="bs3"><div><h4>✅ Bien vus</h4><ol class="bsl">${ok.map(li).join("")}</ol></div><div><h4>⬆️ Sous-estimés</h4><ol class="bsl">${up.map(li).join("")}</ol></div><div><h4>⬇️ Surestimés</h4><ol class="bsl">${dn.map(li).join("")}</ol></div></div>
+      <details class="fxtbl" style="margin-top:12px"><summary class="fah" style="cursor:pointer">Détail par journée et par club</summary>
+      <h4 class="fah">Journée par journée</h4>
       <div class="scroll" style="margin-top:4px"><table class="grid"><thead><tr><th class="pl">Journée</th><th>Écart</th><th>Attendu</th><th>Réel</th><th>Matchs</th><th>Joueurs</th><th>Écart moyen</th><th>Dans ±5</th><th>Biais</th><th>Corrélation</th></tr></thead><tbody>${rr}</tbody></table></div>
       <p class="gbsub">Totaux de tous les joueurs projetés dont le match est joué. Clique une journée pour l'afficher.</p>
       <h4 class="fah">Par équipe · J${R}</h4>
       <div class="scroll" style="margin-top:4px"><table class="grid"><thead><tr><th class="pl">Club</th><th>Écart</th><th>Attendu</th><th>Réel</th><th class="fxhs">Plus gros écart</th><th class="fxhs">Coach</th></tr></thead><tbody>${tr||'<tr><td colspan="6" class="empty-state">Aucun joueur.</td></tr>'}</tbody></table></div>
-      <p class="gbsub">Somme des joueurs de chaque club : vert = l'équipe a rapporté plus que prévu, rouge = moins.</p>
-      <div class="bs3"><div><h4>✅ Bien vus</h4><ol class="bsl">${ok.map(li).join("")}</ol></div><div><h4>⬆️ Sous-estimés</h4><ol class="bsl">${up.map(li).join("")}</ol></div><div><h4>⬇️ Surestimés</h4><ol class="bsl">${dn.map(li).join("")}</ol></div></div>`}
+      <p class="gbsub">Somme des joueurs de chaque club : vert = l'équipe a rapporté plus que prévu, rouge = moins.</p></details>`}
   function fxBilan(){const el=$("#fxbilan");const Rs=Object.keys(D.proj||{}).map(Number).sort((a,b)=>b-a);if(!Rs.length){el.hidden=true;return}
     if(!BV.r||!Rs.includes(BV.r))BV.r=Rs[0];const R=BV.r,B=bilanData(R);
     const mine=new Set((FA.ro||[]).map(r=>r.p).filter(Boolean));
@@ -2114,7 +2137,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     else if(k==="game")bvDialog(`${D.clubs[a].name} – ${D.clubs[c].name}`,(cv,f)=>drawBvGame(cv,f,R,a,c),`projections-J${R}-${a}-${c}`);
     else if(k==="pl")bvDialog(D.players[a].name,(cv,f)=>drawBvPlayer(cv,f,R,a),`projection-J${R}-${D.players[a].name.split(",")[0].normalize("NFD").replace(/[^A-Za-z]+/g,"")}`)},true);
   const more=(k,shown,total)=>total>shown?`<div class="fxmorew"><button type="button" class="vbtn ghost fxmore" data-more="${k}">Voir la suite <small>(${total-shown} de plus)</small></button></div>`:"";
-  const lim=(k,sig)=>{if(FS["s"+k]!==sig){FS["s"+k]=sig;FS["l"+k]=10}return FS["l"+k]};
+  const lim=(k,sig)=>{if(FS["s"+k]!==sig){FS["s"+k]=sig;FS["l"+k]=5}return FS["l"+k]};
   const TIERS=[[0,5,"Moins de 5 cr"],[5,8,"5 à 8 cr"],[8,12,"8 à 12 cr"],[12,15,"12 à 15 cr"],[15,99,"15 cr et +"]];
   function fxBest(){const X=FX,el=$("#fxbest"),P=FS.bpos;
     const rs=X.pl.filter(z=>z.nx).map(z=>z.nx.round);if(!rs.length){el.hidden=true;return}
