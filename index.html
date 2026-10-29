@@ -224,6 +224,20 @@ footer{margin-top:36px;color:var(--muted);font-size:12px;border-top:1px solid va
 .frflag{display:inline-block;width:16px;height:11px;margin-left:6px;vertical-align:-1px;border-radius:2px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%);box-shadow:0 0 0 1px rgba(0,0,0,.18);flex:none}
 .fxh{font-family:var(--f-display);font-weight:800;font-size:20px;text-transform:uppercase;color:var(--head);margin:0}
 .fxa{border-top-color:var(--brand-red)}
+.fxlots{border-top-color:#E0A21B;background:linear-gradient(135deg,color-mix(in srgb,#E0A21B 9%,var(--surface)),var(--surface) 60%)}
+.lotnow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;align-items:center;margin-top:8px}
+.lotnow h4{margin:0;font-family:var(--f-display);font-size:24px;text-transform:uppercase;color:var(--head);line-height:1.05}.lotnow h4 small{font-size:15px;color:var(--muted);margin-left:6px}
+.lotl{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}
+.lotl li{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.lotl .li{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:19px;background:color-mix(in srgb,#E0A21B 18%,var(--surface))}
+.lotl b{display:block;font-size:15px}.lotl small{display:block;color:var(--muted);font-size:13px}
+.lotall{margin-top:12px}.lotall summary{cursor:pointer;font-weight:700;color:var(--head);font-size:14px}
+.lotg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px;margin-top:10px}
+.lotc{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);min-width:0}.lotc.on{border:2px solid #E0A21B}.lotc.past{opacity:.55}
+.lotc h5{margin:0 0 4px;font-size:15px;display:flex;align-items:baseline;gap:6px}.lotc h5 small{color:var(--muted);font-weight:600;font-size:12px}.lotc h5 em{margin-left:auto;font-style:normal;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase}
+.lotc ul{list-style:none;margin:0;padding:0}.lotc li{font-size:13px;padding:3px 0;border-top:1px solid var(--line);line-height:1.35}.lotc li:first-child{border-top:0}
+.lottro{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px;border-radius:10px;background:linear-gradient(90deg,var(--brand-blue),#000B33);color:#fff}.lottro span{font-size:26px}.lottro b{display:block}.lottro small{opacity:.85}
+@media (max-width:560px){.lotnow{grid-template-columns:1fr}.lotnow .vbtn{text-align:center}}
 .cgbar input[list]{flex:1 1 200px}
 .fxmax{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.fxmax input{width:110px;accent-color:var(--brand-red)}
 .fxsb{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;text-transform:inherit;letter-spacing:inherit;font-weight:inherit}
@@ -1672,6 +1686,30 @@ button.gslot:disabled{cursor:default;opacity:.6}
   const langBar=()=>`<span class="seg sm flang" role="group" aria-label="Langue / Language">${LANGS.map(([k,f,c,t])=>`<button type="button" data-lang="${k}" aria-pressed="${LANG===k}" title="${t}" lang="${k}"><span aria-hidden="true">${f}</span> ${c}</button>`).join("")}</span>`;
   document.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(!b)return;const v=b.dataset.lang;if(v===LANG)return;LANG=v;try{localStorage.setItem("elflang",v)}catch(err){}
     const dl=$("#dlg"),pid=dl&&dl.open&&dl.dataset.pid;if(enObs){enObs.disconnect();enObs=null}fantasy();if(typeof dsRender==="function")dsRender();if(pid)player(pid);enApply()});
+  /* ---------- Lots à gagner du championnat EuroLeague France (Fantasy Challenge) ---------- */
+  const LOTS={
+    fr:{h:"🎁 Lots à gagner",sub:"Championnat EuroLeague France du Fantasy Challenge",intro:"Chaque mois, les meilleurs joueurs de notre championnat gagnent des lots. Le score du mois repart de zéro au début de chaque mois.",now:"Ce mois-ci",all:"Voir tous les lots de la saison",done:"Terminé",cur:"En cours",join:"Rejoindre le championnat",tro:"Vainqueur de la saison",trod:"Un trophée EuroLeague miniature pour le n°1 du classement général final",
+      P:{tv:["📺","Un pass EuroLeague TV"],tk:["🎟️","2 places pour un match d'EuroLeague au choix (Paris ou ASVEL)"],je:["👕","Un maillot"],ca:["🧢","Une casquette"],c2:["🧢","2 casquettes"]},
+      W:{b12:"Meilleur score cumulé J1 + J2",g2:"2e du classement général",bm:"Meilleur score du mois",m2:"2e du mois",top2:"Les 2 premiers du mois",r:n=>"Meilleur score de la J"+n},
+      M:["Septembre","Octobre","Novembre","Décembre","Janvier","Février","Mars","Avril"],J:"J"},
+    en:{h:"🎁 Prizes",sub:"EuroLeague France league · Fantasy Challenge",intro:"Every month, the best players in our league win prizes. Monthly scores reset to zero at the start of each month.",now:"This month",all:"See all prizes of the season",done:"Finished",cur:"Live",join:"Join the league",tro:"Season winner",trod:"A EuroLeague miniature trophy for the overall winner",
+      P:{tv:["📺","A EuroLeague TV pass"],tk:["🎟️","2 tickets to the EuroLeague game of their choice (Paris or ASVEL)"],je:["👕","A jersey"],ca:["🧢","A cap"],c2:["🧢","2 caps"]},
+      W:{b12:"Best combined score R1 + R2",g2:"2nd in the overall standings",bm:"Best score of the month",m2:"2nd of the month",top2:"Top 2 of the month",r:n=>"Best score in R"+n},
+      M:["September","October","November","December","January","February","March","April"],J:"R"}};
+  // [mois JS (0-11), journées, [[lot, gagnant], ...]] — liste fournie par EuroLeague France
+  const LOTM=[[8,[1,2],[["tv","b12"],["tk","g2"],["tk",2]]],[9,[3,9],[["tv","bm"],["tk","g2"],["tk",7]]],[10,[9,14],[["tv","bm"],["tk","g2"],["tk",13]]],
+    [11,[15,20],[["tv","bm"],["tk","g2"],["tk",19],["tk",20]]],[0,[21,25],[["je","bm"],["tk","m2"],["tk",24]]],[1,[26,28],[["ca","bm"],["tk","m2"],["tk",27]]],
+    [2,[29,34],[["je","bm"],["tk","m2"],["tk",33]]],[3,[35,38],[["c2","top2"]]]];
+  function fxLots(){const el=$("#fxlots");if(!el)return;const T=LOTS[LANG]||LOTS.en,mo=new Date().getMonth(),ord=m=>(m+4)%12,ci=LOTM.findIndex(x=>x[0]===mo);
+    const who=w=>typeof w==="number"?T.W.r(w):T.W[w];
+    const rr=r=>`${T.J}${r[0]}–${T.J}${r[1]}`,item=([p,w])=>`<li><span class="li" aria-hidden="true">${T.P[p][0]}</span><span><b>${esc(T.P[p][1])}</b><small>${esc(who(w))}</small></span></li>`;
+    const card=(x,i)=>{const st=ci<0?(ord(mo)>ord(x[0])?"past":""):i<ci?"past":i===ci?"on":"";
+      return `<div class="lotc ${st}"><h5>${T.M[i]} <small>${rr(x[1])}</small>${st?`<em>${st==="on"?T.cur:T.done}</em>`:""}</h5><ul>${x[2].map(([p,w])=>`<li>${T.P[p][0]} <b>${esc(T.P[p][1])}</b> · ${esc(who(w))}</li>`).join("")}</ul></div>`};
+    const cur=ci>=0?LOTM[ci]:null,link=$("#promo-go"),href=link?link.href:"";
+    el.innerHTML=`<h3 class="fxh">${T.h}</h3><p class="gbsub">${esc(T.sub)} · ${esc(T.intro)}</p>
+      ${cur?`<div class="lotnow"><div><p class="label" style="margin:0">${T.now}</p><h4>${T.M[ci]}<small>${rr(cur[1])}</small></h4><ul class="lotl">${cur[2].map(item).join("")}</ul></div>${href?`<a class="vbtn" href="${esc(href)}" target="_blank" rel="noopener">${T.join}</a>`:""}</div>`:""}
+      <details class="lotall"${cur?"":" open"}><summary>${T.all}</summary><div class="lotg">${LOTM.map(card).join("")}</div></details>
+      <div class="lottro"><span aria-hidden="true">🏆</span><div><b>${T.tro}</b><small>${esc(T.trod)}</small></div></div>`}
   function fantasy(){
     if(!D.fantasy||!D.fantasy.p){$("#app").innerHTML='<p class="empty-state">Données Fantasy indisponibles.</p>';return}
     const X=fxBuild(),clubs=Object.keys(D.clubs).sort((a,b)=>D.clubs[a].name.localeCompare(D.clubs[b].name));
@@ -1679,6 +1717,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     if(FS.max>maxCr)FS.max=maxCr;
     $("#app").innerHTML=`<section aria-labelledby="h-fx"><div class="fxhead"><h2 id="h-fx">Fantasy</h2><button type="button" class="tabinj" data-injopen aria-controls="injside">🚑 Blessés <span class="injn">${injCount()}</span></button>${langBar()}</div>
       <p class="label" style="margin:-4px 0 14px">Crédits EuroLeague Fantasy Challenge au ${esc(D.fantasy.updated||"")} · stats J1 à J${D.maxRound} · éval = évaluation officielle (PIR)</p>
+      <div class="panel fxlots" id="fxlots" style="margin-bottom:18px"></div>
       <div class="panel fxauto" id="fxauto"></div>
       <div class="panel fxtips" id="fxtips" style="margin-top:18px"></div>
       <div class="panel fxbest" id="fxbest" style="margin-top:18px"></div>
@@ -1705,7 +1744,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
         <p class="label" id="fxn" style="margin:0 0 6px"></p>
         <div class="scroll"><table class="grid fxt" id="fxt"></table></div><div id="fxtm"></div>
         <p class="gbsub" style="margin-top:8px">Valeur = évaluation moyenne par crédit. Δ dans l'analyse = écart avec la moyenne habituelle du joueur.</p></div></section>`;
-    fxAuto();fxTips();fxBest();fxCoach();fxBilan();fxChk();fxTable();fxDef();fxAna();
+    fxLots();fxAuto();fxTips();fxBest();fxCoach();fxBilan();fxChk();fxTable();fxDef();fxAna();
     const pick=v=>{const z=X.pl.find(z=>D.players[z.p].name+" ("+z.club+")"===v);return z&&z.p};
     const setP=p=>{FS.ap=p;FS.apos=X.F[p][0];const z=X.pl.find(y=>y.p===p);if(z&&z.nx){FS.ao=z.nx.opp;$("#fxo").value=FS.ao}fxAna()};
     $("#fxp").addEventListener("change",e=>{const p=pick(e.target.value);if(p&&p!==FS.ap)setP(p)});
