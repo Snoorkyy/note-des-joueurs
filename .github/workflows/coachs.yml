@@ -1,0 +1,54 @@
+name: Photos des coachs
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pillow
+      - name: Télécharger et redimensionner (96 px, webp)
+        run: |
+          python3 - <<'PY'
+          import io, urllib.request
+          from PIL import Image
+          U = {
+           "PAN":"https://media-cdn.incrowdsports.com/e3dff28a-9ec6-4faf-9d96-ecbc68f75780.png",
+           "OLY":"https://media-cdn.incrowdsports.com/789423ac-3cdf-4b89-b11c-b458aa5f59a6.png",
+           "ULK":"https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezrk/aa39750a-6203-49ee-a87d-edd0c6f0397d.png",
+           "MAD":"https://media-cdn.incrowdsports.com/371b0d9b-9250-4c09-bda7-0686cf024657.png",
+           "HTA":"https://media-cdn.incrowdsports.com/cbb1c3ad-03d5-426a-b5ef-2832a4eee484.png",
+           "DUB":"https://media-cdn.incrowdsports.com/1efae090-16e2-4963-ae47-4b94f249c244.png",
+           "BAR":"https://media-cdn.incrowdsports.com/35dfa503-e417-481f-963a-bdf6f013763e.png",
+           "PAM":"https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHL/bc3e00b2-fea4-40be-a7ec-1e633129bde3.png",
+           "RED":"https://media-cdn.incrowdsports.com/d2eef4a8-62df-4fdd-9076-276004268515.png",
+           "IST":"https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCxM/a844756c-a58d-4666-93b8-48f7337bc79d.png",
+           "ZAL":"https://media-cdn.incrowdsports.com/0aa09358-3847-4c4e-b228-3582ee4e536d.png",
+           "PAR":"https://media-cdn.incrowdsports.com/2681304e-77dd-4331-88b1-683078c0fb49.png",
+           "BES":"https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/b05e3c54-e672-4b31-9f86-c91e9de7715c.png",
+           "MIL":"https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/5c2f0ab6-f86a-4df0-b2f3-f9ab92f7267b.png",
+           "TEL":"https://media-cdn.cortextech.io/1b533342-78f5-4932-b714-a7d80b5826b5.png",
+           "VIR":"https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCiezvk/a92d4c3b-9f9c-4163-8a10-bcf8fc15893e.png",
+           "ASV":"https://media-cdn.incrowdsports.com/e33c6d1a-95ca-4dbc-b8cb-0201812104cc.png",
+           "MUN":"https://media-cdn.incrowdsports.com/817b0e58-d595-4b09-ab0b-1e7cc26249ff.png",
+           "PRS":"https://media-cdn.incrowdsports.com/a033e5b3-0de7-48a3-98d9-d9a4b9df1f39.png",
+           "BAS":"https://media-cdn.cortextech.io/cbc49cb0-99ce-4462-bdb7-56983ee03cf4.png",
+          }
+          for c, u in U.items():
+              req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"})
+              im = Image.open(io.BytesIO(urllib.request.urlopen(req, timeout=30).read())).convert("RGBA")
+              s = min(im.size); x0 = (im.width - s) // 2
+              im = im.crop((x0, 0, x0 + s, s)).resize((96, 96), Image.LANCZOS)
+              bg = Image.new("RGBA", (96, 96), (232, 239, 248, 255)); bg.alpha_composite(im)
+              bg.convert("RGB").save(f"photos/K-{c}.webp", "WEBP", quality=82)
+              print(c, "ok")
+          PY
+      - name: Enregistrer
+        run: |
+          git config user.name "EuroLeague France"
+          git config user.email "actions@users.noreply.github.com"
+          git add photos/K-*.webp
+          git diff --cached --quiet || git commit -m "Photos des coachs (K-<club>.webp)"
+          git push
