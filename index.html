@@ -225,6 +225,7 @@ footer{margin-top:36px;color:var(--muted);font-size:12px;border-top:1px solid va
 .fxh{font-family:var(--f-display);font-weight:800;font-size:20px;text-transform:uppercase;color:var(--head);margin:0}
 .fxa{border-top-color:var(--brand-red)}
 .stand.fxoff{display:none!important}
+.facap{flex:none;width:28px;height:28px;border-radius:50%;border:2px dashed var(--line);background:none;color:var(--muted);font-family:var(--f-display);font-weight:800;font-size:15px;cursor:pointer;line-height:1}.facap:hover,.facap:focus-visible{border-color:#E0A21B;color:#B07A00;outline:none}.facap.on{border:2px solid #E0A21B;background:#E0A21B;color:#1b1300}
 .teamcta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:10px 0 4px;padding:10px 12px;border-radius:10px;background:linear-gradient(90deg,color-mix(in srgb,var(--brand-red) 10%,var(--surface)),var(--surface))}
 .teamcta .vbtn{font-size:15px;padding:10px 16px}
 .ftabs{position:sticky;top:0;z-index:20;display:flex;gap:6px;overflow-x:auto;margin:0 0 16px;padding:8px 0;background:var(--bg);scrollbar-width:none}
@@ -1808,10 +1809,10 @@ button.gslot:disabled{cursor:default;opacity:.6}
       </div>
       <p class="gbsub" style="margin-top:8px">Indicateur, pas une certitude : 6 matchs par club seulement. Joueurs à risque élevé (70+) retirés des conseils, risque 40+ retirés du capitanat, « minutes menacées » = projection −15 %. Crédits au ${esc(D.fantasy.updated||"")}.</p>`}
   /* ---------- Choisis pour moi : mon équipe (10 joueurs + coach) + meilleure combinaison sous budget ---------- */
-  const NEED={G:4,F:4,C:2,K:1},CLUBMAX=6,LAM={s:0.25,n:0,a:-0.15},PSK=["G","F","C","K"];
+  const CAPX=0.5,NEED={G:4,F:4,C:2,K:1},CLUBMAX=6,LAM={s:0.25,n:0,a:-0.15},PSK=["G","F","C","K"];
   const FA=(()=>{let s={};try{s=JSON.parse(localStorage.getItem("fxauto")||"{}")}catch(e){}const n=(v,d)=>typeof v==="number"&&v>=0?v:d;
     return {b:n(s.b,27.3),G:n(s.G,1),F:n(s.F,2),C:n(s.C,0),K:n(s.K,0),x:Array.isArray(s.x)?s.x:[],tot:n(s.tot,100),coach:n(s.coach,0),kc:typeof s.kc==="string"?s.kc:"",
-      ro:Array.isArray(s.ro)?s.ro.filter(r=>r&&typeof r.c==="number"&&(r.p||(r.n&&PS.includes(r.pos)))):[],prof:["s","n","a"].includes(s.prof)?s.prof:"n"}})();
+      cap:typeof s.cap==="string"?s.cap:"",ro:Array.isArray(s.ro)?s.ro.filter(r=>r&&typeof r.c==="number"&&(r.p||(r.n&&PS.includes(r.pos)))):[],prof:["s","n","a"].includes(s.prof)?s.prof:"n"}})();
   let FA_T=null;
   function faSave(){try{localStorage.setItem("fxauto",JSON.stringify(FA))}catch(e){}}
   const r1=v=>Math.round(v*10)/10,f2=v=>(v>0?"+":"")+v.toFixed(2).replace(".",",");
@@ -1838,13 +1839,15 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const bz=Math.max(0,-lam*st.rS,-lam*st.rD)*sgMax*sgMax*Math.min(CLUBMAX-1,owned.length+n-1);
     const ub=Array(n+1).fill(0),lb=Array(n+1).fill(0);
     for(let i=n-1;i>=0;i--){const {q,j}=slots[i];ub[i]=ub[i+1]+q.c[q.k-1-j].e+bz;lb[i]=lb[i+1]+q.cheap[q.k-1-j]}
-    const pen=faPen(st,lam);
+    const pen=faPen(st,lam),eOf=o=>{const z=o.z||X.pl.find(y=>y.p===o.p);return z?z.e:0};
+    const ownMax=Math.max(0,...owned.filter(o=>o.pos!=="K").map(eOf)),candMax=Math.max(ownMax,...pools.filter(q=>q.P!=="K").flatMap(q=>q.c.map(z=>z.e)));
+    const capUB=CAPX*(candMax-ownMax);
     const top=[],pick=[],idx=[];let steps=0;const thr=()=>top.length<3?-Infinity:top[2].s;
     (function dfs(i,cost,val,pn){if(++steps>3e6)return;
-      if(i===n){top.push({s:val-pn,e:val,pn,cr:cost,t:pick.slice()});top.sort((a,b)=>b.s-a.s);if(top.length>3)top.pop();return}
+      if(i===n){const m=Math.max(ownMax,...pick.filter(z=>z.pos!=="K").map(z=>z.e)),cb=CAPX*(m-ownMax);top.push({s:val-pn+cb,e:val,cb,pn,cr:cost,t:pick.slice()});top.sort((a,b)=>b.s-a.s);if(top.length>3)top.pop();return}
       const {q,j}=slots[i],start=j?idx[i-1]+1:0;
       for(let a=start;a<=q.c.length-(q.k-j);a++){const z=q.c[a],isK=z.pos==="K";
-        if(val-pn+z.e+bz+ub[i+1]<=thr())break;
+        if(val-pn+z.e+bz+ub[i+1]+capUB<=thr())break;
         if(cost+z.cr+lb[i+1]>B||(!isK&&(cc[z.club]||0)>=CLUBMAX))continue;
         let d=0;owned.forEach(o=>d+=pen(o,z));for(let h=0;h<i;h++)d+=pen(pick[h],z);
         if(!isK)cc[z.club]=(cc[z.club]||0)+1;pick[i]=z;idx[i]=a;dfs(i+1,cost+z.cr,val+z.e,pn+d);if(!isK)cc[z.club]--}
@@ -1861,7 +1864,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     if(!O.length||nTot>6||avail<0)return null;
     const pen=faPen(st,lam);
     const tp=L=>{let v=0;for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++)v+=pen(L[i],L[j]);return v};
-    const keep=L=>L.reduce((a,o)=>a+o.z.e,0)-tp(L);
+    const keep=L=>L.reduce((a,o)=>a+o.z.e,0)-tp(L)+CAPX*Math.max(0,...L.filter(o=>o.pos!=="K").map(o=>o.z.e));
     let base=keep(O),nd={...need},bank=avail;const n0=O.length,sold=[],plan=[];
     if(nTot){const S=faSolve(R,nd,bank,O,lam);if(!S.top||!S.top.length)return null;base+=S.top[0].s}
     for(let step=0;step<3;step++){let best=null;
@@ -1882,7 +1885,8 @@ button.gslot:disabled{cursor:default;opacity:.6}
       <div class="fatrf"><span>Il te resterait ${fr(r1(x.left))} cr.</span><button type="button" class="vbtn fxgo" data-fatr="${k}">Appliquer ce transfert</button></div></div>`}
   function faCombo(r,i,avail,own){const left=avail-r.cr,t=r.t.slice().sort((a,b)=>PSK.indexOf(a.pos)-PSK.indexOf(b.pos)||b.e-a.e);
     const cor=Math.abs(r.pn)>=0.05?` · ${r.pn>0?"−":"+"}${fr(r1(Math.abs(r.pn)))} coéquipiers`:"";
-    return `<div class="facombo${i?"":" win"}"><div class="fagh"><b>${i?"Variante "+i:"🏆 Meilleure combinaison"}</b><span>${f5(r.e)} pts attendus${cor} · ${fr(r1(r.cr))} cr · reste ${fr(r1(left))} cr</span></div>
+    const cz=r.cb>0.01?r.t.filter(z=>z.pos!=="K").sort((a,b)=>b.e-a.e)[0]:null;
+    return `<div class="facombo${i?"":" win"}"><div class="fagh"><b>${i?"Variante "+i:"🏆 Meilleure combinaison"}</b><span>${f5(r.e)} pts attendus${cz?` · capitaine ${esc(zLast(cz))} +${f5(r.cb)}`:""}${cor} · ${fr(r1(r.cr))} cr · reste ${fr(r1(left))} cr</span></div>
       ${t.map(z=>faRow(z,matesOf(z,own,t))).join("")}</div>`}
   const POSL=(P,n)=>P==="K"?(n>1?"coachs":"coach"):(n>1?FPL[P]:FPOS[P]).toLowerCase();
   function fxAuto(){const X=FX,el=$("#fxauto"),rs=X.pl.filter(z=>z.nx).map(z=>z.nx.round);if(!rs.length){el.hidden=true;return}
@@ -1890,6 +1894,8 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const own=FA.ro.map((r,i)=>{const ok=r.p&&D.players[r.p]&&X.F[r.p];return {i,p:ok?r.p:null,pos:ok?X.F[r.p][0]:(r.pos||"G"),club:ok?D.players[r.p].club:"",z:ok?X.pl.find(y=>y.p===r.p):null,name:ok?D.players[r.p].name:(r.n||r.p),c:r.c}});
     if(kz)own.push({i:"K",p:kz.p,pos:"K",club:kz.club,z:kz,name:kz.name,c:FA.coach});
     const have={G:0,F:0,C:0,K:0};own.forEach(o=>have[o.pos]++);
+    const capL=own.filter(o=>o.p&&o.z&&o.pos!=="K").sort((a,b)=>b.z.e-a.z.e),capBest=capL[0]||null,capMan=capL.find(o=>o.p===FA.cap)||null,capO=capMan||capBest;
+    const teamE=own.reduce((a,o)=>a+(o.z?o.z.e:0),0)+(capO?CAPX*capO.z.e:0);
     const need=team?{G:Math.max(0,NEED.G-have.G),F:Math.max(0,NEED.F-have.F),C:Math.max(0,NEED.C-have.C),K:kz?0:1}:{G:FA.G,F:FA.F,C:FA.C,K:FA.K};
     const spent=r1(own.reduce((a,o)=>a+o.c,0)),avail=team?r1(FA.tot-spent):FA.b,tot=PSK.reduce((a,P)=>a+need[P],0);
     const cc={};own.forEach(o=>{if(o.club&&o.pos!=="K")(cc[o.club]=cc[o.club]||[]).push(o)});
@@ -1907,7 +1913,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
       out=S.err?`<p class="empty-state">${S.err}</p>`:!S.top.length?`<p class="empty-state">Aucune combinaison possible avec ${fr(avail)} crédits.</p>`:S.top.map((r,i)=>faCombo(r,i,avail,own)).join("")}
     const needTxt=PSK.filter(P=>need[P]).map(P=>`${need[P]} ${POSL(P,need[P])}`).join(", ");
     const sel=k=>`<label class="fxmax">${k==="K"?"Coach":FPL[k]} <select data-fan="${k}" aria-label="Nombre de ${POSL(k,2)} à recruter">${(k==="K"?[0,1]:[0,1,2,3,4]).map(v=>`<option value="${v}"${FA[k]===v?" selected":""}>${v}</option>`).join("")}</select></label>`;
-    const roRows=PS.map(P=>{const L=own.filter(o=>o.pos===P);return `<div class="faro"><div class="fagh"><b>${FPL[P]}</b><span${have[P]>NEED[P]?' class="faover"':""}>${have[P]}/${NEED[P]}</span></div>${L.map(o=>`<div class="farow"><span class="fxpos fx${P}">${P}</span>${o.p?`<button type="button" class="plbtn fan" data-fxa="${o.p}">${face(o.p,o.club,"sm")}<span><b>${esc(o.name)}</b>${stTag(o.p)}<small class="fxsub">${esc(D.clubs[o.club].name)}${o.z&&o.z.nx?` · ${o.z.nx.home?"vs":"@"} ${esc(D.clubs[o.z.nx.opp].name)}`:""} · cote actuelle ${fr(o.z?o.z.cr:priceOf(o.p,+X.F[o.p][1]))}${domShort(o.p)?" · "+domShort(o.p):""}${o.z?" · risque "+o.z.risk.r:""}</small></span></button>`:`<span class="fan"><b>${esc(o.name)}</b><small class="fxsub">saisi à la main · sans stats</small></span>`}<label class="facost"><input type="number" min="0" max="40" step="0.1" inputmode="decimal" value="${o.c}" data-fac="${o.i}" aria-label="Coût payé pour ${esc(o.name)}"><small>cr</small></label>${o.z?`<span class="fape"><b>${f5(o.z.e)}</b><small>pts att.</small></span>`:""}<button type="button" class="fax" data-far="${o.i}" title="Retirer de mon équipe" aria-label="Retirer ${esc(o.name)}">✕</button></div>`).join("")||'<div class="farow"><small class="fxsub">Aucun joueur</small></div>'}</div>`}).join("")
+    const roRows=PS.map(P=>{const L=own.filter(o=>o.pos===P);return `<div class="faro"><div class="fagh"><b>${FPL[P]}</b><span${have[P]>NEED[P]?' class="faover"':""}>${have[P]}/${NEED[P]}</span></div>${L.map(o=>`<div class="farow"><span class="fxpos fx${P}">${P}</span>${o.p?`<button type="button" class="plbtn fan" data-fxa="${o.p}">${face(o.p,o.club,"sm")}<span><b>${esc(o.name)}</b>${stTag(o.p)}<small class="fxsub">${esc(D.clubs[o.club].name)}${o.z&&o.z.nx?` · ${o.z.nx.home?"vs":"@"} ${esc(D.clubs[o.z.nx.opp].name)}`:""} · cote actuelle ${fr(o.z?o.z.cr:priceOf(o.p,+X.F[o.p][1]))}${domShort(o.p)?" · "+domShort(o.p):""}${o.z?" · risque "+o.z.risk.r:""}</small></span></button>`:`<span class="fan"><b>${esc(o.name)}</b><small class="fxsub">saisi à la main · sans stats</small></span>`}${o.p&&o.z?`<button type="button" class="facap${capO&&o.p===capO.p?" on":""}" data-facap="${o.p}" aria-pressed="${!!(capO&&o.p===capO.p)}" title="${capO&&o.p===capO.p?(capMan?"Ton capitaine (clique pour revenir au choix automatique)":"Capitaine conseillé (le meilleur score attendu) · clique pour le choisir"):"Nommer capitaine (points ×1,5)"}">C</button>`:""}<label class="facost"><input type="number" min="0" max="40" step="0.1" inputmode="decimal" value="${o.c}" data-fac="${o.i}" aria-label="Coût payé pour ${esc(o.name)}"><small>cr</small></label>${o.z?`<span class="fape"><b>${f5(o.z.e)}</b><small>pts att.</small></span>`:""}<button type="button" class="fax" data-far="${o.i}" title="Retirer de mon équipe" aria-label="Retirer ${esc(o.name)}">✕</button></div>`).join("")||'<div class="farow"><small class="fxsub">Aucun joueur</small></div>'}</div>`}).join("")
       +`<div class="faro"><div class="fagh"><b>Coach</b><span>${kz?1:0}/1</span></div><div class="farow"><span class="fxpos fxK">HC</span><span class="fan"><select id="fakc" aria-label="Mon coach"><option value="">Choisir mon coach…</option>${X.co.slice().sort((a,b)=>D.clubs[a.club].name.localeCompare(D.clubs[b.club].name)).map(k=>`<option value="${k.club}"${FA.kc===k.club?" selected":""}>${esc(k.name)} · ${esc(D.clubs[k.club].name)} (${fr(k.cr)})</option>`).join("")}</select>${kz?`<small class="fxsub">${coachSub(kz)}</small>`:""}</span>${kz?`<label class="facost"><input type="number" min="0" max="40" step="0.1" inputmode="decimal" value="${FA.coach}" data-fac="K" aria-label="Coût payé pour ${esc(kz.name)}"><small>cr</small></label><span class="fape" title="${esc(coachTip(kz))}"><b>${f5(kz.e)}</b><small>pts att.</small></span><button type="button" class="fax" data-far="K" title="Retirer mon coach" aria-label="Retirer ${esc(kz.name)}">✕</button>`:""}</div></div>`;
     const opts=X.pl.slice().sort((a,b)=>D.players[a.p].name.localeCompare(D.players[b.p].name)).map(z=>`<option value="${esc(D.players[z.p].name+" ("+z.club+")")}">`).join("");
     el.innerHTML=`<h3 class="fxh">🤖 Choisis pour moi · J${R}</h3>
@@ -1919,7 +1925,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
       <p class="gbsub" id="faaddm" role="status" style="min-height:1.2em"></p>
       ${team?`<div class="farogrid">${roRows}</div>
       <div class="cgbar fasum"><label class="fxmax">Budget total <input id="fatot" type="number" min="0" max="200" step="0.1" inputmode="decimal" value="${FA.tot}" style="width:80px"></label>
-        <span>Dépensé <b>${fr(spent)}</b></span><span>Disponible <b class="${avail<0?"faneg":""}">${fr(avail)}</b></span><span>${tot?`Il te manque <b>${needTxt}</b>`:"Équipe complète"}</span><button type="button" class="vbtn ghost fxgo" id="faclear">Vider mon équipe</button></div>
+        <span>Dépensé <b>${fr(spent)}</b></span><span>Disponible <b class="${avail<0?"faneg":""}">${fr(avail)}</b></span><span>${tot?`Il te manque <b>${needTxt}</b>`:"Équipe complète"}</span>${capO?`<span>Points attendus J${R} <b>${f5(teamE)}</b> <small class="fxsub" style="display:inline">dont capitaine ${esc(capO.name.split(",")[0])} ×1,5 (+${f5(CAPX*capO.z.e)})${capMan&&capBest&&capBest!==capMan?` · conseillé : ${esc(capBest.name.split(",")[0])} (+${f5(CAPX*(capBest.z.e-capMan.z.e))})`:""}</small></span>`:""}<button type="button" class="vbtn ghost fxgo" id="faclear">Vider mon équipe</button></div>
       ${own.some(o=>o.p)?`<div class="teamcta"><button type="button" class="vbtn" id="fateamvis">📸 Créer le visuel de mon équipe</button><span class="gbsub" style="margin:0">Une image prête à partager sur Instagram ou X.</span></div>`:""}
       ${stacks.length?`<p class="gbsub fastk">⚠️ Doublons de club : ${stacks.map(([c,L])=>`<b>${L.length} ${esc(D.clubs[c].name)}</b>`).join(" · ")}${stacks.some(([c,L])=>L.length>CLUBMAX)?` · limite de ${CLUBMAX} par club dépassée`:""}${lam?` (effet ${ownPen>0?"−":"+"}${fr(r1(Math.abs(ownPen)))} pts sur ton équipe actuelle avec ce profil)`:""}</p>`:""}`
       :`<div class="cgbar"><label class="fxmax">Crédits disponibles <input id="fab" type="number" min="0" max="200" step="0.1" inputmode="decimal" value="${FA.b}" style="width:90px"></label>${PSK.map(sel).join("")}</div>
@@ -1947,6 +1953,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const setCoach=c=>{const k=c?coachZ(c):null;FA.kc=k?k.club:"";FA.coach=k?k.cr:0};
     $("#fakc")?.addEventListener("change",e=>{setCoach(e.target.value);faSave();fxAuto()});
     $("#fateam")?.addEventListener("click",()=>{$("#faadd").focus();msg("Ajoute tes joueurs un par un, puis choisis ton coach.")});
+    el.querySelectorAll("[data-facap]").forEach(b=>b.addEventListener("click",()=>{const p=b.dataset.facap;FA.cap=FA.cap===p?"":p;faSave();fxAuto()}));
     el.querySelectorAll("[data-fac]").forEach(x=>x.addEventListener("change",()=>{const c=num(x.value);if(c!=null){if(x.dataset.fac==="K")FA.coach=c;else FA.ro[+x.dataset.fac].c=c;faSave();fxAuto()}}));
     el.querySelectorAll("[data-far]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.far==="K")setCoach("");else FA.ro.splice(+b.dataset.far,1);faSave();fxAuto()}));
     $("#fateamvis")?.addEventListener("click",teamDialog);
@@ -2128,39 +2135,46 @@ button.gslot:disabled{cursor:default;opacity:.6}
   /* ---------- Visuel « Mon équipe » (Fantasy) ---------- */
   function teamData(){const X=FX||fxBuild(),rs=X.pl.filter(z=>z.nx).map(z=>z.nx.round),R=rs.length?Math.min(...rs):D.maxRound+1;
     const L=FA.ro.map(r=>{const ok=r.p&&D.players[r.p]&&X.F[r.p];const z=ok?X.pl.find(y=>y.p===r.p):null;return {p:ok?r.p:null,pos:ok?X.F[r.p][0]:(r.pos||"G"),club:ok?D.players[r.p].club:"",name:ok?D.players[r.p].name:(r.n||""),z,c:r.c}});
-    const kz=FA.kc?coachZ(FA.kc):null;return {R,L,k:kz?{p:null,pos:"K",club:kz.club,name:kz.name,z:kz,c:FA.coach}:null}}
+    const kz=FA.kc?coachZ(FA.kc):null,cl=L.filter(o=>o.z&&o.pos!=="K").sort((a,b)=>b.z.e-a.z.e),cap=cl.find(o=>o.p===FA.cap)||cl[0]||null;
+    return {R,L,cap,k:kz?{p:null,pos:"K",club:kz.club,name:kz.name,z:kz,c:FA.coach}:null}}
+  async function coachDisc(x,cx,cy,r,club){const ph=await img("photos/K-"+club+".webp");if(!ph)return logoDisc(x,cx,cy,r,club);
+    x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.fillStyle="#E8EFF8";x.fill();x.clip();const k=Math.max(2*r/ph.width,2*r/ph.height);x.drawImage(ph,cx-ph.width*k/2,cy-ph.height*k/2,ph.width*k,ph.height*k);x.restore();
+    x.beginPath();x.arc(cx,cy,r,0,7);x.lineWidth=2;x.strokeStyle="rgba(255,255,255,.22)";x.stroke();await logoDisc(x,cx+r*.78,cy+r*.72,r*.34,club)}
   let TEAMNM="";try{TEAMNM=localStorage.getItem("fxteamnm")||""}catch(e){}
   async function drawTeam(cv,f){const x=cv.getContext("2d");await fontsReady();const tw=f.tag==="x",W=f.W,H=f.H,T=teamData();
-    const nx=T.L.find(o=>o.z&&o.z.nx),sub=`Fantasy Challenge · J${T.R}`+(TEAMNM?` · ${TEAMNM}`:"");
+    const sub=`Fantasy Challenge · J${T.R}`+(TEAMNM?` · ${TEAMNM}`:"");
     const {top,bottom}=await frame(x,f,"EUROLEAGUE FANTASY","MON ÉQUIPE",sub);
     const fh=tw?58:66;x.fillStyle=FOOT;x.fillRect(0,H-fh,W,fh);x.fillStyle=RED;x.fillRect(0,H-fh,W,3);
     txt(x,"Fais ton équipe et rejoins notre championnat",40,H-fh/2+8,{s:tw?19:21,w:600,f:FB,c:MUT,max:W*.55});txt(x,"EUROLEAGUE FRANCE",W-40,H-fh/2+10,{s:tw?26:28,w:800,c:WHITE,a:"right",ls:2});
     // parquet stylisé
     x.save();x.globalAlpha=.07;x.strokeStyle="#fff";x.lineWidth=4;const cy0=(top+bottom)/2;x.beginPath();x.arc(W/2,cy0,tw?120:150,0,7);x.stroke();x.beginPath();x.moveTo(W/2,top);x.lineTo(W/2,bottom);x.stroke();x.restore();
-    const all=[...T.L,...(T.k?[T.k]:[])],pts=all.reduce((a,o)=>a+(o.z?h5(o.z.e):0),0),cr=all.reduce((a,o)=>a+(+o.c||0),0);
+    const all=[...T.L,...(T.k?[T.k]:[])],pts=all.reduce((a,o)=>a+(o.z?h5(o.z.e):0),0)+(T.cap?h5(CAPX*T.cap.z.e):0),cr=all.reduce((a,o)=>a+(+o.c||0),0);
     const sumH=tw?64:92,pad=40,gap=tw?14:18,y0=top+(tw?14:22),areaH=bottom-y0-sumH-(tw?14:22)-gap;
     const rows=[["G",4,"ARRIÈRES"],["F",4,"AILIERS"],["C",2,"PIVOTS"]],rowH=(areaH-2*gap)/3;
     for(let ri=0;ri<3;ri++){const [P,n,lab]=rows[ri],y=y0+ri*(rowH+gap),list=T.L.filter(o=>o.pos===P).slice(0,n);
       const cells=ri===2?[...list,...Array(Math.max(0,n-list.length)).fill(null),{coach:1,o:T.k}]:[...list,...Array(Math.max(0,n-list.length)).fill(null)];
       const cw=(W-2*pad-(cells.length-1)*gap)/cells.length;
-      for(let ci=0;ci<cells.length;ci++){const c=cells[ci],X0=pad+ci*(cw+gap);await teamCard(x,X0,y,cw,rowH,c&&c.coach?c.o:c,c&&c.coach?"COACH":lab,tw)}}
+      for(let ci=0;ci<cells.length;ci++){const c=cells[ci],X0=pad+ci*(cw+gap);await teamCard(x,X0,y,cw,rowH,c&&c.coach?c.o:c,c&&c.coach?"COACH":lab,tw,!!(c&&!c.coach&&T.cap&&c===T.cap))}}
     // bandeau total
     const sy=bottom-sumH-(tw?10:16);rr(x,pad,sy,W-2*pad,sumH,14);const g=x.createLinearGradient(pad,0,W-pad,0);g.addColorStop(0,RED);g.addColorStop(1,"#B3122A");x.fillStyle=g;x.fill();
     const third=(W-2*pad)/3,vs=tw?34:46,ls=tw?15:18;
     [[`${all.length}/11`,"ÉLÉMENTS"],[fr(r1(cr)),"CRÉDITS"],[f5(pts),`PTS ATTENDUS J${T.R}`]].forEach(([v,l],i)=>{const cx=pad+third*i+third/2;txt(x,v,cx,sy+sumH*.56,{s:vs,w:800,a:"center"});txt(x,l,cx,sy+sumH*.56+ls+4,{s:ls,w:700,f:FB,c:"rgba(255,255,255,.85)",a:"center",ls:2})})}
-  async function teamCard(x,X0,y,w,h,o,lab,tw){rr(x,X0,y,w,h,16);x.fillStyle=o?ROW:"rgba(255,255,255,.04)";x.fill();x.lineWidth=2;x.strokeStyle=o?"rgba(255,255,255,.10)":"rgba(255,255,255,.18)";if(!o){x.setLineDash([10,8])}x.stroke();x.setLineDash([]);
+  function capBadge(x,cx,cy,r){x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.fillStyle="#E0A21B";x.shadowColor="rgba(0,0,0,.45)";x.shadowBlur=12;x.fill();x.restore();x.beginPath();x.arc(cx,cy,r,0,7);x.lineWidth=3;x.strokeStyle="#fff";x.stroke();txt(x,"C",cx,cy+r*.42,{s:r*1.25,w:800,c:"#1b1300",a:"center"})}
+  async function teamCard(x,X0,y,w,h,o,lab,tw,isCap){rr(x,X0,y,w,h,16);x.fillStyle=o?ROW:"rgba(255,255,255,.04)";x.fill();x.lineWidth=2;x.strokeStyle=o?"rgba(255,255,255,.10)":"rgba(255,255,255,.18)";if(!o){x.setLineDash([10,8])}x.stroke();x.setLineDash([]);
     x.save();rr(x,X0,y,w,6,3);x.fillStyle=lab==="COACH"?"#E0A21B":lab==="PIVOTS"?"#C2410C":lab==="AILIERS"?"#7A4FB5":"#3F80AF";x.fill();x.restore();
     if(!o){txt(x,lab==="COACH"?"COACH":lab.slice(0,-1),X0+w/2,y+h/2-4,{s:tw?18:22,w:800,c:MUT,a:"center",ls:2});txt(x,"à recruter",X0+w/2,y+h/2+(tw?22:28),{s:tw?16:19,w:600,f:FB,c:MUT,a:"center"});return}
-    const e=o.z?f5(o.z.e):"–",opp=o.z&&o.z.nx?`${o.z.nx.home?"vs":"@"} ${o.z.nx.opp}`:"",nm=o.pos==="K"?o.name.toUpperCase():short(o.name),crs=fr(+o.c||(o.z?o.z.cr:0))+" cr";
+    const e=o.z?f5(o.z.e*(isCap?1+CAPX:1)):"–",opp=o.z&&o.z.nx?`${o.z.nx.home?"vs":"@"} ${o.z.nx.opp}`:"",nm=o.pos==="K"?o.name.toUpperCase():short(o.name),crs=fr(+o.c||(o.z?o.z.cr:0))+" cr";
     if(!tw){const r=Math.min(w*.28,h*.24,72),cx=X0+w/2,cy=y+18+r;
-      if(o.pos==="K")await logoDisc(x,cx,cy,r,o.club);else{await disc(x,cx,cy,r,o.p,o.club);if(o.club)await logoDisc(x,cx+r*.78,cy+r*.72,r*.34,o.club)}
+      if(o.pos==="K")await coachDisc(x,cx,cy,r,o.club);else{await disc(x,cx,cy,r,o.p,o.club);if(o.club)await logoDisc(x,cx+r*.78,cy+r*.72,r*.34,o.club)}
+      if(isCap)capBadge(x,cx-r*.78,cy-r*.72,r*.36);
       if(o.p&&isFr(o.p))cflag(x,cx-r*.95,cy+r*.62,30,20);
       txt(x,nm,cx,cy+r+(h>300?42:34),{s:h>300?30:26,w:800,a:"center",max:w-20});
       txt(x,[o.club&&D.clubs[o.club]?D.clubs[o.club].name:"",opp].filter(Boolean).join(" · "),cx,cy+r+(h>300?68:58),{s:h>300?18:16,w:600,f:FB,c:MUT,a:"center",max:w-20});
       const by=y+h-(h>300?58:50),bw=(w-30)/2;rr(x,X0+10,by,bw,h>300?44:38,10);x.fillStyle="rgba(255,255,255,.08)";x.fill();txt(x,crs,X0+10+bw/2,by+(h>300?30:26),{s:h>300?22:19,w:800,a:"center"});
       rr(x,X0+20+bw,by,bw,h>300?44:38,10);x.fillStyle="#1E8E3E";x.fill();txt(x,e+" pts",X0+20+bw+bw/2,by+(h>300?30:26),{s:h>300?22:19,w:800,a:"center"})}
     else{const r=Math.min(h*.34,52),cx=X0+16+r,cy=y+h/2+2;
-      if(o.pos==="K")await logoDisc(x,cx,cy,r,o.club);else{await disc(x,cx,cy,r,o.p,o.club);if(o.club)await logoDisc(x,cx+r*.78,cy+r*.72,r*.34,o.club)}
+      if(o.pos==="K")await coachDisc(x,cx,cy,r,o.club);else{await disc(x,cx,cy,r,o.p,o.club);if(o.club)await logoDisc(x,cx+r*.78,cy+r*.72,r*.34,o.club)}
+      if(isCap)capBadge(x,cx-r*.78,cy-r*.72,r*.4);
       const tx=cx+r+14,tw2=X0+w-tx-12;txt(x,nm,tx,y+h*.36,{s:24,w:800,max:tw2});txt(x,[o.club&&D.clubs[o.club]?D.clubs[o.club].name:"",opp].filter(Boolean).join(" · "),tx,y+h*.36+22,{s:15,w:600,f:FB,c:MUT,max:tw2});
       txt(x,crs,tx,y+h*.36+56,{s:20,w:800,c:WHITE});txt(x,e+" pts",X0+w-14,y+h*.36+56,{s:22,w:800,c:"#5BD08A",a:"right"})}}
   function teamDialog(){bvDialog("Mon équipe Fantasy",(cv,f)=>drawTeam(cv,f),"mon-equipe-fantasy-J"+teamData().R);
