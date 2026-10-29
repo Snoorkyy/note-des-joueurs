@@ -224,6 +224,9 @@ footer{margin-top:36px;color:var(--muted);font-size:12px;border-top:1px solid va
 .frflag{display:inline-block;width:16px;height:11px;margin-left:6px;vertical-align:-1px;border-radius:2px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%);box-shadow:0 0 0 1px rgba(0,0,0,.18);flex:none}
 .fxh{font-family:var(--f-display);font-weight:800;font-size:20px;text-transform:uppercase;color:var(--head);margin:0}
 .fxa{border-top-color:var(--brand-red)}
+.stand.fxoff{display:none!important}
+.teamcta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:10px 0 4px;padding:10px 12px;border-radius:10px;background:linear-gradient(90deg,color-mix(in srgb,var(--brand-red) 10%,var(--surface)),var(--surface))}
+.teamcta .vbtn{font-size:15px;padding:10px 16px}
 .ftabs{position:sticky;top:0;z-index:20;display:flex;gap:6px;overflow-x:auto;margin:0 0 16px;padding:8px 0;background:var(--bg);scrollbar-width:none}
 .ftabs::-webkit-scrollbar{display:none}
 .ftabs button{flex:1 0 auto;font-family:var(--f-display);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.02em;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--head);cursor:pointer;white-space:nowrap}
@@ -1917,6 +1920,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
       ${team?`<div class="farogrid">${roRows}</div>
       <div class="cgbar fasum"><label class="fxmax">Budget total <input id="fatot" type="number" min="0" max="200" step="0.1" inputmode="decimal" value="${FA.tot}" style="width:80px"></label>
         <span>Dépensé <b>${fr(spent)}</b></span><span>Disponible <b class="${avail<0?"faneg":""}">${fr(avail)}</b></span><span>${tot?`Il te manque <b>${needTxt}</b>`:"Équipe complète"}</span><button type="button" class="vbtn ghost fxgo" id="faclear">Vider mon équipe</button></div>
+      ${own.some(o=>o.p)?`<div class="teamcta"><button type="button" class="vbtn" id="fateamvis">📸 Créer le visuel de mon équipe</button><span class="gbsub" style="margin:0">Une image prête à partager sur Instagram ou X.</span></div>`:""}
       ${stacks.length?`<p class="gbsub fastk">⚠️ Doublons de club : ${stacks.map(([c,L])=>`<b>${L.length} ${esc(D.clubs[c].name)}</b>`).join(" · ")}${stacks.some(([c,L])=>L.length>CLUBMAX)?` · limite de ${CLUBMAX} par club dépassée`:""}${lam?` (effet ${ownPen>0?"−":"+"}${fr(r1(Math.abs(ownPen)))} pts sur ton équipe actuelle avec ce profil)`:""}</p>`:""}`
       :`<div class="cgbar"><label class="fxmax">Crédits disponibles <input id="fab" type="number" min="0" max="200" step="0.1" inputmode="decimal" value="${FA.b}" style="width:90px"></label>${PSK.map(sel).join("")}</div>
       <p class="gbsub">Sans équipe saisie, choisis directement les postes à pourvoir et tes crédits disponibles. <button type="button" class="vbtn ghost fxgo" id="fateam">Saisir mon équipe</button></p>`}
@@ -1945,6 +1949,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     $("#fateam")?.addEventListener("click",()=>{$("#faadd").focus();msg("Ajoute tes joueurs un par un, puis choisis ton coach.")});
     el.querySelectorAll("[data-fac]").forEach(x=>x.addEventListener("change",()=>{const c=num(x.value);if(c!=null){if(x.dataset.fac==="K")FA.coach=c;else FA.ro[+x.dataset.fac].c=c;faSave();fxAuto()}}));
     el.querySelectorAll("[data-far]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.far==="K")setCoach("");else FA.ro.splice(+b.dataset.far,1);faSave();fxAuto()}));
+    $("#fateamvis")?.addEventListener("click",teamDialog);
     $("#faclear")?.addEventListener("click",()=>{if(confirm("Vider ton équipe ?")){FA.ro=[];setCoach("");faSave();fxAuto()}});
     $("#fatot")?.addEventListener("change",e=>{const v=num(e.target.value);if(v!=null){FA.tot=v;faSave();fxAuto()}});
     $("#fab")?.addEventListener("change",e=>{const v=num(e.target.value);if(v!=null){FA.b=v;faSave();fxAuto()}});
@@ -2120,6 +2125,48 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const dy=Y0+bhh+(tw?30:40);txt(x,"ÉCART",X0+AW/2,dy+20,{s:tw?18:22,w:700,f:FB,c:MUT,a:"center",ls:3});txt(x,s1(r.d)+" pts",X0+AW/2,dy+(tw?82:100),{s:tw?60:76,w:800,c:col===GRY?WHITE:col,a:"center"});
     const M=Math.max(25,r.e,r.a),by=dy+(tw?120:150),wv=v=>Math.max(0,Math.min(1,v/M))*AW;rr(x,X0,by,AW,22,8);x.fillStyle="rgba(255,255,255,.08)";x.fill();if(wv(r.e)>3){rr(x,X0,by,wv(r.e),22,8);x.fillStyle="#7E8CB3";x.fill()}if(wv(r.a)>3){rr(x,X0,by+6,wv(r.a),10,5);x.fillStyle=col===GRY?WHITE:col;x.fill()}
     txt(x,"barre bleue = attendu · barre fine = réel",X0,by+(tw?50:56),{s:tw?16:19,w:600,f:FB,c:MUT})}
+  /* ---------- Visuel « Mon équipe » (Fantasy) ---------- */
+  function teamData(){const X=FX||fxBuild(),rs=X.pl.filter(z=>z.nx).map(z=>z.nx.round),R=rs.length?Math.min(...rs):D.maxRound+1;
+    const L=FA.ro.map(r=>{const ok=r.p&&D.players[r.p]&&X.F[r.p];const z=ok?X.pl.find(y=>y.p===r.p):null;return {p:ok?r.p:null,pos:ok?X.F[r.p][0]:(r.pos||"G"),club:ok?D.players[r.p].club:"",name:ok?D.players[r.p].name:(r.n||""),z,c:r.c}});
+    const kz=FA.kc?coachZ(FA.kc):null;return {R,L,k:kz?{p:null,pos:"K",club:kz.club,name:kz.name,z:kz,c:FA.coach}:null}}
+  let TEAMNM="";try{TEAMNM=localStorage.getItem("fxteamnm")||""}catch(e){}
+  async function drawTeam(cv,f){const x=cv.getContext("2d");await fontsReady();const tw=f.tag==="x",W=f.W,H=f.H,T=teamData();
+    const nx=T.L.find(o=>o.z&&o.z.nx),sub=`Fantasy Challenge · J${T.R}`+(TEAMNM?` · ${TEAMNM}`:"");
+    const {top,bottom}=await frame(x,f,"EUROLEAGUE FANTASY","MON ÉQUIPE",sub);
+    const fh=tw?58:66;x.fillStyle=FOOT;x.fillRect(0,H-fh,W,fh);x.fillStyle=RED;x.fillRect(0,H-fh,W,3);
+    txt(x,"Fais ton équipe et rejoins notre championnat",40,H-fh/2+8,{s:tw?19:21,w:600,f:FB,c:MUT,max:W*.55});txt(x,"EUROLEAGUE FRANCE",W-40,H-fh/2+10,{s:tw?26:28,w:800,c:WHITE,a:"right",ls:2});
+    // parquet stylisé
+    x.save();x.globalAlpha=.07;x.strokeStyle="#fff";x.lineWidth=4;const cy0=(top+bottom)/2;x.beginPath();x.arc(W/2,cy0,tw?120:150,0,7);x.stroke();x.beginPath();x.moveTo(W/2,top);x.lineTo(W/2,bottom);x.stroke();x.restore();
+    const all=[...T.L,...(T.k?[T.k]:[])],pts=all.reduce((a,o)=>a+(o.z?h5(o.z.e):0),0),cr=all.reduce((a,o)=>a+(+o.c||0),0);
+    const sumH=tw?64:92,pad=40,gap=tw?14:18,y0=top+(tw?14:22),areaH=bottom-y0-sumH-(tw?14:22)-gap;
+    const rows=[["G",4,"ARRIÈRES"],["F",4,"AILIERS"],["C",2,"PIVOTS"]],rowH=(areaH-2*gap)/3;
+    for(let ri=0;ri<3;ri++){const [P,n,lab]=rows[ri],y=y0+ri*(rowH+gap),list=T.L.filter(o=>o.pos===P).slice(0,n);
+      const cells=ri===2?[...list,...Array(Math.max(0,n-list.length)).fill(null),{coach:1,o:T.k}]:[...list,...Array(Math.max(0,n-list.length)).fill(null)];
+      const cw=(W-2*pad-(cells.length-1)*gap)/cells.length;
+      for(let ci=0;ci<cells.length;ci++){const c=cells[ci],X0=pad+ci*(cw+gap);await teamCard(x,X0,y,cw,rowH,c&&c.coach?c.o:c,c&&c.coach?"COACH":lab,tw)}}
+    // bandeau total
+    const sy=bottom-sumH-(tw?10:16);rr(x,pad,sy,W-2*pad,sumH,14);const g=x.createLinearGradient(pad,0,W-pad,0);g.addColorStop(0,RED);g.addColorStop(1,"#B3122A");x.fillStyle=g;x.fill();
+    const third=(W-2*pad)/3,vs=tw?34:46,ls=tw?15:18;
+    [[`${all.length}/11`,"ÉLÉMENTS"],[fr(r1(cr)),"CRÉDITS"],[f5(pts),`PTS ATTENDUS J${T.R}`]].forEach(([v,l],i)=>{const cx=pad+third*i+third/2;txt(x,v,cx,sy+sumH*.56,{s:vs,w:800,a:"center"});txt(x,l,cx,sy+sumH*.56+ls+4,{s:ls,w:700,f:FB,c:"rgba(255,255,255,.85)",a:"center",ls:2})})}
+  async function teamCard(x,X0,y,w,h,o,lab,tw){rr(x,X0,y,w,h,16);x.fillStyle=o?ROW:"rgba(255,255,255,.04)";x.fill();x.lineWidth=2;x.strokeStyle=o?"rgba(255,255,255,.10)":"rgba(255,255,255,.18)";if(!o){x.setLineDash([10,8])}x.stroke();x.setLineDash([]);
+    x.save();rr(x,X0,y,w,6,3);x.fillStyle=lab==="COACH"?"#E0A21B":lab==="PIVOTS"?"#C2410C":lab==="AILIERS"?"#7A4FB5":"#3F80AF";x.fill();x.restore();
+    if(!o){txt(x,lab==="COACH"?"COACH":lab.slice(0,-1),X0+w/2,y+h/2-4,{s:tw?18:22,w:800,c:MUT,a:"center",ls:2});txt(x,"à recruter",X0+w/2,y+h/2+(tw?22:28),{s:tw?16:19,w:600,f:FB,c:MUT,a:"center"});return}
+    const e=o.z?f5(o.z.e):"–",opp=o.z&&o.z.nx?`${o.z.nx.home?"vs":"@"} ${o.z.nx.opp}`:"",nm=o.pos==="K"?o.name.toUpperCase():short(o.name),crs=fr(+o.c||(o.z?o.z.cr:0))+" cr";
+    if(!tw){const r=Math.min(w*.28,h*.24,72),cx=X0+w/2,cy=y+18+r;
+      if(o.pos==="K")await logoDisc(x,cx,cy,r,o.club);else{await disc(x,cx,cy,r,o.p,o.club);if(o.club)await logoDisc(x,cx+r*.78,cy+r*.72,r*.34,o.club)}
+      if(o.p&&isFr(o.p))cflag(x,cx-r*.95,cy+r*.62,30,20);
+      txt(x,nm,cx,cy+r+(h>300?42:34),{s:h>300?30:26,w:800,a:"center",max:w-20});
+      txt(x,[o.club&&D.clubs[o.club]?D.clubs[o.club].name:"",opp].filter(Boolean).join(" · "),cx,cy+r+(h>300?68:58),{s:h>300?18:16,w:600,f:FB,c:MUT,a:"center",max:w-20});
+      const by=y+h-(h>300?58:50),bw=(w-30)/2;rr(x,X0+10,by,bw,h>300?44:38,10);x.fillStyle="rgba(255,255,255,.08)";x.fill();txt(x,crs,X0+10+bw/2,by+(h>300?30:26),{s:h>300?22:19,w:800,a:"center"});
+      rr(x,X0+20+bw,by,bw,h>300?44:38,10);x.fillStyle="#1E8E3E";x.fill();txt(x,e+" pts",X0+20+bw+bw/2,by+(h>300?30:26),{s:h>300?22:19,w:800,a:"center"})}
+    else{const r=Math.min(h*.34,52),cx=X0+16+r,cy=y+h/2+2;
+      if(o.pos==="K")await logoDisc(x,cx,cy,r,o.club);else{await disc(x,cx,cy,r,o.p,o.club);if(o.club)await logoDisc(x,cx+r*.78,cy+r*.72,r*.34,o.club)}
+      const tx=cx+r+14,tw2=X0+w-tx-12;txt(x,nm,tx,y+h*.36,{s:24,w:800,max:tw2});txt(x,[o.club&&D.clubs[o.club]?D.clubs[o.club].name:"",opp].filter(Boolean).join(" · "),tx,y+h*.36+22,{s:15,w:600,f:FB,c:MUT,max:tw2});
+      txt(x,crs,tx,y+h*.36+56,{s:20,w:800,c:WHITE});txt(x,e+" pts",X0+w-14,y+h*.36+56,{s:22,w:800,c:"#5BD08A",a:"right"})}}
+  function teamDialog(){bvDialog("Mon équipe Fantasy",(cv,f)=>drawTeam(cv,f),"mon-equipe-fantasy-J"+teamData().R);
+    const fig=$("#dlg .pvfig");if(!fig)return;const w=document.createElement("label");w.className="fxmax";w.style.cssText="display:flex;gap:8px;align-items:center";
+    w.innerHTML=`Nom de ton équipe <input id="tmnm" type="text" maxlength="28" placeholder="facultatif" value="${esc(TEAMNM)}" style="flex:1;min-width:0;font:inherit;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)">`;
+    fig.before(w);let tm=null;$("#tmnm").addEventListener("input",e=>{TEAMNM=e.target.value.trim();try{localStorage.setItem("fxteamnm",TEAMNM)}catch(err){}clearTimeout(tm);tm=setTimeout(()=>{const b=$('#dlg [data-pvf][aria-pressed="true"]');if(b)b.click()},300)})}
   function bvDialog(title,draw,fname){const dlg=$("#dlg");let fmt="insta";const PF={insta:FMT.insta,x:FMT.x};
     dlg.innerHTML=`<div class="dhead"><div><h3 id="dlg-title">${esc(title)}</h3><div class="label" id="pvlab"></div></div><button class="x" id="x" aria-label="Fermer">×</button></div>
       <div class="dbody shr"><span class="seg sm" role="group" aria-label="Format">${Object.keys(PF).map(k=>`<button data-pvf="${k}" aria-pressed="${k===fmt}">${k==="x"?"X / Twitter":"Instagram"}</button>`).join("")}</span>
@@ -2228,7 +2275,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     el.innerHTML=h}
   function route(){const h=location.hash.replace("#","");
     if(VUE==="fantasy"&&!h.startsWith("fantasy")){location.replace("#fantasy");return}
-    if(VUE==="notes"&&h.startsWith("fantasy")){location.replace("#");return}
+    if(VUE==="notes"&&h.startsWith("fantasy")){location.replace("#");return}{const st=$("#standings");if(st)st.classList.toggle("fxoff",h.startsWith("fantasy"))}
     if(h==="classement")classement();else if(h.startsWith("fantasy"))fantasy();else if(h.startsWith("jeu"))jeu();else if(h.startsWith("francais"))francais(parseInt(h.split("-")[1])||0);else if(h==="admin")ADMIN?visuals(D.maxRound):lock(D.maxRound);else if(h.startsWith("visuels"))visuals(parseInt(h.split("-")[1])||D.maxRound);else if(h.startsWith("journee"))rounds(parseInt(h.split("-")[1])||D.maxRound);else if(h.startsWith("club-"))club(h.slice(5));else home();
     domVis();enApply();
     document.querySelectorAll("#tabs a").forEach(a=>{const k=a.getAttribute("href").slice(1),sec=["journee","visuels","francais","jeu","fantasy"];const on=k===""?!sec.some(x=>h.startsWith(x)):k==="journees"?(h.startsWith("journee")||h.startsWith("visuels")):h.startsWith(k);if(on)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});}
