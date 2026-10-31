@@ -1394,14 +1394,30 @@ button.gslot:disabled{cursor:default;opacity:.6}
       z.adj=bd.mu+bd.form+bd.team+bd.opp;z.proj=z.fpt+z.adj;
       if(z.st==="comp"){bd.comp=-0.15*z.proj;z.adj+=bd.comp;z.proj*=0.85}
       {const c=calP(z.proj);bd.cal=c-z.proj;z.proj=h5(c);const pp=calPlay(z.rk,z.min);z.rkc=Math.round(100*(1-pp));z.bd=bd;z.e=h5(z.proj*pp);z.epc=z.cr?z.e/z.cr:0}});
-    // coachs : barème sur l'écart final, écart attendu = forme + terrain + absents
-    const trt={};Object.keys(D.clubs).forEach(c=>{const ms=D.matches.filter(m=>m.home===c||m.away===c),n=ms.length,d=ms.reduce((a,m)=>a+(m.home===c?m.hs-m.as:m.as-m.hs),0)/Math.max(1,n);trt[c]=d*n/(n+3)});
-    const lostF=c=>pl.filter(z=>z.club===c&&z.rk>=70).reduce((a,z)=>a+Math.max(0,z.fpt)*z.rk/100,0);
+    // coachs : barème sur l'écart final. Écart attendu = force (ajustée à l'adversaire) + forme récente + terrain + absents
+    const CL=Object.keys(D.clubs),NC=CL.length,ixc=Object.fromEntries(CL.map((c,i)=>[c,i])),MS=D.matches.slice().sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));
+    const capM=x=>Math.max(-20,Math.min(20,x)),HCA=MS.length?MS.reduce((a,m)=>a+m.hs-m.as,0)/MS.length:3;
+    const crs=CL.map(c=>+((D.coaches[c]||[0,0])[1])||0),mcr=crs.reduce((a,b)=>a+b,0)/NC,sdcr=Math.sqrt(crs.reduce((a,b)=>a+(b-mcr)**2,0)/NC)||1;
+    const prior=CL.map((c,i)=>(crs[i]-mcr)/sdcr*4),LAMR=3;
+    const RT=(()=>{const N=CL.map(()=>CL.map(()=>0)),b=CL.map(()=>0);
+      MS.forEach(m=>{const h=ixc[m.home],a=ixc[m.away];if(h==null||a==null)return;const y=capM(m.hs-m.as)-HCA;N[h][h]++;N[a][a]++;N[h][a]--;N[a][h]--;b[h]+=y;b[a]-=y});
+      CL.forEach((c,i)=>{N[i][i]+=LAMR;b[i]+=LAMR*prior[i]});
+      for(let i=0;i<NC;i++)for(let k=0;k<NC;k++)N[i][k]+=100;   // somme des notes = 0
+      const A=N.map((r,i)=>[...r,b[i]]);for(let i=0;i<NC;i++){let mx=i;for(let r=i+1;r<NC;r++)if(Math.abs(A[r][i])>Math.abs(A[mx][i]))mx=r;[A[i],A[mx]]=[A[mx],A[i]];
+        for(let r=0;r<NC;r++)if(r!==i){const f=A[r][i]/A[i][i];for(let k=i;k<=NC;k++)A[r][k]-=f*A[i][k]}}
+      return Object.fromEntries(CL.map((c,i)=>[c,A[i][NC]/A[i][i]]))})();
+    const formT=c=>{const ms=MS.filter(m=>m.home===c||m.away===c).slice(-4);if(!ms.length)return 0;
+      const r=ms.map(m=>(capM(m.hs-m.as)-HCA-(RT[m.home]-RT[m.away]))*(m.home===c?1:-1));return Math.max(-1.5,Math.min(1.5,0.15*r.reduce((a,b)=>a+b,0)/r.length))};
+    const gpT=c=>MS.filter(m=>m.home===c||m.away===c).length||1;
+    const injT=c=>{const R=pl.filter(z=>z.club===c&&z.n>=2),tot=R.reduce((a,z)=>a+Math.max(0,z.fpt),0)||1;
+      const L=R.filter(z=>z.rk>=50).map(z=>({z,v:Math.max(0,z.fpt)*z.rk/100*Math.min(1,z.n/gpT(c))}));
+      return {pts:Math.min(5,8*L.reduce((a,o)=>a+o.v,0)/tot),who:L.filter(o=>o.v>=1).sort((a,b)=>b.v-a.v).map(o=>D.players[o.z.p].name.split(",")[0])}};
     const erf=x=>{const t=1/(1+0.3275911*Math.abs(x)),y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);return x>=0?y:-y};
     const co=Object.entries(D.coaches||{}).filter(([c])=>D.clubs[c]).map(([c,[name,cr]])=>{const nx=nextOf(c);let e=0,P={w:0,mu:0};
-      if(nx){const mu=trt[c]-trt[nx.opp]+(nx.home?3:-3)-0.12*lostF(c)+0.12*lostF(nx.opp),S=12.5,cdf=x=>0.5*(1+erf((x-mu)/(S*Math.SQRT2)));
+      if(nx){const ic=injT(c),io=injT(nx.opp),fc=formT(c),fo=formT(nx.opp),parts={force:RT[c]-RT[nx.opp],forme:fc-fo,terrain:nx.home?HCA:-HCA,absents:io.pts-ic.pts};
+        const mu=parts.force+parts.forme+parts.terrain+parts.absents,S=12.3,cdf=x=>0.5*(1+erf((x-mu)/(S*Math.SQRT2)));
         const w1=cdf(10.5)-cdf(0),w2=cdf(20.5)-cdf(10.5),w3=1-cdf(20.5),l1=cdf(0)-cdf(-10.5),l2=cdf(-10.5)-cdf(-20.5),l3=cdf(-20.5);
-        e=10*w1+20*w2+25*w3-5*l1-10*l2-20*l3;P={w:w1+w2+w3,mu}}
+        e=10*w1+20*w2+25*w3-5*l1-10*l2-20*l3;P={w:w1+w2+w3,mu,parts,rc:RT[c],ro:RT[nx.opp],ic:ic.who,io:io.who}}
       return {p:"K-"+c,coach:true,name,club:c,pos:"K",cr:priceOf("K-"+c,+cr),cr0:+cr,nx,e:h5(e),proj:h5(e),rk:0,risk:{r:0,why:[]},mu:0,n:9,min:40,P}});
     return FX={F,teams,avg,pl,nt,co}}
   // filtre de crédits : saisie au dixième + curseur au dixième + raccourcis
@@ -1511,7 +1527,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
    [/^Base /,"Base "],[/calibrage/g,"calibration"],[/forme championnat/g,"domestic form"],[/coéquipiers absents/g,"teammates out"],[/adversaires absents/g,"opponents out"],[/minutes menacées/g,"minutes at risk"],
    [/ proj\. × \(1 − risque (\d+)\/100\) = (\S+) attendus/," proj. × (1 − risk $1/100) = $2 expected"],
    // coach
-   [/Coach · /,"Coach · "],[/victoire (\d+) %/,"win $1%"],[/écart attendu /,"expected margin "],[/Choisir mon coach…/,"Pick my coach…"],[/Retirer mon coach/,"Remove my coach"],[/Prendre ce coach dans mon équipe/,"Add this coach to my team"],[/Exclure ce coach/,"Exclude this coach"],
+   [/Coach · /,"Coach · "],[/victoire (\d+) %/,"win $1%"],[/écart attendu /,"expected margin "],[/\(force ([+−\d])/g,"(strength $1"],[/, forme ([+−\d])/g,", form $1"],[/, terrain ([+−\d])/g,", venue $1"],[/, absents ([+−\d])/g,", absences $1"],[/ · sans ([A-Z])/g," · without $1"],[/Choisir mon coach…/,"Pick my coach…"],[/Retirer mon coach/,"Remove my coach"],[/Prendre ce coach dans mon équipe/,"Add this coach to my team"],[/Exclure ce coach/,"Exclude this coach"],
    // libellés courts
    [/🤖 Choisis pour moi · J(\d+)/,"🤖 Pick for me · R$1"],[/🧠 Coachs · J(\d+)/,"🧠 Coaches · R$1"],[/Conseils Fantasy · J(\d+)/,"Fantasy tips · R$1"],[/Meilleur choix par poste · J(\d+)/,"Best pick by position · R$1"],[/Checklist blessures · J(\d+)/,"Injury checklist · R$1"],[/Projection J(\d+)/,"R$1 projection"],
    [/👑 Capitaine/,"👑 Captain"],[/💰 Bonnes affaires · moins de 5 crédits/,"💰 Bargains · under 5 credits"],[/⚖️ Rapport qualité-prix · 5 à 12 crédits/,"⚖️ Value · 5 to 12 credits"],[/🧠 Coach$/,"🧠 Coach"],
@@ -1853,8 +1869,10 @@ button.gslot:disabled{cursor:default;opacity:.6}
         if(!isK)cc[z.club]=(cc[z.club]||0)+1;pick[i]=z;idx[i]=a;dfs(i+1,cost+z.cr,val+z.e,pn+d);if(!isK)cc[z.club]--}
       pick.length=i})(0,0,0,0);
     return {top}}
-  const coachSub=z=>z.nx?`${z.nx.home?"vs":"@"} ${esc(D.clubs[z.nx.opp].name)} · victoire ${Math.round(z.P.w*100)} % · écart attendu ${z.P.mu>0?"+":""}${fr(r1(z.P.mu))}`:"";
-  const coachTip=z=>`Barème coach : victoire de 1 à 10 pts +10, de 11 à 20 +20, de plus de 20 +25 ; défaite de 1 à 10 −5, de 11 à 20 −10, de plus de 20 −20. Écart attendu = forme (écart moyen de la saison, lissé) + avantage du terrain (3 pts) + absents des deux équipes ; incertitude ±12,5 pts.`;
+  const sg=v=>(v>0?"+":v<0?"−":"")+fr(r1(Math.abs(v)));
+  const coachSub=z=>z.nx?`${z.nx.home?"vs":"@"} ${esc(D.clubs[z.nx.opp].name)} · victoire ${Math.round(z.P.w*100)} % · écart attendu ${sg(z.P.mu)}${z.P.parts?` (force ${sg(z.P.parts.force)}, forme ${sg(z.P.parts.forme)}, terrain ${sg(z.P.parts.terrain)}, absents ${sg(z.P.parts.absents)}${z.P.ic&&z.P.ic.length?" · sans "+esc(z.P.ic.slice(0,3).join(", ")):""})`:""}`:"";
+  const coachTip=z=>`Barème coach : victoire de 1 à 10 pts +10, de 11 à 20 +20, de plus de 20 +25 ; défaite de 1 à 10 −5, de 11 à 20 −10, de plus de 20 −20. Écart attendu = force des deux équipes (écarts de la saison corrigés du terrain et du niveau des adversaires, plafonnés à 20 pts, avec la cote coach du jeu comme point de départ) + forme sur les 4 derniers matchs (±1,5 pt max) + avantage du terrain mesuré sur la saison (${fr(r1(HCA0()))} pts) + absents (pondérés par leur poids dans l'équipe et par leur part de matchs joués : une absence déjà subie est déjà dans les résultats) ; incertitude ±12,3 pts.`;
+  const HCA0=()=>{const M=D.matches;return M.length?M.reduce((a,m)=>a+m.hs-m.as,0)/M.length:3};
   const faRow=(z,m)=>z.coach?`<div class="farow"><span class="fxpos fxK">HC</span><span class="fan"><span class="plbtn">${badge(z.club,"sm")}<span><b>${esc(z.name)}</b><small class="fxsub">Coach · ${esc(D.clubs[z.club].name)} · ${fr(z.cr)} cr · ${coachSub(z)}</small></span></span></span><span class="fape" title="${esc(coachTip(z))}"><b>${f5(z.e)}</b><small>pts att.</small></span><button type="button" class="faplus" data-fain="${z.p}" title="Ajouter à mon équipe" aria-label="Ajouter ${esc(z.name)} à mon équipe">＋</button><button type="button" class="fax" data-fax="${z.p}" title="Exclure ce coach" aria-label="Exclure ${esc(z.name)}">✕</button></div>`
     :`<div class="farow"><span class="fxpos fx${z.pos}">${z.pos}</span><button type="button" class="plbtn fan" data-fxa="${z.p}">${face(z.p,z.club,"sm")}<span><b>${esc(D.players[z.p].name)}</b>${flag(z.p)}${stTag(z.p)}<small class="fxsub">${fr(z.cr)} cr · ${z.nx.home?"vs":"@"} ${esc(D.clubs[z.nx.opp].name)} · déf. ${ord(z.mu)}/${FX.nt}${domShort(z.p)?" · "+domShort(z.p):""}${z.bd&&z.bd.team>0.3?` · <b class="faup">+${fr(r1(z.bd.team))} coéq. absents</b>`:""}${m.length?` · <b class="famate">même club que ${esc(m.join(", "))}</b>`:""}</small></span></button><span class="fape" title="${esc(bdTxt(z))}"><b>${f5(z.e)}</b><small>pts att.</small></span>${rkChip(z.risk,true)}<button type="button" class="faplus" data-fain="${z.p}" title="Ajouter à mon équipe" aria-label="Ajouter ${esc(D.players[z.p].name)} à mon équipe">＋</button><button type="button" class="fax" data-fax="${z.p}" title="Exclure ce joueur" aria-label="Exclure ${esc(D.players[z.p].name)}">✕</button></div>`;
   const matesOf=(z,own,t)=>z.coach?[]:[...own.filter(o=>o.p&&o.pos!=="K"&&o.club===z.club).map(o=>o.pos==="K"?"":o.name.split(",")[0]),...t.filter(y=>y!==z&&!y.coach&&y.club===z.club).map(zLast)];
