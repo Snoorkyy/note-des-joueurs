@@ -2,3 +2,5 @@
   Cache-Control: public, max-age=0, must-revalidate
 /emissions/videos.json
   Cache-Control: public, max-age=0, must-revalidate
+/og/*
+  Access-Control-Allow-Origin: *
