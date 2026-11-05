@@ -2164,7 +2164,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.fillStyle="#E8EFF8";x.fill();x.clip();const k=Math.max(2*r/ph.width,2*r/ph.height);x.drawImage(ph,cx-ph.width*k/2,cy-ph.height*k/2,ph.width*k,ph.height*k);x.restore();
     x.beginPath();x.arc(cx,cy,r,0,7);x.lineWidth=2;x.strokeStyle="rgba(255,255,255,.22)";x.stroke();await logoDisc(x,cx+r*.78,cy+r*.72,r*.34,club)}
   let TEAMNM="";try{TEAMNM=localStorage.getItem("fxteamnm")||""}catch(e){}
-  async function drawTeam(cv,f){const x=cv.getContext("2d");await fontsReady();const tw=f.tag==="x",W=f.W,H=f.H,T=teamData();
+  async function drawMyTeam(cv,f){const x=cv.getContext("2d");await fontsReady();const tw=f.tag==="x",W=f.W,H=f.H,T=teamData();
     const sub=`Fantasy Challenge · J${T.R}`+(TEAMNM?` · ${TEAMNM}`:"");
     const {top,bottom}=await frame(x,f,"EUROLEAGUE FANTASY","MON ÉQUIPE",sub);
     const fh=tw?58:66;x.fillStyle=FOOT;x.fillRect(0,H-fh,W,fh);x.fillStyle=RED;x.fillRect(0,H-fh,W,3);
@@ -2200,7 +2200,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
       if(isCap)capBadge(x,cx-r*.78,cy-r*.72,r*.4);
       const tx=cx+r+14,tw2=X0+w-tx-12;txt(x,nm,tx,y+h*.36,{s:24,w:800,max:tw2});txt(x,[o.club&&D.clubs[o.club]?D.clubs[o.club].name:"",opp].filter(Boolean).join(" · "),tx,y+h*.36+22,{s:15,w:600,f:FB,c:MUT,max:tw2});
       txt(x,crs,tx,y+h*.36+56,{s:20,w:800,c:WHITE});txt(x,e+" pts",X0+w-14,y+h*.36+56,{s:22,w:800,c:"#5BD08A",a:"right"})}}
-  function teamDialog(){bvDialog("Mon équipe Fantasy",(cv,f)=>drawTeam(cv,f),"mon-equipe-fantasy-J"+teamData().R);
+  function teamDialog(){bvDialog("Mon équipe Fantasy",(cv,f)=>drawMyTeam(cv,f),"mon-equipe-fantasy-J"+teamData().R);
     const fig=$("#dlg .pvfig");if(!fig)return;const w=document.createElement("label");w.className="fxmax";w.style.cssText="display:flex;gap:8px;align-items:center";
     w.innerHTML=`Nom de ton équipe <input id="tmnm" type="text" maxlength="28" placeholder="facultatif" value="${esc(TEAMNM)}" style="flex:1;min-width:0;font:inherit;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)">`;
     fig.before(w);let tm=null;$("#tmnm").addEventListener("input",e=>{TEAMNM=e.target.value.trim();try{localStorage.setItem("fxteamnm",TEAMNM)}catch(err){}clearTimeout(tm);tm=setTimeout(()=>{const b=$('#dlg [data-pvf][aria-pressed="true"]');if(b)b.click()},300)})}
