@@ -172,9 +172,15 @@ def main():
             print(c, g["A"], g["B"], g["score"], "contrôles OK" if not err else err, "| notes identiques" if not diff else f"| ÉCARTS {diff}")
             bad += bool(diff or err)
         sys.exit(1 if bad else 0)
-    today = dt.datetime.now(PARIS).date().isoformat()
+    now = dt.datetime.now(PARIS)
+    today = now.date().isoformat()
     if "--codes" in a: todo = [int(x) for x in a[a.index("--codes") + 1].split(",")]
     else:
+        # soir de match uniquement : un match au calendrier aujourd'hui (ou hier, pour le passage d'après minuit)
+        days = {f[1] for f in d["fixtures"]}
+        soir = today in days or (now.hour < 6 and (now.date() - dt.timedelta(days=1)).isoformat() in days)
+        if not soir:
+            print("Pas de match EuroLeague au calendrier ce soir : rien à faire."); return
         # gamecodes de la saison régulière : journée r -> codes 10(r-1)+1 .. 10r, dans l'ordre du calendrier
         fx = sorted({(f[0], f[1]) for f in d["fixtures"]})
         played_rounds = sorted({r for r, day in fx if day <= today})

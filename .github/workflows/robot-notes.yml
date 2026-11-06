@@ -2,8 +2,10 @@ name: Robot notes EuroLeague
 # Note automatiquement les matchs terminés et publie data.json (Cloudflare Pages redéploie ensuite le site).
 on:
   schedule:
-    - cron: "*/10 17-23 * * *"   # toutes les 10 min, 18h-00h50 heure de Paris (hiver)
-    - cron: "*/10 0 * * *"
+    # mardi-vendredi seulement (seuls soirs de matchs EuroLeague 2026-27), toutes les 10 min de 18h à 1h heure de Paris (hiver) ;
+    # en plus, robot/run.py s'arrête aussitôt si aucun match n'est au calendrier ce soir-là.
+    - cron: "*/10 17-23 * * 2-5"
+    - cron: "*/10 0 * * 3-6"
   workflow_dispatch:
     inputs:
       check:
