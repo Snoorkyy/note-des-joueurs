@@ -66,6 +66,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .prev{aspect-ratio:1200/630;border-radius:12px;overflow:hidden;background:#0B1638;display:grid;place-items:center;color:var(--mut);font-size:14px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 .prev img{width:100%;height:100%;display:block}
 .btn.x{background:#fff;color:#000;font-family:SC}
+.btn.ig{margin-top:10px;color:#fff;background:linear-gradient(45deg,#F58529,#DD2A7B 45%,#8134AF 75%,#515BD4)}
+.hint{font-size:14px;color:#DDE3FF;background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;margin:10px 0 0;text-align:left;word-break:break-word}
 .btn.ghost{background:transparent;color:#fff;border:1px solid var(--line);box-shadow:none;margin-top:10px;font-size:17px}
 .ml a{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;text-decoration:none;font:800 18px SC;text-transform:uppercase}
 .ml a span{flex:1}.ml a em{font-style:normal;color:var(--gold)}
@@ -135,6 +137,8 @@ async function results(j){
   $("#app").innerHTML=head()+`<div class="thx"><b>Merci, tes notes sont comptées !</b><p>${j.n||1} lecteur${(j.n||1)>1?"s ont":" a"} noté ce match. Montre tes notes à tes followers :</p>
     <div class="prev" id="prev"><span>Fabrication de ton visuel…</span></div>
     <button class="btn x" id="shx">Partager mon visuel sur X</button>
+    <button class="btn ig" id="shi">Partager en story Instagram</button>
+    <p class="hint" id="hint" hidden></p>
     <a class="btn ghost" id="dl" download="mes-notes-${M.id}.jpg">Télécharger mon visuel</a>
     <a class="btn ghost" href="${NOTES}#journee-${M.round}">Toutes les notes de la J${M.round}</a></div>`
     +[M.home,M.away].map(c=>`<div class="gh"><img src="${logo(c)}" alt="">${esc(D.clubs[c].name)}</div>`+PL.filter(n=>n[2]===c).map(row).join("")).join("")
@@ -147,15 +151,24 @@ async function results(j){
     const L=[`Mes notes pour ${H} ${M.hs}-${M.as} ${A} 🏀`,"",`⭐ Mon MVP : ${nm(best[0])} ${fr(best[1])}/10`];
     if(dis)L.push(`🤔 ${nm(dis[0])} : je mets ${fr(dis[1])}, EuroLeague France ${fr(dis[2])}`);
     L.push("",`${cta} ${link}`,"","#EuroLeague");return L.join("\n")};
-  let file=null,link=SELF+M.id;const mobile=matchMedia("(pointer:coarse)").matches;
+  let file=null,storyFile=null,storyUrl=null,link=SELF+M.id;const mobile=matchMedia("(pointer:coarse)").matches;
   const ready=(async()=>{const cv=await drawCard(best);const url=cv.toDataURL("image/jpeg",.88);
     $("#prev").innerHTML=`<img src="${url}" alt="Mon visuel de notes">`;$("#dl").href=url;
     file=new File([await (await fetch(url)).blob()],`mes-notes-${M.id}.jpg`,{type:"image/jpeg"});
+    const sv=await drawStory(best);storyUrl=sv.toDataURL("image/jpeg",.9);storyFile=new File([await (await fetch(storyUrl)).blob()],`ma-story-notes-${M.id}.jpg`,{type:"image/jpeg"});
     try{const r=await fetch("/api/share",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({m:M.id,dev,img:url})});const k=await r.json();if(k.id)link=location.origin+"/s/"+k.id}catch(e){}
   })().catch(e=>{$("#prev").innerHTML=""});
   $("#shx").onclick=async()=>{
     if(mobile&&file&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],text:tweet(link)});return}catch(e){if(e.name==="AbortError")return}}
     const w=window.open("about:blank","_blank");await ready;const u="https://x.com/intent/post?text="+encodeURIComponent(tweet(link));if(w)w.location=u;else location.href=u};
+  $("#shi").onclick=async()=>{
+    const h=$("#hint");try{navigator.clipboard&&navigator.clipboard.writeText(link).catch(()=>{})}catch(e){}
+    if(!storyFile){h.hidden=false;h.textContent="Ton visuel story se prépare, réessaie dans une seconde.";return}
+    if(mobile&&navigator.canShare&&navigator.canShare({files:[storyFile]})){
+      h.hidden=false;h.innerHTML="Choisis <b>Instagram</b> puis <b>Story</b>. Ton lien est copié : ajoute le sticker <b>Lien</b> et colle-le pour que tes abonnés viennent noter.";
+      try{await navigator.share({files:[storyFile]})}catch(e){}return}
+    const a=document.createElement("a");a.href=storyUrl;a.download=storyFile.name;document.body.appendChild(a);a.click();a.remove();
+    h.hidden=false;h.innerHTML="Visuel story téléchargé (1080 × 1920). Publie-le en story depuis ton téléphone et ajoute le sticker <b>Lien</b> : "+esc(link)};
 }
 const ours=p=>{const n=PL.find(z=>z[0]===p);return n?n[6]:null};
 /* ---------- visuel « Mes notes » 1200 × 630 ---------- */
@@ -203,6 +216,44 @@ async function drawCard(best){
   // appel à noter
   x.textAlign="left";x.fillStyle="#fff";x.font="800 24px SC";x.letterSpacing="2px";x.fillText("À TON TOUR DE NOTER",56,592);const tw1=x.measureText("À TON TOUR DE NOTER ").width;
   x.fillStyle="#FFB547";x.fillText("→ EUROLEAGUE-FRANCE.COM",56+tw1,592);x.letterSpacing="0px";
+  return cv}
+/* ---------- visuel story Instagram 1080 × 1920 ---------- */
+async function drawStory(best){
+  const W=1080,Hh=1920,cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const x=cv.getContext("2d");
+  x.fillStyle="#060D24";x.fillRect(0,0,W,Hh);
+  let g=x.createRadialGradient(W,0,0,W,0,1300);g.addColorStop(0,"rgba(255,45,58,.32)");g.addColorStop(1,"rgba(255,45,58,0)");x.fillStyle=g;x.fillRect(0,0,W,Hh);
+  g=x.createRadialGradient(0,Hh,0,0,Hh,1300);g.addColorStop(0,"rgba(0,35,149,.6)");g.addColorStop(1,"rgba(0,35,149,0)");x.fillStyle=g;x.fillRect(0,0,W,Hh);
+  x.strokeStyle="rgba(255,255,255,.025)";x.lineWidth=2;for(let i=-1200;i<W+200;i+=24){x.beginPath();x.moveTo(i,0);x.lineTo(i+900,Hh);x.stroke()}
+  [["#002395",0],["#fff",360],["#ED2939",720]].forEach(([c,X])=>{x.fillStyle=c;x.fillRect(X,0,360,14);x.fillRect(X,Hh-14,360,14)});
+  x.textAlign="center";x.textBaseline="middle";
+  const lg=await img("logo_white.png");if(lg){const h=74,w=lg.width*h/lg.height;x.drawImage(lg,(W-w)/2,196,w,h)}
+  x.fillStyle="#FFB547";x.font="800 34px SC";x.letterSpacing="6px";x.fillText(`MES NOTES · JOURNÉE ${M.round}`,W/2,330);x.letterSpacing="0px";
+  // score
+  const hw=M.hs>M.as;
+  for(const [c,cx,win] of [[M.home,200,hw],[M.away,880,!hw]]){x.globalAlpha=win?1:.55;x.beginPath();x.arc(cx,470,75,0,7);x.fillStyle="#fff";x.fill();
+    const li=await img(logo(c));if(li)x.drawImage(li,cx-52,470-52,104,104);
+    x.fillStyle="#F4F6FF";const t=D.clubs[c].name.toUpperCase();fit(x,t,300,38,"800");x.fillText(t,cx,585);x.globalAlpha=1}
+  x.font="800 150px SC";x.fillStyle=hw?"#fff":"rgba(255,255,255,.4)";x.fillText(M.hs,430,478);x.fillStyle="rgba(255,255,255,.3)";x.font="800 90px SC";x.fillText("–",540,470);x.font="800 150px SC";x.fillStyle=hw?"rgba(255,255,255,.4)":"#fff";x.fillText(M.as,650,478);
+  // MVP
+  rr(x,70,650,940,480,40);let gg=x.createLinearGradient(70,650,1010,1130);gg.addColorStop(0,"#15275F");gg.addColorStop(1,"#0B1638");x.fillStyle=gg;x.fill();x.strokeStyle="rgba(255,181,71,.5)";x.lineWidth=3;x.stroke();
+  x.fillStyle="#FFB547";x.font="800 36px SC";x.letterSpacing="7px";x.fillText("★ MON MVP",W/2,700);x.letterSpacing="0px";
+  await face(x,best[0],W/2,840,110);x.strokeStyle="rgba(255,255,255,.3)";x.lineWidth=6;x.beginPath();x.arc(W/2,840,110,0,7);x.stroke();
+  const mn=nm(best[0]).toUpperCase();x.fillStyle="#fff";fit(x,mn,860,66,"800");x.fillText(mn,W/2,1000);
+  chipC(x,best[1],W/2-85,1032,170,84,60);
+  // autres notes
+  const rest=Object.entries(mine).filter(([p])=>p!==best[0]).sort((a,b)=>b[1]-a[1]);
+  const show=rest.slice(0,rest.length>4?3:4);let Y=1240;
+  const o=ours(best[0]);if(o!=null){x.fillStyle="#AEB9E0";x.font="700 30px SS";x.fillText(`EuroLeague France lui met ${fr(o)}`,W/2,1168)}
+  Y=1205;
+  for(const [p,v] of show){rr(x,110,Y,860,84,20);x.fillStyle="rgba(255,255,255,.06)";x.fill();x.strokeStyle="rgba(255,255,255,.1)";x.lineWidth=1.5;x.stroke();
+    await face(x,p,156,Y+42,30);x.textAlign="left";x.fillStyle="#fff";const t=nm(p).toUpperCase();fit(x,t,440,34,"800");x.fillText(t,200,Y+45);
+    const ov=ours(p);x.textAlign="right";x.fillStyle="#8E9AC4";x.font="700 22px SS";if(ov!=null)x.fillText(`EL France ${fr(ov)}`,836,Y+44);
+    chipC(x,v,852,Y+14,100,56,38);x.textAlign="center";Y+=90}
+  if(rest.length>4){x.fillStyle="#8E9AC4";x.font="800 30px SC";x.fillText(`+ ${rest.length-3} AUTRES JOUEURS NOTÉS`,W/2,Y+28);Y+=56}
+  // appel
+  const cy=Math.max(Y+50,1600);
+  x.fillStyle="#fff";x.font="800 58px SC";x.fillText("ET TOI, TU LEUR",W/2,cy);x.fillText("METS COMBIEN ?",W/2,cy+62);
+  x.fillStyle="#FFB547";x.font="800 32px SC";x.letterSpacing="4px";x.fillText("NOTE SUR EUROLEAGUE-FRANCE.COM",W/2,cy+124);x.letterSpacing="0px";
   return cv}
 function pick(){
   const R=Math.max(...D.matches.map(m=>m.round));const ms=D.matches.filter(m=>m.round===R);
