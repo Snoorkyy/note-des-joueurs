@@ -1,0 +1,50 @@
+name: Robot notes EuroLeague
+# Note automatiquement les matchs terminés et publie data.json (Cloudflare Pages redéploie ensuite le site).
+on:
+  #schedule:
+    #- cron: "*/10 17-23 * * *"   # toutes les 10 min, 18h-00h50 heure de Paris (hiver)
+    #- cron: "*/10 0 * * *"
+  workflow_dispatch:
+    inputs:
+      check:
+        description: "Contrôle seul : gamecodes déjà publiés à recalculer (ex. 91,92) — n'écrit rien"
+        required: false
+      codes:
+        description: "Forcer ces gamecodes (ex. 101,102)"
+        required: false
+permissions:
+  contents: write
+concurrency:
+  group: robot-notes
+  cancel-in-progress: false
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Contrôle (sans publication)
+        if: ${{ github.event.inputs.check }}
+        run: python3 robot/run.py --check "${{ github.event.inputs.check }}"
+      - name: Noter et publier
+        if: ${{ !github.event.inputs.check }}
+        env:
+          CODES: ${{ github.event.inputs.codes }}
+        run: |
+          git config user.name "Robot EuroLeague France"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            rm -f robot/commit_msg.txt
+            set +e
+            if [ -n "$CODES" ]; then python3 robot/run.py --codes "$CODES"; else python3 robot/run.py; fi
+            rc=$?
+            set -e
+            if [ ! -f robot/commit_msg.txt ]; then exit $rc; fi
+            python3 -c "import json;json.load(open('data.json'))"
+            git add data.json
+            git commit -q -m "$(cat robot/commit_msg.txt)"
+            if git push -q origin HEAD:main; then echo "Publié."; exit $rc; fi
+            echo "Conflit de publication, nouvel essai ($attempt)"; sleep 10
+          done
+          exit 1
