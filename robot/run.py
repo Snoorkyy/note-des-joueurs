@@ -161,7 +161,8 @@ def main():
         bad = 0
         for c in codes:
             try: g = extract(c); rows, err, _ = rate(g)
-            except Exception as e: print(c, "ERREUR", e); bad += 1; continue
+            except Exception as e:
+                import traceback; print(c, "ERREUR", e); traceback.print_exc(); bad += 1; continue
             mine = {r[0]: r[6] for r in rows}; p = pub.get(f"{SEASON}-{c}", {})
             diff = {k: (mine.get(k), p.get(k)) for k in set(mine) | set(p) if mine.get(k) != p.get(k)}
             print(c, g["A"], g["B"], g["score"], "contrôles OK" if not err else err, "| notes identiques" if not diff else f"| ÉCARTS {diff}")
