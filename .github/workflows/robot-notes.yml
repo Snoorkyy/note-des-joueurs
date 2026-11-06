@@ -1,9 +1,9 @@
 name: Robot notes EuroLeague
 # Note automatiquement les matchs terminés et publie data.json (Cloudflare Pages redéploie ensuite le site).
 on:
-  #schedule:
-    #- cron: "*/10 17-23 * * *"   # toutes les 10 min, 18h-00h50 heure de Paris (hiver)
-    #- cron: "*/10 0 * * *"
+  schedule:
+    - cron: "*/10 17-23 * * *"   # toutes les 10 min, 18h-00h50 heure de Paris (hiver)
+    - cron: "*/10 0 * * *"
   workflow_dispatch:
     inputs:
       check:
