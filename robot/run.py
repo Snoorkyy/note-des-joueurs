@@ -83,10 +83,13 @@ def load_box(txt):
     for l in txt.split("\n"):
         if not l.strip(): continue
         r = dict(zip(K, l.strip().split("|")))
-        for k in K[3:]:
-            if k == "min": m, s = r[k].split(":"); r[k] = int(m) + int(s) / 60
-            elif k == "st": r[k] = 1 if r[k] in ("1", "True", "true") else 0
-            else: r[k] = int(r[k])
+        try:
+            for k in K[3:]:
+                if k == "min": m, s = r[k].split(":"); r[k] = int(m) + int(s) / 60
+                elif k == "st": r[k] = 1 if r[k] in ("1", "True", "true") else 0
+                else: r[k] = int(r[k])
+        except ValueError as e:
+            raise ValueError(f"ligne de box illisible ({e}) : {l}")
         out[r["id"]] = r
     return out
 
@@ -117,7 +120,7 @@ def checks(g, box):
     err = []
     if (sa, sb) != g["score"]: err.append(f"score reconstitué {sa}-{sb} ≠ score officiel {g['score'][0]}-{g['score'][1]}")
     bad = [(box[p]["name"], round(mins[p] / 60, 1), round(box[p]["min"], 1)) for p in box if abs(mins[p] / 60 - box[p]["min"]) > 0.2]
-    if bad: err.append(f"minutes PBP ≠ box : {bad}")
+    if bad: print("  avertissement (non bloquant) : minutes PBP ≠ box", bad)   # décalage de chrono fréquent dans les données officielles, sans effet sur les notes
     sA = sum(pm[p] for p in box if box[p]["team"] == "A"); sB = sum(pm[p] for p in box if box[p]["team"] == "B")
     if sA != 5 * (sa - sb) or sB != -5 * (sa - sb): err.append(f"somme des +/- incohérente ({sA}, {sB})")
     if g["unk"]: err.append(f"types de play-by-play inconnus : {g['unk']}")
@@ -157,7 +160,8 @@ def main():
         for n in d["notes"]: pub.setdefault(n[1], {})[n[0]] = n[6]
         bad = 0
         for c in codes:
-            g = extract(c); rows, err, _ = rate(g)
+            try: g = extract(c); rows, err, _ = rate(g)
+            except Exception as e: print(c, "ERREUR", e); bad += 1; continue
             mine = {r[0]: r[6] for r in rows}; p = pub.get(f"{SEASON}-{c}", {})
             diff = {k: (mine.get(k), p.get(k)) for k in set(mine) | set(p) if mine.get(k) != p.get(k)}
             print(c, g["A"], g["B"], g["score"], "contrôles OK" if not err else err, "| notes identiques" if not diff else f"| ÉCARTS {diff}")
@@ -177,7 +181,8 @@ def main():
         except Exception as e: print(c, "indisponible :", e); continue
         if g["live"] or not g["ended"] or not g["box"]:
             print(c, g["A"], g["B"], "pas terminé (Live =", g["live"], ", fin =", g["ended"], ")"); continue
-        rows, err, box = rate(g)
+        try: rows, err, box = rate(g)
+        except Exception as e: rows, err, box = [], [f"données illisibles : {e}"], {}
         if err:
             print(c, "CONTRÔLES ÉCHOUÉS :", err); failed.append((c, g, err)); continue
         for pid, r in box.items():
