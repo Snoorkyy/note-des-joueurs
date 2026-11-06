@@ -51,6 +51,7 @@ def stats_line(r):
     extra = [e for e in extra if e[0] >= e[1]]
     extra.sort(key=lambda e: -(e[0] / e[1]))
     parts += [e[2] for e in extra[:3 - len(parts)]]
+    parts.append(f"{r['pir']} d'éval")
     return " · ".join(parts)
 
 def build(d, g, box, rows):
