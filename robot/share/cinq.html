@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-800-normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F}
+@font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-ext-800-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+@font-face{font-family:SS;font-weight:700;src:url(a/source-sans-3-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:SS;font-weight:700;src:url(a/source-sans-3-latin-ext-700-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1200px;height:640px;overflow:hidden;background:#060D24;font-family:SS;color:#F4F6FF}
+.c{position:relative;width:1200px;height:640px;overflow:hidden;background:radial-gradient(60% 90% at 100% 0%,rgba(255,45,58,.28),transparent 60%),radial-gradient(55% 80% at 0% 100%,rgba(0,35,149,.5),transparent 60%),#060D24;padding:44px 48px}
+.c:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.022) 0 2px,transparent 2px 22px)}
+.st{position:absolute;left:0;right:0;bottom:0;height:10px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%)}
+.k{position:relative;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.2em;color:#FFB547}
+h1{position:relative;font-family:SC;font-weight:800;font-size:64px;line-height:1;text-transform:uppercase;margin:6px 0 30px}
+.g{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
+.p{border-radius:22px;background:linear-gradient(165deg,#15275F,#0B1638);border:1px solid rgba(255,255,255,.1);padding:22px 12px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.p.m{border:2px solid rgba(255,181,71,.6)}
+.ph{width:132px;height:132px;border-radius:50%;background:#E8EFF8 center/cover;border:4px solid rgba(255,255,255,.22);display:grid;place-items:center;font-family:SC;font-weight:800;font-size:48px;color:#0B1638}
+.cl{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;margin:-22px 0 0 90px;position:relative}.cl img{width:30px;height:30px;object-fit:contain}
+.pn{font-family:SC;font-weight:800;font-size:27px;line-height:1;text-transform:uppercase;margin-top:10px;min-height:54px;display:flex;align-items:center}
+.mt{font-weight:700;font-size:15px;color:#AEB9E0;margin-top:6px}
+.nt{margin-top:14px;width:96px;height:62px;border-radius:16px;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:40px;color:#fff}
+.lab{font-family:SC;font-weight:800;font-size:14px;letter-spacing:.18em;color:#FFB547;height:18px;margin-bottom:8px}
+.url{position:absolute;left:48px;bottom:30px;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.08em}.url span{color:#8E9AC4}
+</style></head><body><div class="c"><div id="x"></div><div class="url">EUROLEAGUE-FRANCE.COM <span>· LA LETTRE DU SAMEDI</span></div><div class="st"></div></div>
+<script>
+const NC=n=>n>=8.5?"#17633A":n>=7?"#2E8048":n>=5.5?"#6F7F3F":n>=4.5?"#B08816":n>=3?"#C4521E":"#A01E16";
+const fr=n=>(Math.round(n*2)/2).toFixed(1).replace('.0','').replace('.',',');
+const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
+window.render=D=>{document.getElementById('x').innerHTML=`<div class="k">${D.kicker}</div><h1>Le cinq de la semaine</h1>
+ <div class="g">${D.five.map((p,i)=>`<div class="p ${i?'':'m'}"><div class="lab">${i?'':'★ MVP'}</div><div class="ph" ${p.photo?`style="background-image:url(../../photos/${p.id}.webp)"`:''}>${p.photo?'':ini(p.n)}</div>
+ <div class="cl"><img src="../../logos/${p.club}.webp"></div><div class="pn">${p.fra?'🇫🇷 ':''}${p.n}</div><div class="mt">${p.mt}</div><div class="nt" style="background:${NC(p.note)}">${fr(p.note)}</div></div>`).join('')}</div>`;
+ return document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r}))))};
+</script></body></html>

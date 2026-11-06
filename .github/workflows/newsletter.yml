@@ -1,0 +1,52 @@
+name: Lettre du samedi
+# Chaque samedi matin : fabrique la lettre de la semaine (newsletter/<date>.html + visuel og/nl/<date>-cinq.jpg),
+# la publie sur le site, crée le BROUILLON dans Kit (jamais envoyé automatiquement) et prévient Démian par ntfy.
+on:
+  schedule:
+    - cron: "37 6 * * 6"   # samedi 7h37 heure de Paris (hiver)
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Date de la lettre (AAAA-MM-JJ, par défaut aujourd'hui) — semaine des 7 jours précédents"
+        required: false
+      nodraft:
+        description: "Mettre « 1 » pour fabriquer la lettre sans créer de brouillon Kit"
+        required: false
+permissions:
+  contents: write
+concurrency:
+  group: robot-notes
+  cancel-in-progress: false
+jobs:
+  lettre:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fabriquer et publier la lettre
+        env:
+          DAY: ${{ github.event.inputs.date }}
+        run: |
+          D="${DAY:-$(date -u +%F)}"; echo "D=$D" >> "$GITHUB_ENV"
+          pip install -q playwright && python3 -m playwright install --with-deps chromium >/dev/null
+          python3 robot/newsletter.py build --date "$D" || { echo "Pas de lettre cette semaine."; echo "SKIP=1" >> "$GITHUB_ENV"; exit 0; }
+          git config user.name "Robot EuroLeague France"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git add newsletter og/nl
+            git diff --cached --quiet && break
+            git commit -q -m "Lettre du samedi $D" && git pull -q --rebase origin main && git push -q origin HEAD:main && break
+            sleep 10
+          done
+          # attendre la mise en ligne (images de la lettre)
+          for i in $(seq 1 30); do curl -sf -o /dev/null "https://note-des-joueurs.pages.dev/og/nl/$D-cinq.jpg" && break; sleep 10; done
+      - name: Brouillon Kit
+        if: ${{ env.SKIP != '1' && github.event.inputs.nodraft != '1' }}
+        env:
+          KIT_API_KEY: ${{ secrets.KIT_API_KEY }}
+        run: python3 robot/newsletter.py draft
+      - name: Notifier (ntfy)
+        if: ${{ env.SKIP != '1' }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python3 robot/newsletter.py notify
