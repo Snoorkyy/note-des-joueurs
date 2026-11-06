@@ -1,0 +1,72 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:SC;font-weight:700;src:url(a/saira-condensed-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-800-normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:SC;font-weight:700;src:url(a/saira-condensed-latin-ext-700-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF,U+2020,U+20A0-20AB,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-ext-800-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF,U+2020,U+20A0-20AB,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:SS;font-weight:600;src:url(a/source-sans-3-latin-600-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F,U+2212}
+@font-face{font-family:SS;font-weight:700;src:url(a/source-sans-3-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F,U+2212}
+@font-face{font-family:SS;font-weight:600;src:url(a/source-sans-3-latin-ext-600-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+@font-face{font-family:SS;font-weight:700;src:url(a/source-sans-3-latin-ext-700-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1200px;height:630px;overflow:hidden;background:#060D24;font-family:SS;color:#F4F6FF}
+.c{position:relative;width:1200px;height:630px;overflow:hidden;background:radial-gradient(60% 90% at 100% 0%,rgba(255,45,58,.28),transparent 60%),radial-gradient(55% 80% at 0% 100%,rgba(0,35,149,.5),transparent 60%),#060D24}
+.c:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.022) 0 2px,transparent 2px 22px)}
+.stripe{position:absolute;left:0;right:0;bottom:0;height:10px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%)}
+.top{position:absolute;left:56px;top:40px;display:flex;align-items:center;gap:20px}
+.top img{height:52px}
+.top .sep{width:2px;height:38px;background:rgba(255,255,255,.25)}
+.top .k{font-family:SC;font-weight:800;letter-spacing:.16em;font-size:21px;color:#FFB547;text-transform:uppercase}
+/* score */
+.score{position:absolute;left:56px;top:118px;width:640px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+.team{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.team .lg{width:96px;height:96px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.team .lg img{width:66px;height:66px;object-fit:contain}
+.team .nm{font-family:SC;font-weight:800;font-size:28px;line-height:1;text-transform:uppercase;max-width:250px}
+.team.l{opacity:.55}
+.pts{font-family:SC;font-weight:800;font-size:100px;line-height:1;display:flex;gap:16px;align-items:center;letter-spacing:-.01em}
+.pts .w{color:#fff}.pts .lo{color:rgba(255,255,255,.4)}
+.pts .d{font-size:60px;color:rgba(255,255,255,.3)}
+.tag{position:absolute;left:56px;top:300px;width:640px;text-align:center;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:#FF6670}
+/* players */
+.mvp{position:absolute;right:52px;top:44px;width:404px;height:356px;border-radius:26px;background:linear-gradient(165deg,#15275F,#0B1638);border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 50px rgba(0,0,0,.45);padding:26px 26px 22px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.mvp .lab{font-family:SC;font-weight:800;font-size:20px;letter-spacing:.2em;color:#FFB547}
+.mvp .ph{width:150px;height:150px;border-radius:50%;margin:16px 0 14px;background:#E8EFF8 center/cover;border:4px solid rgba(255,255,255,.25);display:grid;place-items:center;font-family:SC;font-weight:800;font-size:58px;color:#0B1638}
+.mvp .pn{font-family:SC;font-weight:800;font-size:40px;line-height:.95;text-transform:uppercase}
+.mvp .st{font-weight:700;font-size:20px;color:#AEB9E0;margin-top:8px}
+.mvp .nt{position:absolute;right:20px;top:66px;width:96px;height:72px;border-radius:18px;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:46px;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.row{position:absolute;right:52px;width:404px;height:84px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:14px;padding:0 16px}
+.row .ph{width:56px;height:56px;border-radius:50%;background:#E8EFF8 center/cover;flex:none;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:22px;color:#0B1638}
+.row .tx{flex:1;min-width:0}
+.row .lb{font-family:SC;font-weight:800;font-size:15px;letter-spacing:.16em;color:#FF6670}
+.row .pn{font-family:SC;font-weight:800;font-size:27px;line-height:1.05;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .nt{width:70px;height:50px;border-radius:13px;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:30px;color:#fff;flex:none}
+.lst{position:absolute;left:56px;top:350px;width:640px}
+.lst .h{font-family:SC;font-weight:800;font-size:17px;letter-spacing:.18em;color:#8E9AC4;margin-bottom:10px}
+.lst .g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pl{height:62px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;padding:0 10px 0 8px}
+.pl .ph{width:46px;height:46px;border-radius:50%;background:#E8EFF8 center/cover;flex:none;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:18px;color:#0B1638}
+.pl .pn{flex:1;min-width:0;font-family:SC;font-weight:800;font-size:22px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl .nt{width:54px;height:40px;border-radius:10px;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:24px;color:#fff;flex:none}
+.url{position:absolute;left:56px;bottom:36px;font-family:SC;font-weight:800;font-size:24px;letter-spacing:.08em;color:#fff}
+.url span{color:#8E9AC4}
+</style></head><body><div class="c" id="c"></div><div class="stripe"></div>
+<script>
+const NC=n=>n>=8.5?"#17633A":n>=7?"#2E8048":n>=5.5?"#6F7F3F":n>=4.5?"#B08816":n>=3?"#C4521E":"#A01E16";
+const fr=n=>(Math.round(n*2)/2).toFixed(1).replace('.0','').replace('.',',');
+const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
+const ph=(p)=>p.photo?`style="background-image:url(../../photos/${p.id}.webp)"`:``;
+window.render=D=>{const w=D.hs>=D.as;
+ document.getElementById('c').innerHTML=`
+ <div class="top"><img src="../../logo_white.png"><div class="sep"></div><div class="k">${D.kicker}</div></div>
+ <div class="score">
+  <div class="team ${w?'':'l'}"><div class="lg"><img src="../../logos/${D.home}.webp"></div><div class="nm">${D.hn}</div></div>
+  <div class="pts"><span class="${w?'w':'lo'}">${D.hs}</span><span class="d">–</span><span class="${w?'lo':'w'}">${D.as}</span></div>
+  <div class="team ${w?'l':''}"><div class="lg"><img src="../../logos/${D.away}.webp"></div><div class="nm">${D.an}</div></div>
+ </div>
+ ${D.tag?`<div class="tag">${D.tag}</div>`:''}
+ ${D.top&&D.top.length?`<div class="lst"><div class="h">LES AUTRES NOTES À RETENIR</div><div class="g">${D.top.map(x=>`<div class="pl"><div class="ph" ${ph(x)}>${x.photo?'':ini(x.n)}</div><div class="pn">${x.fra?'🇫🇷 ':''}${x.n}</div><div class="nt" style="background:${NC(x.note)}">${fr(x.note)}</div></div>`).join('')}</div></div>`:''}
+ <div class="mvp"><div class="lab">★ MVP DU MATCH</div><div class="ph" ${ph(D.mvp)}>${D.mvp.photo?'':ini(D.mvp.n)}</div><div class="pn">${D.mvp.n}</div><div class="st">${D.mvp.st}</div><div class="nt" style="background:${NC(D.mvp.note)}">${fr(D.mvp.note)}</div></div>
+ ${D.flop?`<div class="row" style="top:414px"><div class="ph" ${ph(D.flop)}>${D.flop.photo?'':ini(D.flop.n)}</div><div class="tx"><div class="lb">À OUBLIER</div><div class="pn">${D.flop.n}</div></div><div class="nt" style="background:${NC(D.flop.note)}">${fr(D.flop.note)}</div></div>`:''}
+ <div class="url">EUROLEAGUE-FRANCE.COM <span>· LES NOTES /10</span></div>`;
+ return document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r}))))};
+</script></body></html>

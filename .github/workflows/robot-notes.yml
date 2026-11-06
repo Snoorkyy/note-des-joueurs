@@ -1,5 +1,6 @@
 name: Robot notes EuroLeague
-# Note automatiquement les matchs terminés et publie data.json (Cloudflare Pages redéploie ensuite le site).
+# Note automatiquement les matchs terminés, publie data.json (Cloudflare Pages redéploie le site),
+# prépare le post X de chaque match (visuel + page de partage) et envoie une notification ntfy « Publier sur X ».
 on:
   schedule:
     # mardi-vendredi seulement (seuls soirs de matchs EuroLeague 2026-27), toutes les 10 min de 18h à 1h heure de Paris (hiver) ;
@@ -14,6 +15,9 @@ on:
       codes:
         description: "Forcer ces gamecodes (ex. 101,102)"
         required: false
+      share:
+        description: "Refaire le post X de matchs déjà publiés (ex. 99) et renvoyer la notification"
+        required: false
 permissions:
   contents: write
 concurrency:
@@ -22,31 +26,47 @@ concurrency:
 jobs:
   notes:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Contrôle (sans publication)
         if: ${{ github.event.inputs.check }}
         run: python3 robot/run.py --check "${{ github.event.inputs.check }}"
-      - name: Noter et publier
+      - name: Noter, préparer les posts X et publier
         if: ${{ !github.event.inputs.check }}
         env:
           CODES: ${{ github.event.inputs.codes }}
+          SHARE: ${{ github.event.inputs.share }}
         run: |
           git config user.name "Robot EuroLeague France"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          pw_ready=0
           for attempt in 1 2 3; do
             git fetch -q origin main && git reset -q --hard origin/main
-            rm -f robot/commit_msg.txt
+            rm -f robot/commit_msg.txt robot/share_queue.json
             set +e
-            if [ -n "$CODES" ]; then python3 robot/run.py --codes "$CODES"; else python3 robot/run.py; fi
+            if [ -n "$SHARE" ]; then python3 robot/share.py rebuild "$SHARE" && echo "Posts X refaits : $SHARE" > robot/commit_msg.txt
+            elif [ -n "$CODES" ]; then python3 robot/run.py --codes "$CODES"
+            else python3 robot/run.py; fi
             rc=$?
             set -e
             if [ ! -f robot/commit_msg.txt ]; then exit $rc; fi
+            if [ -f robot/share_queue.json ]; then
+              if [ $pw_ready = 0 ]; then pip install -q playwright && python3 -m playwright install --with-deps chromium >/dev/null && pw_ready=1; fi
+              python3 robot/share.py render || echo "::warning::visuels X non fabriqués"
+            fi
             python3 -c "import json;json.load(open('data.json'))"
-            git add data.json
+            git add data.json og/m m 2>/dev/null || git add data.json
             git commit -q -m "$(cat robot/commit_msg.txt)"
-            if git push -q origin HEAD:main; then echo "Publié."; exit $rc; fi
+            if git push -q origin HEAD:main; then echo "Publié."; echo "RC=$rc" >> "$GITHUB_ENV"; exit 0; fi
             echo "Conflit de publication, nouvel essai ($attempt)"; sleep 10
           done
           exit 1
+      - name: Notifier « Publier sur X » (ntfy)
+        if: ${{ !github.event.inputs.check && hashFiles('robot/share_queue.json') != '' }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python3 robot/share.py notify
+      - name: Signaler un match bloqué par les contrôles
+        if: ${{ env.RC != '' && env.RC != '0' }}
+        run: exit 1

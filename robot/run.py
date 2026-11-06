@@ -210,6 +210,9 @@ def main():
                              "hs": g["score"][0], "as": g["score"][1]})   # toujours en fin de liste (jeu « Top à l'aveugle »)
         d["notes"] += rows
         new.append(g)
+        try:                                   # post X « en un geste » (visuel + texte), sans jamais bloquer les notes
+            import share; share.queue_add([share.build(d, g, box, rows)])
+        except Exception as e: print("::warning::partage X non préparé pour", c, ":", e)
         print(c, g["A"], g["score"], g["B"], "→", len(rows), "notes")
     if new:
         rnd = max(g["round"] for g in new)
