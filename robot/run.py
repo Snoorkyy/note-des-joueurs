@@ -52,13 +52,17 @@ def extract(code):
     for k, n in [("FirstQuarter",1),("SecondQuarter",2),("ThirdQuarter",3),("ForthQuarter",4),("ExtraTime",5)]:
         ev = p.get(k) or []
         if not ev: continue
-        qn, last = n, 1e9; out.append(f"#{qn}")
+        qn, last, prev_sec = n, 1e9, 600 if n <= 4 else 300; out.append(f"#{qn}")
         for e in ev:
             ty = T(e.get("PLAYTYPE"))
             if ty == "EG": ended = True
             mt = T(e.get("MARKERTIME"))
             if not mt: continue
-            mm, ss = map(int, mt.split(":")); sec = mm * 60 + ss
+            try:
+                mm, ss = mt.split(":"); sec = int(float(mm) * 60 + float(ss))
+            except ValueError:
+                sec = prev_sec           # chrono illisible dans les données officielles : on garde le précédent
+            prev_sec = sec
             if n == 5 and sec > last + 5: qn += 1; out.append(f"#{qn}")
             last = sec
             c = PT.get(ty)
