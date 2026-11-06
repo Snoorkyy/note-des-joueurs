@@ -87,6 +87,10 @@ section{margin-top:28px}
 .prow button{flex:1;min-width:0;text-align:left;background:none;border:0;font:inherit;color:inherit;cursor:pointer;padding:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
 .prow small{opacity:.55;font-size:11px;white-space:nowrap}
 .prow .note{font-size:12px;min-width:34px}
+.prow .lect{font-size:11px;min-width:30px;padding:2px 5px;border-radius:7px;border:1.5px solid rgba(0,35,149,.35);color:#002395;font-weight:800;text-align:center;white-space:nowrap}
+.prow .lect:before{content:"👥 ";font-size:10px}
+.vote-btn{display:block;margin:8px 10px 10px;padding:9px;border-radius:10px;background:#002395;color:#fff;text-align:center;font-weight:800;font-size:13px;text-decoration:none;letter-spacing:.02em}
+.vote-btn:hover{background:#ED2939}
 @media (max-width:560px){.prow small{display:none}.prow{padding:5px 5px;gap:5px}.prow .badge.xs{width:24px;height:24px}.mhead .t b{font-size:12px}}
 
 .badge.xs{width:28px;height:28px;font-size:10px}
@@ -619,11 +623,14 @@ button.gslot:disabled{cursor:default;opacity:.6}
   }
 
 
+  const VOTE="https://note-des-joueurs.pages.dev/vote.html";let LECT={};
+  const lect=(m,p)=>{const r=(LECT[m]||{})[p];return r&&r[1]>=5?`<span class="lect" title="Note des lecteurs (${r[1]} votes)">${fr(Math.round(r[0]*2)/2)}</span>`:""};
+  fetch("https://note-des-joueurs.pages.dev/api/vote").then(r=>r.json()).then(j=>{LECT=j.a||{};try{if(Object.keys(LECT).length&&D&&(!location.hash||/^#?journee-/.test(location.hash)))route()}catch(e){}}).catch(()=>{});
   function rounds(j){
     const rs=[...new Set(D.matches.map(m=>m.round))].sort((a,b)=>a-b);
     if(!rs.includes(j))j=rs[rs.length-1];
     const ms=D.matches.filter(m=>m.round===j).sort((a,b)=>a.date.localeCompare(b.date)||(+a.id.split("-")[1])-(+b.id.split("-")[1]));
-    const side=(m,c)=>D.notes.filter(n=>n[1]===m.id&&n[2]===c).sort((a,b)=>b[6]-a[6]||b[4]-a[4]).map(n=>`<div class="prow">${face(n[0],c,"xs")}<span class="pn"><button data-player="${n[0]}">${esc(D.players[n[0]].name)}</button>${flag(n[0])}</span><small>${Math.round(n[3])}′ · ${n[4]}</small>${chip(n[6])}</div>`).join("");
+    const side=(m,c)=>D.notes.filter(n=>n[1]===m.id&&n[2]===c).sort((a,b)=>b[6]-a[6]||b[4]-a[4]).map(n=>`<div class="prow">${face(n[0],c,"xs")}<span class="pn"><button data-player="${n[0]}">${esc(D.players[n[0]].name)}</button>${flag(n[0])}</span><small>${Math.round(n[3])}′ · ${n[4]}</small>${chip(n[6])}${lect(m.id,n[0])}</div>`).join("");
     $("#app").innerHTML=`<section aria-labelledby="h-r"><h2 id="h-r">Journée ${j}</h2>
       <div class="rtabs" role="group" aria-label="Choisir la journée">${rs.map(r=>`<button data-round="${r}" aria-pressed="${r===j}">J${r}</button>`).join("")}</div>
       <div class="vbar"><a class="vbtn" href="#visuels-${j}">Visuels à partager</a></div>
@@ -632,7 +639,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
         <div class="mhead"><button class="t" data-club="${m.home}">${badge(m.home,"sm")}<b>${esc(D.clubs[m.home].name)}</b></button>
         <div class="sc"><span class="${hw?"w":"l"}">${m.hs}</span>-<span class="${hw?"l":"w"}">${m.as}</span><small>${dateFr(m.date)}</small></div>
         <button class="t r" data-club="${m.away}"><b>${esc(D.clubs[m.away].name)}</b>${badge(m.away,"sm")}</button></div>
-        <div class="mcols"><div>${side(m,m.home)}</div><div>${side(m,m.away)}</div></div></article>`}).join("")}</div></section>`;
+        <div class="mcols"><div>${side(m,m.home)}</div><div>${side(m,m.away)}</div></div><a class="vote-btn" href="${VOTE}?m=${m.id}" target="_blank" rel="noopener">🗳️ À toi de noter ce match</a></article>`}).join("")}</div></section>`;
     window.scrollTo(0,0);
   }
 
