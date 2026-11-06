@@ -84,7 +84,7 @@ def build(d, g, box, rows):
     L_mvp_short = f"⭐ {pname(d, mvp)} {nfr(notes[mvp])}/10"
     L_flop = f"📉 {pname(d, flop)} {nfr(notes[flop])}/10" if flop else None
     L_fr = ("🇫🇷 " + " · ".join(f"{pname(d, p)} {nfr(notes[p])}" for p in french)) if french else None
-    L_end = f"Toutes les notes de la J{rnd} 👉 {url}\n\n#EuroLeague"
+    L_end = f"Et toi, tu leur mets combien ? 👉 {url}\n\n#EuroLeague"
     def compose(mv, fl, fr_):
         body = [L_head, "", mv] + ([fl] if fl else []) + ([fr_] if fr_ else []) + ["", L_end]
         return "\n".join(body)
@@ -107,7 +107,7 @@ def build(d, g, box, rows):
             "mvp": {**P(mvp), "st": stats_line(box[mvp])}, "flop": P(flop) if flop else None,
             "top": [{**P(p), "fra": p in frs} for p in top]}
     title = f"{CARD[home]} {hs}-{as_} {CARD[away]} · Les notes /10"
-    desc = f"MVP : {pname(d, mvp)} {nfr(notes[mvp])}/10. Toutes les notes du match, joueur par joueur, par EuroLeague France."
+    desc = f"MVP : {pname(d, mvp)} {nfr(notes[mvp])}/10. Toutes les notes du match… et à toi de noter les joueurs !"
     return {"id": mid, "round": rnd, "card": card, "tweet": text, "url": url, "title": title, "desc": desc,
             "notif": f"{CARD[home]} {hs}-{as_} {CARD[away]} : post prêt"}
 
@@ -127,7 +127,7 @@ PAGE = """<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>{tit
 <meta name="twitter:description" content="{desc}"><meta name="twitter:image" content="{img}">
 <meta http-equiv="refresh" content="0; url={dest}"><link rel="canonical" href="{dest}">
 </head><body style="background:#060D24;color:#fff;font-family:sans-serif;text-align:center;padding:40px">
-<p><a style="color:#FFB547" href="{dest}">Voir les notes du match sur EuroLeague France</a></p>
+<p><a style="color:#FFB547" href="{dest}">Noter les joueurs du match</a></p>
 <script>location.replace({dest_js})</script></body></html>
 """
 
@@ -143,7 +143,7 @@ def render():
             pg.evaluate("D=>window.render(D)", it["card"]); pg.wait_for_timeout(300)
             png = os.path.join(ROOT, "og", "m", it["id"] + ".png")
             pg.screenshot(path=png)
-            dest = f"{NOTES}#journee-{it['round']}"
+            dest = f"{SITE}/vote.html?m={it['id']}"
             esc = lambda s: s.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
             html = PAGE.format(title=esc(it["title"]), desc=esc(it["desc"]), url=it["url"], img=f"{SITE}/og/m/{it['id']}.png",
                                dest=dest, dest_js=json.dumps(dest))

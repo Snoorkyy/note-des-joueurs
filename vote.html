@@ -1,0 +1,147 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Note les joueurs · EuroLeague France</title>
+<meta name="description" content="Mets ta note aux joueurs du match et compare-la à celle d'EuroLeague France et des autres lecteurs.">
+<meta property="og:title" content="À toi de noter les joueurs · EuroLeague France"><meta property="og:image" content="https://note-des-joueurs.pages.dev/og/partage-notes.jpg">
+<meta name="theme-color" content="#060D24">
+<style>
+@font-face{font-family:SC;font-weight:800;src:url(robot/share/a/saira-condensed-latin-800-normal.woff2);unicode-range:U+0000-00FF,U+0152-0153,U+2000-206F}
+@font-face{font-family:SC;font-weight:800;src:url(robot/share/a/saira-condensed-latin-ext-800-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+@font-face{font-family:SC;font-weight:700;src:url(robot/share/a/saira-condensed-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+0152-0153,U+2000-206F}
+@font-face{font-family:SC;font-weight:700;src:url(robot/share/a/saira-condensed-latin-ext-700-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+@font-face{font-family:SS;font-weight:400;src:url(robot/share/a/source-sans-3-latin-400-normal.woff2)}
+@font-face{font-family:SS;font-weight:600;src:url(robot/share/a/source-sans-3-latin-600-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:SS;font-weight:600;src:url(robot/share/a/source-sans-3-latin-ext-600-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+@font-face{font-family:SS;font-weight:700;src:url(robot/share/a/source-sans-3-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:SS;font-weight:700;src:url(robot/share/a/source-sans-3-latin-ext-700-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+:root{--bg:#060D24;--card:#0E1A42;--line:rgba(255,255,255,.09);--mut:#93A0CB;--gold:#FFB547;--red:#FF4B57}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:#F4F6FF;font:16px/1.4 SS,system-ui,sans-serif;min-height:100vh;
+ background-image:radial-gradient(80% 40% at 100% 0%,rgba(255,45,58,.22),transparent 70%),radial-gradient(80% 40% at 0% 100%,rgba(0,35,149,.45),transparent 70%);background-attachment:fixed}
+a{color:inherit}
+.w{max-width:620px;margin:0 auto;padding:18px 16px 120px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.top img{height:34px}
+.top a.all{font:700 13px SC;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);text-decoration:none;border:1px solid var(--line);padding:7px 11px;border-radius:999px}
+.k{font:800 14px SC;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;text-align:center}
+h1{font:800 34px/1 SC;text-transform:uppercase;text-align:center;margin:6px 0 4px}
+.sub{color:var(--mut);text-align:center;font-size:15px;margin-bottom:18px}
+.sc{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 10px;margin-bottom:22px}
+.tm{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font:800 17px/1 SC;text-transform:uppercase}
+.tm i{width:54px;height:54px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.tm i img{width:38px;height:38px;object-fit:contain}
+.tm.l{opacity:.55}
+.pts{font:800 46px/1 SC;display:flex;gap:8px;align-items:center}.pts .lo{opacity:.4}.pts small{font-size:28px;opacity:.3}
+.gh{display:flex;align-items:center;gap:10px;font:800 15px SC;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin:20px 4px 10px}
+.gh img{width:22px;height:22px;object-fit:contain;background:#fff;border-radius:50%;padding:2px}
+.p{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px 10px;margin-bottom:10px;transition:border-color .2s}
+.p.set{border-color:rgba(255,181,71,.45)}
+.ph{display:flex;align-items:center;gap:12px}
+.av{width:46px;height:46px;border-radius:50%;flex:none;background:#E7EFF7 center/cover;display:grid;place-items:center;font:800 17px SC;color:#0B1638}
+.nm{flex:1;min-width:0}
+.nm b{display:block;font:800 19px/1.05 SC;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm span{font-size:13px;color:var(--mut)}
+.us{display:flex;flex-direction:column;align-items:center;gap:2px;font:700 10px SC;letter-spacing:.14em;color:var(--mut)}
+.chip{min-width:46px;height:32px;padding:0 8px;border-radius:9px;display:grid;place-items:center;font:800 19px SC;color:#fff}
+.me{width:62px;height:46px;border-radius:12px;display:grid;place-items:center;font:800 26px SC;border:2px dashed rgba(255,255,255,.25);color:rgba(255,255,255,.4);flex:none;transition:all .15s}
+.p.set .me{border:0;color:#fff}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:36px;background:transparent;margin-top:6px;touch-action:pan-y}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:8px;background:linear-gradient(90deg,#A01E16,#C4521E 30%,#B08816 47%,#6F7F3F 60%,#2E8048 75%,#17633A)}
+input[type=range]::-moz-range-track{height:8px;border-radius:8px;background:linear-gradient(90deg,#A01E16,#C4521E 30%,#B08816 47%,#6F7F3F 60%,#2E8048 75%,#17633A)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:-10px;border-radius:50%;background:#fff;border:4px solid var(--bg);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:4px solid var(--bg)}
+.p:not(.set) input[type=range]{opacity:.45}
+.ticks{display:flex;justify-content:space-between;font:700 11px SC;color:var(--mut);padding:0 6px}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(6,13,36,.96) 30%)}
+.bar button,.btn{display:block;width:100%;max-width:588px;margin:0 auto;border:0;border-radius:16px;padding:16px;font:800 21px SC;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;background:var(--gold);color:#1B1300;box-shadow:0 10px 30px rgba(0,0,0,.4);text-align:center;text-decoration:none}
+.bar button:disabled{background:#2A3560;color:#8E9AC4;box-shadow:none;cursor:default}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.res div{background:rgba(255,255,255,.04);border-radius:12px;padding:6px 4px 8px;text-align:center;font:700 11px SC;letter-spacing:.12em;color:var(--mut)}
+.res div .chip{margin:4px auto 0;width:56px}
+.res small{display:block;font:600 11px SS;letter-spacing:0;margin-top:3px}
+.thx{background:linear-gradient(135deg,#1B2C6B,#0E1A42);border:1px solid rgba(255,181,71,.35);border-radius:20px;padding:18px;text-align:center;margin-bottom:18px}
+.thx b{font:800 26px/1.05 SC;text-transform:uppercase;display:block;margin-bottom:6px}
+.thx p{color:var(--mut);font-size:15px;margin-bottom:14px}
+.btn.x{background:#fff;color:#000}
+.btn.ghost{background:transparent;color:#fff;border:1px solid var(--line);box-shadow:none;margin-top:10px;font-size:17px}
+.ml a{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;text-decoration:none;font:800 18px SC;text-transform:uppercase}
+.ml a span{flex:1}.ml a em{font-style:normal;color:var(--gold)}
+.ml img{width:30px;height:30px;object-fit:contain;background:#fff;border-radius:50%;padding:3px}
+.err{text-align:center;color:var(--red);margin:20px 0;font-weight:600}
+.foot{text-align:center;color:var(--mut);font-size:13px;margin-top:26px}
+.stripe{position:fixed;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%);z-index:5}
+</style></head><body><div class="stripe"></div>
+<div class="w" id="app"><p class="sub" style="margin-top:40vh">Chargement…</p></div>
+<div class="bar" id="bar" hidden><button id="go" disabled>Bouge les curseurs pour noter</button></div>
+<script>
+const NOTES="https://www.euroleague-france.com/notes-des-joueurs/",API="/api/vote",SELF=location.origin+"/m/";
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const NC=n=>n>=8.5?"#17633A":n>=7?"#2E8048":n>=5.5?"#6F7F3F":n>=4.5?"#B08816":n>=3?"#C4521E":"#A01E16";
+const fr=n=>(Math.round(n*2)/2).toFixed(1).replace(".0","").replace(".",",");
+const fr1=n=>(Math.round(n*10)/10).toFixed(1).replace(".0","").replace(".",",");
+const nm=p=>{const s=(D.players[p]||{name:p}).name.split(", ");return s.length>1?s[1]+" "+s[0]:s[0]};
+const ini=n=>n.split(" ").map(w=>w[0]).join("").slice(0,2);
+const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let dev=ls.get("elf-dev");if(!dev){dev=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));ls.set("elf-dev",dev)}
+let D,M,PL,mine={};
+const logo=c=>`logos/${c}.webp`;
+const av=(p)=>{const ph=D.photos.includes(p);return `<div class="av" ${ph?`style="background-image:url(photos/${p}.webp)"`:""}>${ph?"":ini(nm(p))}</div>`};
+fetch("data.json",{cache:"no-store"}).then(r=>r.json()).then(d=>{D=d;D.photos=D.photos||[];const id=new URLSearchParams(location.search).get("m");
+  M=D.matches.find(m=>m.id===id);if(!M)return pick();
+  PL=D.notes.filter(n=>n[1]===M.id&&n[3]>=10).sort((a,b)=>b[6]-a[6]||b[4]-a[4]);
+  mine=ls.get("elf-v-"+M.id)||{};
+  Object.keys(mine).length?results():form();
+}).catch(()=>{$("#app").innerHTML=`<p class="err">Impossible de charger les données. Réessaie dans un instant.</p>`});
+
+function head(){const hw=M.hs>M.as;const d=new Date(M.date+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
+  return `<div class="top"><a href="${NOTES}#journee-${M.round}"><img src="logo_white.png" alt="EuroLeague France"></a><a class="all" href="${NOTES}#journee-${M.round}">Toutes les notes</a></div>
+  <div class="k">Journée ${M.round} · ${d}</div>
+  <div class="sc"><div class="tm ${hw?"":"l"}"><i><img src="${logo(M.home)}" alt=""></i>${esc(D.clubs[M.home].name)}</div>
+  <div class="pts"><span class="${hw?"":"lo"}">${M.hs}</span><small>–</small><span class="${hw?"lo":""}">${M.as}</span></div>
+  <div class="tm ${hw?"l":""}"><i><img src="${logo(M.away)}" alt=""></i>${esc(D.clubs[M.away].name)}</div></div>`}
+
+function form(){
+  const grp=c=>`<div class="gh"><img src="${logo(c)}" alt="">${esc(D.clubs[c].name)}</div>`+PL.filter(n=>n[2]===c).map(n=>`
+   <div class="p" data-p="${n[0]}"><div class="ph">${av(n[0])}<div class="nm"><b>${esc(nm(n[0]))}${D.fr.includes(n[0])?" 🇫🇷":""}</b><span>${Math.round(n[3])} min · ${n[4]} d'éval</span></div>
+   <div class="us">NOUS<span class="chip" style="background:${NC(n[6])}">${fr(n[6])}</span></div><div class="me">–</div></div>
+   <input type="range" min="0" max="10" step="0.5" value="5" aria-label="Ta note pour ${esc(nm(n[0]))}">
+   <div class="ticks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div></div>`).join("");
+  $("#app").innerHTML=head()+`<h1>À toi de noter</h1><p class="sub">Glisse le curseur de chaque joueur (0 à 10, par demi-points). Note ceux que tu veux.</p>`+grp(M.home)+grp(M.away)+`<p class="foot">Un vote par appareil et par match.</p>`;
+  const sel={};$("#bar").hidden=false;
+  const upd=()=>{const k=Object.keys(sel).length;const b=$("#go");b.disabled=!k;b.textContent=k?`Valider mes notes (${k} joueur${k>1?"s":""})`:"Bouge les curseurs pour noter"};
+  document.querySelectorAll(".p").forEach(el=>{const r=el.querySelector("input"),me=el.querySelector(".me"),p=el.dataset.p;
+    const set=()=>{const v=+r.value;sel[p]=v;el.classList.add("set");me.textContent=fr(v);me.style.background=NC(v);upd()};
+    r.addEventListener("input",set);r.addEventListener("change",set);});
+  $("#go").onclick=async()=>{const b=$("#go");b.disabled=true;b.textContent="Envoi…";
+    try{const r=await fetch(API,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({m:M.id,dev,v:sel})});
+      const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);
+      mine=sel;ls.set("elf-v-"+M.id,sel);results(j)}
+    catch(e){b.disabled=false;upd();alertBox("Vote non enregistré ("+e.message+"). Réessaie.")}};
+}
+function alertBox(t){let e=$(".err");if(!e){e=document.createElement("p");e.className="err";$("#app").appendChild(e)}e.textContent=t;e.scrollIntoView({behavior:"smooth"})}
+
+async function results(j){
+  $("#bar").hidden=true;
+  if(!j){try{j=await (await fetch(API+"?m="+M.id,{cache:"no-store"})).json()}catch(e){j={p:{},n:0}}}
+  const P=j.p||{};
+  const best=Object.entries(mine).sort((a,b)=>b[1]-a[1])[0];
+  const tw=`J'ai noté ${D.clubs[M.home].name} ${M.hs}-${M.as} ${D.clubs[M.away].name} : mon MVP, ${nm(best[0])} (${fr(best[1])}/10).\n\nEt toi, tu leur mets combien ? 👉 ${SELF}${M.id}\n\n#EuroLeague`;
+  const row=n=>{const p=n[0],m=mine[p],r=P[p];return `<div class="p ${m!=null?"set":""}"><div class="ph">${av(p)}<div class="nm"><b>${esc(nm(p))}${D.fr.includes(p)?" 🇫🇷":""}</b><span>${Math.round(n[3])} min · ${n[4]} d'éval</span></div></div>
+   <div class="res"><div>TOI${m!=null?`<span class="chip" style="background:${NC(m)}">${fr(m)}</span>`:`<span class="chip" style="background:#2A3560">–</span>`}</div>
+   <div>NOUS<span class="chip" style="background:${NC(n[6])}">${fr(n[6])}</span></div>
+   <div>LECTEURS${r?`<span class="chip" style="background:${NC(r[0])}">${fr1(r[0])}</span><small>${r[1]} vote${r[1]>1?"s":""}</small>`:`<span class="chip" style="background:#2A3560">–</span>`}</div></div></div>`};
+  $("#app").innerHTML=head()+`<div class="thx"><b>Merci, tes notes sont comptées !</b><p>${j.n||1} lecteur${(j.n||1)>1?"s ont":" a"} noté ce match. Compare avec nous ci-dessous.</p>
+    <a class="btn x" target="_blank" rel="noopener" href="https://x.com/intent/post?text=${encodeURIComponent(tw)}">Partager mes notes sur X</a>
+    <a class="btn ghost" href="${NOTES}#journee-${M.round}">Toutes les notes de la J${M.round}</a></div>`
+    +[M.home,M.away].map(c=>`<div class="gh"><img src="${logo(c)}" alt="">${esc(D.clubs[c].name)}</div>`+PL.filter(n=>n[2]===c).map(row).join("")).join("")
+    +`<p class="foot">La note des lecteurs apparaît sur le site à partir de 5 votes.</p>`;
+  window.scrollTo(0,0);
+}
+function pick(){
+  const R=Math.max(...D.matches.map(m=>m.round));const ms=D.matches.filter(m=>m.round===R);
+  $("#app").innerHTML=`<div class="top"><a href="${NOTES}"><img src="logo_white.png" alt="EuroLeague France"></a><a class="all" href="${NOTES}">Toutes les notes</a></div>
+  <div class="k">Journée ${R}</div><h1>À toi de noter</h1><p class="sub">Choisis un match et note les joueurs.</p>
+  <div class="ml">${ms.map(m=>`<a href="?m=${m.id}"><img src="${logo(m.home)}" alt=""><span>${esc(D.clubs[m.home].name)} ${m.hs}-${m.as} ${esc(D.clubs[m.away].name)}</span><img src="${logo(m.away)}" alt=""><em>›</em></a>`).join("")}</div>`;
+}
+</script></body></html>
