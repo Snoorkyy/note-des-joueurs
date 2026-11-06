@@ -57,6 +57,7 @@ jobs:
             fi
             python3 -c "import json;json.load(open('data.json'))"
             git add data.json og/m m 2>/dev/null || git add data.json
+            if git diff --cached --quiet; then echo "Rien de nouveau à publier."; echo "RC=$rc" >> "$GITHUB_ENV"; exit 0; fi
             git commit -q -m "$(cat robot/commit_msg.txt)"
             if git push -q origin HEAD:main; then echo "Publié."; echo "RC=$rc" >> "$GITHUB_ENV"; exit 0; fi
             echo "Conflit de publication, nouvel essai ($attempt)"; sleep 10
