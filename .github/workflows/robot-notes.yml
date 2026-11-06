@@ -18,6 +18,9 @@ on:
       share:
         description: "Refaire le post X de matchs déjà publiés (ex. 99) et renvoyer la notification"
         required: false
+      story:
+        description: "Publier (ou republier) la story Instagram de matchs déjà publiés (ex. 99)"
+        required: false
 permissions:
   contents: write
 concurrency:
@@ -37,6 +40,7 @@ jobs:
         env:
           CODES: ${{ github.event.inputs.codes }}
           SHARE: ${{ github.event.inputs.share }}
+          STORY: ${{ github.event.inputs.story }}
         run: |
           git config user.name "Robot EuroLeague France"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -45,7 +49,7 @@ jobs:
             git fetch -q origin main && git reset -q --hard origin/main
             rm -f robot/commit_msg.txt robot/share_queue.json
             set +e
-            if [ -n "$SHARE" ]; then python3 robot/share.py rebuild "$SHARE" && echo "Posts X refaits : $SHARE" > robot/commit_msg.txt
+            if [ -n "$SHARE$STORY" ]; then python3 robot/share.py rebuild "${SHARE:-$STORY}" && echo "Visuels refaits : ${SHARE:-$STORY}" > robot/commit_msg.txt
             elif [ -n "$CODES" ]; then python3 robot/run.py --codes "$CODES"
             else python3 robot/run.py; fi
             rc=$?
@@ -64,10 +68,15 @@ jobs:
           done
           exit 1
       - name: Notifier « Publier sur X » (ntfy)
-        if: ${{ !github.event.inputs.check && hashFiles('robot/share_queue.json') != '' }}
+        if: ${{ !github.event.inputs.check && !github.event.inputs.story && hashFiles('robot/share_queue.json') != '' }}
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: python3 robot/share.py notify
+      - name: Story Instagram (API Meta)
+        if: ${{ !github.event.inputs.check && !github.event.inputs.share && hashFiles('robot/share_queue.json') != '' }}
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+        run: python3 robot/share.py instagram
       - name: Signaler un match bloqué par les contrôles
         if: ${{ env.RC != '' && env.RC != '0' }}
         run: exit 1

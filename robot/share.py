@@ -3,6 +3,7 @@
   python3 robot/share.py rebuild 99[,100]  -> remet en file d'attente des matchs déjà publiés (re-lit l'API)
   python3 robot/share.py render            -> fabrique og/m/<id>.png et m/<id>.html pour la file d'attente
   python3 robot/share.py notify            -> attend que la carte soit en ligne puis envoie les notifications ntfy
+  python3 robot/share.py instagram         -> publie la story Instagram de chaque match (og/m/<id>-story.jpg), secret IG_TOKEN
 La file d'attente est robot/share_queue.json (non versionnée)."""
 import json, os, sys, time, hashlib, unicodedata, urllib.request, urllib.parse, datetime as dt
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -106,6 +107,14 @@ def build(d, g, box, rows):
             "hs": hs, "as": as_, "tag": " · ".join(tags),
             "mvp": {**P(mvp), "st": stats_line(box[mvp])}, "flop": P(flop) if flop else None,
             "top": [{**P(p), "fra": p in frs} for p in top]}
+    # story Instagram : jusqu'à 7 autres joueurs (Français assurés d'y figurer), classés par note
+    oth = [p for p in played if p not in (mvp, flop) and box[p]["min"] >= 10]
+    keep = [p for p in oth if p in frs][:3]
+    keep += [p for p in sorted(oth, key=lambda p: (-notes[p], -box[p]["pir"])) if p not in keep][:7 - len(keep)]
+    card["lst"] = [{**P(p), "fra": p in frs, "club": d["players"][p]["club"]}
+                   for p in sorted(keep, key=lambda p: (-notes[p], -box[p]["pir"]))]
+    if card["flop"]: card["flop"]["club"] = d["players"][flop]["club"]
+    card["mvp"]["club"] = d["players"][mvp]["club"]
     title = f"{CARD[home]} {hs}-{as_} {CARD[away]} · Les notes /10"
     desc = f"MVP : {pname(d, mvp)} {nfr(notes[mvp])}/10. Toutes les notes du match… et à toi de noter les joueurs !"
     return {"id": mid, "round": rnd, "card": card, "tweet": text, "url": url, "title": title, "desc": desc,
@@ -139,10 +148,16 @@ def render():
     with sync_playwright() as pw:
         b = pw.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 630})
         pg.goto("file://" + os.path.join(ROOT, "robot", "share", "card.html"))
+        sp = b.new_page(viewport={"width": 1080, "height": 1920})
+        sp.goto("file://" + os.path.join(ROOT, "robot", "share", "story.html"))
         for it in q:
             pg.evaluate("D=>window.render(D)", it["card"]); pg.wait_for_timeout(300)
             png = os.path.join(ROOT, "og", "m", it["id"] + ".png")
             pg.screenshot(path=png)
+            try:
+                sp.evaluate("D=>window.render(D)", it["card"]); sp.wait_for_timeout(300)
+                sp.screenshot(path=os.path.join(ROOT, "og", "m", it["id"] + "-story.jpg"), type="jpeg", quality=90)
+            except Exception as e: print("::warning::story non fabriquée", it["id"], e)
             dest = f"{SITE}/vote.html?m={it['id']}"
             esc = lambda s: s.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
             html = PAGE.format(title=esc(it["title"]), desc=esc(it["desc"]), url=it["url"], img=f"{SITE}/og/m/{it['id']}.png",
@@ -173,7 +188,48 @@ def notify(dry=False):
         if dry: print(json.dumps(msg, ensure_ascii=False, indent=1)); continue
         req = urllib.request.Request("https://ntfy.sh/", data=json.dumps(msg).encode(), headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=20) as r: print("notifié", it["id"], r.status)
-    if not dry: os.remove(QUEUE)
+
+GRAPH = "https://graph.facebook.com/v24.0"
+def _graph(path, data=None):
+    url = f"{GRAPH}/{path}"
+    tok = os.environ["IG_TOKEN"]
+    if data is None:
+        url += ("&" if "?" in url else "?") + "access_token=" + urllib.parse.quote(tok); req = urllib.request.Request(url)
+    else:
+        req = urllib.request.Request(url, data=urllib.parse.urlencode({**data, "access_token": tok}).encode())
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r: return json.loads(r.read().decode())
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(e.read().decode()[:400])
+
+def instagram():
+    """Publie en story Instagram le visuel 1080x1920 de chaque match de la file (API Graph de Meta, gratuite).
+    Secret IG_TOKEN = jeton d'accès de la page Facebook liée au compte Instagram professionnel (n'expire pas)."""
+    if not os.environ.get("IG_TOKEN"): print("::warning::IG_TOKEN absent : stories Instagram non publiées"); return 0
+    q = json.load(open(QUEUE)) if os.path.exists(QUEUE) else []
+    if not q: print("aucune story"); return 0
+    ig = os.environ.get("IG_USER_ID") or _graph("me?fields=instagram_business_account")["instagram_business_account"]["id"]
+    bad = 0
+    for it in q:
+        img = f"{SITE}/og/m/{it['id']}-story.jpg"
+        for _ in range(30):
+            try:
+                with urllib.request.urlopen(urllib.request.Request(img + "?v=" + str(time.time()), headers={"User-Agent": "Mozilla/5.0"}), timeout=15) as r:
+                    if r.status == 200: break
+            except Exception: pass
+            time.sleep(10)
+        try:
+            c = _graph(f"{ig}/media", {"image_url": img, "media_type": "STORIES"})["id"]
+            for _ in range(30):
+                st = _graph(f"{c}?fields=status_code").get("status_code")
+                if st == "FINISHED": break
+                if st == "ERROR": raise RuntimeError("traitement de l'image refusé par Instagram")
+                time.sleep(4)
+            r = _graph(f"{ig}/media_publish", {"creation_id": c})
+            print("story Instagram publiée", it["id"], r.get("id"))
+        except Exception as e:
+            bad += 1; print("::error::story Instagram non publiée pour", it["id"], ":", e)
+    return 1 if bad else 0
 
 def rebuild(codes):
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -190,4 +246,5 @@ if __name__ == "__main__":
     a = sys.argv[1:]
     if a[0] == "render": render()
     elif a[0] == "notify": notify(dry="--dry" in a)
+    elif a[0] == "instagram": sys.exit(instagram())
     elif a[0] == "rebuild": rebuild([int(x) for x in a[1].split(",")])
