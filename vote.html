@@ -63,7 +63,9 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .thx{background:linear-gradient(135deg,#1B2C6B,#0E1A42);border:1px solid rgba(255,181,71,.35);border-radius:20px;padding:18px;text-align:center;margin-bottom:18px}
 .thx b{font:800 26px/1.05 SC;text-transform:uppercase;display:block;margin-bottom:6px}
 .thx p{color:var(--mut);font-size:15px;margin-bottom:14px}
-.btn.x{background:#fff;color:#000}
+.prev{aspect-ratio:1200/630;border-radius:12px;overflow:hidden;background:#0B1638;display:grid;place-items:center;color:var(--mut);font-size:14px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.prev img{width:100%;height:100%;display:block}
+.btn.x{background:#fff;color:#000;font-family:SC}
 .btn.ghost{background:transparent;color:#fff;border:1px solid var(--line);box-shadow:none;margin-top:10px;font-size:17px}
 .ml a{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;text-decoration:none;font:800 18px SC;text-transform:uppercase}
 .ml a span{flex:1}.ml a em{font-style:normal;color:var(--gold)}
@@ -125,19 +127,83 @@ async function results(j){
   $("#bar").hidden=true;
   if(!j){try{j=await (await fetch(API+"?m="+M.id,{cache:"no-store"})).json()}catch(e){j={p:{},n:0}}}
   const P=j.p||{};
-  const best=Object.entries(mine).sort((a,b)=>b[1]-a[1])[0];
-  const tw=`J'ai noté ${D.clubs[M.home].name} ${M.hs}-${M.as} ${D.clubs[M.away].name} : mon MVP, ${nm(best[0])} (${fr(best[1])}/10).\n\nEt toi, tu leur mets combien ? 👉 ${SELF}${M.id}\n\n#EuroLeague`;
+  const best=Object.entries(mine).sort((a,b)=>b[1]-a[1]||(ours(b[0])-ours(a[0])))[0];
   const row=n=>{const p=n[0],m=mine[p],r=P[p];return `<div class="p ${m!=null?"set":""}"><div class="ph">${av(p)}<div class="nm"><b>${esc(nm(p))}${D.fr.includes(p)?" 🇫🇷":""}</b><span>${Math.round(n[3])} min · ${n[4]} d'éval</span></div></div>
    <div class="res"><div>TOI${m!=null?`<span class="chip" style="background:${NC(m)}">${fr(m)}</span>`:`<span class="chip" style="background:#2A3560">–</span>`}</div>
    <div>NOUS<span class="chip" style="background:${NC(n[6])}">${fr(n[6])}</span></div>
    <div>LECTEURS${r?`<span class="chip" style="background:${NC(r[0])}">${fr1(r[0])}</span><small>${r[1]} vote${r[1]>1?"s":""}</small>`:`<span class="chip" style="background:#2A3560">–</span>`}</div></div></div>`};
-  $("#app").innerHTML=head()+`<div class="thx"><b>Merci, tes notes sont comptées !</b><p>${j.n||1} lecteur${(j.n||1)>1?"s ont":" a"} noté ce match. Compare avec nous ci-dessous.</p>
-    <a class="btn x" target="_blank" rel="noopener" href="https://x.com/intent/post?text=${encodeURIComponent(tw)}">Partager mes notes sur X</a>
+  $("#app").innerHTML=head()+`<div class="thx"><b>Merci, tes notes sont comptées !</b><p>${j.n||1} lecteur${(j.n||1)>1?"s ont":" a"} noté ce match. Montre tes notes à tes followers :</p>
+    <div class="prev" id="prev"><span>Fabrication de ton visuel…</span></div>
+    <button class="btn x" id="shx">Partager mon visuel sur X</button>
+    <a class="btn ghost" id="dl" download="mes-notes-${M.id}.jpg">Télécharger mon visuel</a>
     <a class="btn ghost" href="${NOTES}#journee-${M.round}">Toutes les notes de la J${M.round}</a></div>`
     +[M.home,M.away].map(c=>`<div class="gh"><img src="${logo(c)}" alt="">${esc(D.clubs[c].name)}</div>`+PL.filter(n=>n[2]===c).map(row).join("")).join("")
     +`<p class="foot">La note des lecteurs apparaît sur le site à partir de 5 votes.</p>`;
   window.scrollTo(0,0);
+  // visuel + texte de partage
+  const tweet=link=>{const H=D.clubs[M.home].name,A=D.clubs[M.away].name;
+    const dis=Object.entries(mine).map(([p,x])=>[p,x,ours(p)]).filter(z=>z[2]!=null&&Math.abs(z[1]-z[2])>=1.5).sort((a,b)=>Math.abs(b[1]-b[2])-Math.abs(a[1]-a[2]))[0];
+    const cta=["T'es d'accord ? Mets tes notes 👉","Tu ferais mieux ? Note-les toi aussi 👉","À toi de juger, mets tes notes 👉","Qui a raison ? Viens noter 👉"][Math.floor(Math.random()*4)];
+    const L=[`Mes notes pour ${H} ${M.hs}-${M.as} ${A} 🏀`,"",`⭐ Mon MVP : ${nm(best[0])} ${fr(best[1])}/10`];
+    if(dis)L.push(`🤔 ${nm(dis[0])} : je mets ${fr(dis[1])}, EuroLeague France ${fr(dis[2])}`);
+    L.push("",`${cta} ${link}`,"","#EuroLeague");return L.join("\n")};
+  let file=null,link=SELF+M.id;const mobile=matchMedia("(pointer:coarse)").matches;
+  const ready=(async()=>{const cv=await drawCard(best);const url=cv.toDataURL("image/jpeg",.88);
+    $("#prev").innerHTML=`<img src="${url}" alt="Mon visuel de notes">`;$("#dl").href=url;
+    file=new File([await (await fetch(url)).blob()],`mes-notes-${M.id}.jpg`,{type:"image/jpeg"});
+    try{const r=await fetch("/api/share",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({m:M.id,dev,img:url})});const k=await r.json();if(k.id)link=location.origin+"/s/"+k.id}catch(e){}
+  })().catch(e=>{$("#prev").innerHTML=""});
+  $("#shx").onclick=async()=>{
+    if(mobile&&file&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],text:tweet(link)});return}catch(e){if(e.name==="AbortError")return}}
+    const w=window.open("about:blank","_blank");await ready;const u="https://x.com/intent/post?text="+encodeURIComponent(tweet(link));if(w)w.location=u;else location.href=u};
 }
+const ours=p=>{const n=PL.find(z=>z[0]===p);return n?n[6]:null};
+/* ---------- visuel « Mes notes » 1200 × 630 ---------- */
+const img=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src});
+function rr(x,X,Y,w,h,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath()}
+function fit(x,t,max,size,font){let s=size;do{x.font=`${font} ${s}px SC`;s-=1}while(x.measureText(t).width>max&&s>10);return t}
+async function face(x,p,cx,cy,r){x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.fillStyle="#E7EFF7";x.fill();x.clip();
+  const i=D.photos.includes(p)?await img(`photos/${p}.webp`):null;
+  if(i)x.drawImage(i,cx-r,cy-r,2*r,2*r);else{x.fillStyle="#0B1638";x.font=`800 ${Math.round(r*.8)}px SC`;x.textAlign="center";x.textBaseline="middle";x.fillText(ini(nm(p)),cx,cy+2)}
+  x.restore()}
+function chipC(x,v,X,Y,w,h,size){rr(x,X,Y,w,h,h*.25);x.fillStyle=NC(v);x.fill();x.fillStyle="#fff";x.font=`800 ${size}px SC`;x.textAlign="center";x.textBaseline="middle";x.fillText(fr(v),X+w/2,Y+h/2+2)}
+async function drawCard(best){
+  await Promise.all(["800 40px SC","700 20px SC","700 20px SS","600 20px SS"].map(f=>document.fonts.load(f).catch(()=>0)));
+  const W=1200,Hh=630,cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const x=cv.getContext("2d");
+  x.fillStyle="#060D24";x.fillRect(0,0,W,Hh);
+  let g=x.createRadialGradient(W,0,0,W,0,700);g.addColorStop(0,"rgba(255,45,58,.30)");g.addColorStop(1,"rgba(255,45,58,0)");x.fillStyle=g;x.fillRect(0,0,W,Hh);
+  g=x.createRadialGradient(0,Hh,0,0,Hh,700);g.addColorStop(0,"rgba(0,35,149,.55)");g.addColorStop(1,"rgba(0,35,149,0)");x.fillStyle=g;x.fillRect(0,0,W,Hh);
+  x.strokeStyle="rgba(255,255,255,.025)";x.lineWidth=2;for(let i=-700;i<W+700;i+=22){x.beginPath();x.moveTo(i,0);x.lineTo(i+294,Hh);x.stroke()}
+  [["#002395",0],["#fff",400],["#ED2939",800]].forEach(([c,X])=>{x.fillStyle=c;x.fillRect(X,Hh-10,400,10)});
+  const lg=await img("logo_white.png");if(lg)x.drawImage(lg,56,38,lg.width*48/lg.height,48);
+  const lw=lg?lg.width*48/lg.height:0;x.fillStyle="rgba(255,255,255,.25)";x.fillRect(56+lw+18,44,2,36);
+  x.fillStyle="#FFB547";x.font="800 21px SC";x.textAlign="left";x.textBaseline="middle";x.letterSpacing="3px";x.fillText(`MES NOTES · JOURNÉE ${M.round}`,56+lw+38,64);x.letterSpacing="0px";
+  // score
+  const hw=M.hs>M.as;
+  for(const [c,cx,win] of [[M.home,150,hw],[M.away,490,!hw]]){x.globalAlpha=win?1:.55;x.beginPath();x.arc(cx,175,46,0,7);x.fillStyle="#fff";x.fill();
+    const li=await img(logo(c));if(li){const s=64;x.drawImage(li,cx-s/2,175-s/2,s,s)}
+    x.fillStyle="#F4F6FF";x.textAlign="center";fit(x,D.clubs[c].name.toUpperCase(),230,26,"800");x.fillText(D.clubs[c].name.toUpperCase(),cx,252);x.globalAlpha=1}
+  x.textAlign="center";x.font="800 84px SC";x.fillStyle=hw?"#fff":"rgba(255,255,255,.4)";x.fillText(M.hs,258,180);x.fillStyle="rgba(255,255,255,.3)";x.font="800 56px SC";x.fillText("–",320,174);x.fillStyle=hw?"rgba(255,255,255,.4)":"#fff";x.font="800 84px SC";x.fillText(M.as,382,180);
+  // MVP
+  rr(x,56,300,584,250,24);let gg=x.createLinearGradient(56,300,640,550);gg.addColorStop(0,"#15275F");gg.addColorStop(1,"#0B1638");x.fillStyle=gg;x.fill();x.strokeStyle="rgba(255,181,71,.45)";x.lineWidth=2;x.stroke();
+  x.textAlign="left";x.fillStyle="#FFB547";x.font="800 20px SC";x.letterSpacing="4px";x.fillText("★ MON MVP",86,336);x.letterSpacing="0px";
+  await face(x,best[0],156,440,72);x.strokeStyle="rgba(255,255,255,.25)";x.lineWidth=4;x.beginPath();x.arc(156,440,72,0,7);x.stroke();
+  const mn=nm(best[0]).toUpperCase();x.fillStyle="#fff";x.textAlign="left";fit(x,mn,250,40,"800");x.fillText(mn,250,410);
+  chipC(x,best[1],250,438,104,72,48);
+  const o=ours(best[0]);x.fillStyle="#AEB9E0";x.font="700 19px SS";x.textAlign="left";if(o!=null)x.fillText(`EuroLeague France : ${fr(o)}`,370,474);
+  // mes autres notes
+  const rest=Object.entries(mine).filter(([p])=>p!==best[0]).sort((a,b)=>b[1]-a[1]);
+  x.fillStyle="#8E9AC4";x.font="800 18px SC";x.letterSpacing="3px";x.textAlign="left";x.fillText(rest.length?"MES AUTRES NOTES":"ET TOI ?",690,120);x.letterSpacing="0px";
+  const show=rest.slice(0,rest.length>7?6:7);
+  for(let i=0;i<show.length;i++){const [p,v]=show[i],Y=140+i*58;rr(x,690,Y,454,50,13);x.fillStyle="rgba(255,255,255,.05)";x.fill();x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=1;x.stroke();
+    await face(x,p,716,Y+25,19);x.fillStyle="#fff";x.textAlign="left";const t=nm(p).toUpperCase();fit(x,t,212,22,"800");x.fillText(t,746,Y+27);
+    const ov=ours(p);x.fillStyle="#8E9AC4";x.font="700 14px SS";x.textAlign="right";if(ov!=null)x.fillText(`EL France ${fr(ov)}`,1068,Y+26);chipC(x,v,1080,Y+7,56,36,22)}
+  if(rest.length>7){const Y=140+6*58;x.fillStyle="#8E9AC4";x.font="800 20px SC";x.textAlign="left";x.fillText(`+ ${rest.length-6} AUTRES JOUEURS NOTÉS`,700,Y+27)}
+  if(!rest.length){x.fillStyle="#fff";x.font="800 46px SC";x.textAlign="left";["TU NOTERAIS","COMMENT ?"].forEach((t,i)=>x.fillText(t,690,200+i*52));x.fillStyle="#AEB9E0";x.font="600 22px SS";x.fillText("Mets tes notes aux joueurs du match",690,300);x.fillText("et compare avec les miennes.",690,330)}
+  // appel à noter
+  x.textAlign="left";x.fillStyle="#fff";x.font="800 24px SC";x.letterSpacing="2px";x.fillText("À TON TOUR DE NOTER",56,592);const tw1=x.measureText("À TON TOUR DE NOTER ").width;
+  x.fillStyle="#FFB547";x.fillText("→ EUROLEAGUE-FRANCE.COM",56+tw1,592);x.letterSpacing="0px";
+  return cv}
 function pick(){
   const R=Math.max(...D.matches.map(m=>m.round));const ms=D.matches.filter(m=>m.round===R);
   $("#app").innerHTML=`<div class="top"><a href="${NOTES}"><img src="logo_white.png" alt="EuroLeague France"></a><a class="all" href="${NOTES}">Toutes les notes</a></div>
