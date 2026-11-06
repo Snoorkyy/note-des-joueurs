@@ -1,117 +1,128 @@
 <!-- wp:html -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,800;0,900;1,900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-.page-template-default .entry-title{}
-.cn{--n:#0B1A44;--n2:#13245a;--r:#E1262F;--b:#002395;--g:#2E8048;--l:#EEF2FA;--t:#1B2440;--m:#5A6688;font-family:inherit;color:var(--t);max-width:900px;margin:0 auto;line-height:1.6;font-size:17px}
-.cn *{box-sizing:border-box}
-.cn .hero{background:linear-gradient(135deg,var(--n) 0%,var(--n2) 70%,#3a1030 140%);color:#fff;border-radius:18px;padding:34px 30px;margin:10px 0 28px;position:relative;overflow:hidden}
-.cn .hero:after{content:"/10";position:absolute;right:-10px;bottom:-60px;font-size:220px;font-weight:900;color:rgba(255,255,255,.05);line-height:1}
-.cn .hero .k{font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#FF6670;font-size:13px}
-.cn .hero h1{color:#fff;font-size:40px;line-height:1.05;margin:8px 0 12px;font-weight:900;text-transform:uppercase}
-.cn .hero p{color:#D3DBF2;margin:0;max-width:640px;font-size:18px}
-.cn h2{font-size:26px;font-weight:900;color:var(--n);margin:38px 0 12px;text-transform:uppercase;letter-spacing:.01em;padding-bottom:0;border-left:6px solid var(--r);padding-left:12px}
-.cn .formula{background:var(--l);border-radius:14px;padding:18px 20px;font-weight:800;font-size:20px;color:var(--n);text-align:center;margin:14px 0}
-.cn .formula small{display:block;font-weight:600;font-size:14px;color:var(--m);margin-top:6px}
-.cn .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:14px 0}
-.cn .card{background:#fff;border:1px solid #DCE3F2;border-radius:14px;padding:16px 18px;box-shadow:0 4px 14px rgba(11,26,68,.06)}
-.cn .card b.t{display:block;font-size:17px;color:var(--n);margin-bottom:4px}
-.cn .card .w{display:inline-block;font-size:12px;font-weight:800;color:#fff;background:var(--b);border-radius:999px;padding:2px 10px;margin-bottom:8px}
-.cn .card .w.r{background:var(--r)}
-.cn .card p{margin:0;font-size:15.5px}
-.cn table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15.5px}
-.cn th{background:var(--n);color:#fff;text-align:left;padding:9px 12px;font-weight:700}
-.cn td{padding:9px 12px;border-bottom:1px solid #E1E7F3}
-.cn tr:nth-child(even) td{background:#F7F9FD}
-.cn td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.cn .ex{border:2px solid var(--n);border-radius:16px;overflow:hidden;margin:16px 0}
-.cn .ex .hd{background:var(--n);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.cn .ex .hd b{font-size:19px}
-.cn .ex .hd span{opacity:.8;font-size:14px}
-.cn .note{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:44px;border-radius:10px;font-weight:900;font-size:24px;color:#fff;background:var(--g)}
-.cn .note.o{background:#C4521E}
-.cn .ex .bd{padding:6px 18px 14px}
-.cn .ex table{margin:6px 0}
-.cn .ex tr.tot td{font-weight:800;border-top:2px solid var(--n)}
-.cn .scale{display:flex;gap:4px;margin:14px 0;flex-wrap:wrap}
-.cn .scale div{flex:1;min-width:120px;border-radius:10px;padding:10px;color:#fff;font-weight:800;text-align:center;font-size:14px}
-.cn .scale small{display:block;font-weight:600;opacity:.9}
-.cn .tip{background:#FFF6E5;border-left:5px solid #E0A21B;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:15.5px}
-.cn details{background:#fff;border:1px solid #DCE3F2;border-radius:12px;padding:12px 16px;margin:8px 0}
-.cn summary{font-weight:800;color:var(--n);cursor:pointer}
-.cn details p{margin:8px 0 0;font-size:15.5px}
-.cn .cta{display:flex;gap:12px;flex-wrap:wrap;margin:26px 0 8px}
-.cn .cta a{display:inline-block;padding:12px 20px;border-radius:999px;font-weight:800;text-decoration:none;background:var(--r);color:#fff}
-.cn .cta a.s{background:var(--n)}
-@media(max-width:600px){.cn .hero h1{font-size:30px}.cn{font-size:16px}.cn th,.cn td{padding:7px 8px}}
+.page-id-105137 .entry-title,.page-id-105137 .main_title{display:none!important}
+.page-id-105137 #sidebar{display:none!important}
+.page-id-105137 #main-content{background:#060D24}
+.page-id-105137 #main-content .container{width:100%!important;max-width:100%!important;padding:0!important}
+.page-id-105137 #main-content .container:before{display:none!important}
+.page-id-105137 #left-area,.page-id-105137 article.page,.page-id-105137 .entry-content{width:100%!important;padding:0!important;margin:0!important;float:none!important}
+.xn{--n:#060D24;--n2:#0D1A45;--r:#FF2D3A;--o:#FFB547;--g:#22C55E;--w:#F4F6FF;--m:#8E9AC4;font-family:Barlow,system-ui,sans-serif;color:var(--w);background:var(--n);overflow:hidden}
+.xn *{box-sizing:border-box;margin:0;padding:0}
+.xn .D{font-family:"Barlow Condensed",Impact,sans-serif;text-transform:uppercase;letter-spacing:.005em;line-height:.88}
+.xn .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+/* HERO */
+.xn .hero{position:relative;padding:86px 0 78px;background:radial-gradient(70% 90% at 85% 15%,rgba(255,45,58,.35),transparent 60%),radial-gradient(60% 80% at 0% 100%,rgba(0,35,149,.55),transparent 60%),var(--n)}
+.xn .hero:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.025) 0 2px,transparent 2px 22px)}
+.xn .hero .wrap{position:relative;display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center}
+.xn .kick{display:inline-flex;gap:10px;align-items:center;font-weight:700;letter-spacing:.22em;text-transform:uppercase;font-size:13px;color:var(--o)}
+.xn .kick:before{content:"";width:34px;height:3px;background:var(--r)}
+.xn .hero h1{font-size:clamp(64px,10vw,138px);font-weight:900;margin:18px 0 18px;color:#fff}
+.xn .hero h1 em{font-style:italic;color:var(--r)}
+.xn .hero p{font-size:21px;line-height:1.45;color:#C9D1F0;max-width:520px}
+.xn .hero p b{color:#fff}
+.xn .big{justify-self:center;position:relative;width:260px;height:260px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--g) 0 90%,rgba(255,255,255,.08) 0);box-shadow:0 0 90px rgba(34,197,94,.35)}
+.xn .big:after{content:"";position:absolute;inset:16px;border-radius:50%;background:var(--n2)}
+.xn .big span{position:relative;z-index:1;font-size:118px;font-weight:900;color:#fff}
+.xn .big small{position:absolute;z-index:1;bottom:58px;font-family:Barlow;font-weight:700;letter-spacing:.2em;font-size:13px;color:var(--m)}
+/* INGREDIENTS */
+.xn section{padding:80px 0}
+.xn h2{font-size:clamp(44px,6vw,76px);font-weight:900;margin-bottom:34px}
+.xn h2 em{font-style:italic;color:var(--r)}
+.xn .ing{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.xn .it{position:relative;border-radius:22px;padding:26px 22px 24px;background:linear-gradient(160deg,#13225A,#0A1438);border:1px solid rgba(255,255,255,.08);min-height:250px;transition:transform .2s}
+.xn .it:hover{transform:translateY(-6px)}
+.xn .it .num{position:absolute;right:18px;top:12px;font-size:64px;font-weight:900;color:rgba(255,255,255,.06)}
+.xn .it svg{width:46px;height:46px;margin-bottom:22px}
+.xn .it h3{font-size:34px;font-weight:800;margin-bottom:10px;color:#fff}
+.xn .it p{font-size:16.5px;line-height:1.45;color:#B8C2E6}
+/* POTION */
+.xn .potion{position:relative;border-radius:28px;padding:44px 40px;background:radial-gradient(80% 120% at 100% 0%,rgba(255,181,71,.25),transparent 55%),linear-gradient(120deg,#2A0B2E,#120A2E 60%,#0A1438);border:1px solid rgba(255,181,71,.25);display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;overflow:hidden}
+.xn .potion .flask{font-size:96px;filter:drop-shadow(0 0 30px rgba(255,181,71,.6))}
+.xn .potion h3{font-size:clamp(40px,5vw,62px);font-weight:900;color:#fff;margin-bottom:12px}
+.xn .potion h3 em{font-style:italic;color:var(--o)}
+.xn .potion p{font-size:19px;line-height:1.5;color:#E3D9F2;max-width:620px}
+.xn .potion .blur{margin-top:18px;font-family:"Courier New",monospace;font-size:16px;color:rgba(255,255,255,.55);filter:blur(5px);user-select:none;letter-spacing:.06em}
+.xn .seal{position:absolute;right:28px;bottom:22px;font-weight:700;font-size:12px;letter-spacing:.25em;color:var(--o);border:2px solid var(--o);border-radius:999px;padding:6px 14px;transform:rotate(-6deg)}
+/* SCALE */
+.xn .scale{height:22px;border-radius:999px;background:linear-gradient(90deg,#B91C1C 0%,#EA580C 30%,#CA8A04 47%,#65A30D 62%,#16A34A 78%,#0E7A3A 100%);margin:10px 0 14px;position:relative}
+.xn .scale i{position:absolute;top:-10px;width:4px;height:42px;background:#fff;border-radius:2px;box-shadow:0 0 12px #fff}
+.xn .marks{display:flex;justify-content:space-between;font-family:"Barlow Condensed";font-weight:800;font-size:22px;text-transform:uppercase;color:var(--m)}
+.xn .marks b{color:#fff}
+/* DUEL */
+.xn .duel{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.xn .pc{position:relative;border-radius:24px;padding:26px;background:#0E1A45;border:1px solid rgba(255,255,255,.08);display:grid;grid-template-columns:96px 1fr auto;gap:18px;align-items:center}
+.xn .pc img{width:96px;height:96px;border-radius:50%;background:#E8EFF8;object-fit:cover;border:3px solid rgba(255,255,255,.2)}
+.xn .pc h4{font-size:34px;font-weight:900;color:#fff}
+.xn .pc .club{font-size:14px;color:var(--m);font-weight:600;margin:4px 0 10px}
+.xn .chips{display:flex;flex-wrap:wrap;gap:6px}
+.xn .chips span{font-size:13.5px;font-weight:700;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:#DDE3F7}
+.xn .chips span.hot{background:rgba(34,197,94,.18);color:#86EFAC}
+.xn .chips span.cold{background:rgba(255,45,58,.18);color:#FCA5A5}
+.xn .nt{width:96px;height:96px;border-radius:22px;display:grid;place-items:center;font-size:58px;font-weight:900;color:#fff}
+.xn .verdict{grid-column:1/-1;font-size:17px;color:#C9D1F0;border-top:1px solid rgba(255,255,255,.08);padding-top:14px}
+.xn .verdict b{color:#fff}
+.xn .ctx{font-size:15px;color:var(--m);margin:-20px 0 22px;font-weight:600}
+/* TRUST */
+.xn .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.xn .tr{border-radius:18px;padding:22px;border-left:5px solid var(--r);background:rgba(255,255,255,.04)}
+.xn .tr .D{font-size:30px;font-weight:900;color:#fff;margin-bottom:6px}
+.xn .tr p{font-size:15.5px;color:#B8C2E6;line-height:1.45}
+.xn .cta{padding:70px 0 90px;text-align:center;background:linear-gradient(180deg,var(--n),#0A1440)}
+.xn .cta h2{margin-bottom:26px}
+.xn .btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.xn .btns a{font-family:"Barlow Condensed";font-weight:800;text-transform:uppercase;font-size:24px;letter-spacing:.03em;padding:16px 30px;border-radius:999px;text-decoration:none;background:var(--r);color:#fff;box-shadow:0 10px 30px rgba(255,45,58,.35)}
+.xn .btns a.s{background:transparent;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.xn .btns a:hover{transform:translateY(-2px)}
+@media(max-width:900px){.xn .hero .wrap{grid-template-columns:1fr}.xn .big{width:200px;height:200px}.xn .big span{font-size:90px}.xn .big small{bottom:44px}.xn .ing{grid-template-columns:1fr 1fr}.xn .duel,.xn .trust{grid-template-columns:1fr}.xn .potion{grid-template-columns:1fr;padding:32px 24px}.xn .potion .flask{font-size:70px}.xn .seal{position:static;justify-self:start;margin-top:4px}}
+@media(max-width:520px){.xn .ing{grid-template-columns:1fr}.xn .it{min-height:0}.xn section{padding:56px 0}.xn .pc{grid-template-columns:72px 1fr auto;padding:18px;gap:12px}.xn .pc img{width:72px;height:72px}.xn .nt{width:72px;height:72px;font-size:42px;border-radius:16px}.xn .pc h4{font-size:26px}.xn .marks{font-size:16px}.xn .hero{padding:60px 0 56px}.xn .hero p{font-size:18px}}
 </style>
-<div class="cn">
-<div class="hero"><div class="k">La méthode EuroLeague France</div><h1>Comment on note les joueurs</h1><p>Chaque joueur d'EuroLeague reçoit une note sur 10 après chaque match. Pas un avis : un calcul, le même pour tout le monde, à partir des statistiques officielles et du déroulé du match action par action.</p></div>
+<div class="xn">
+<div class="hero"><div class="wrap"><div>
+<div class="kick">La méthode EuroLeague France</div>
+<h1 class="D">La note<br><em>sur 10</em></h1>
+<p><b>Pas un avis. Une recette.</b><br>Chaque joueur, chaque match, la même formule : les données officielles, lues action par action.</p>
+</div><div class="big"><span class="D">9</span><small>SUR 10</small></div></div></div>
 
-<h2>En une phrase</h2>
-<p>La note mesure <b>ce que le joueur a apporté à son équipe, au moment où ça comptait</b>, par rapport à ce qu'on attend d'un joueur qui reste autant de temps sur le terrain. Une note de <b>5</b> correspond à un match « normal ».</p>
-<div class="scale">
-<div style="background:#A01E16">0 à 2,5<small>Match à oublier</small></div>
-<div style="background:#C4521E">3 à 4<small>En dessous</small></div>
-<div style="background:#B08816">4,5 à 5,5<small>Dans la moyenne</small></div>
-<div style="background:#6F7F3F">6 à 6,5<small>Bon match</small></div>
-<div style="background:#2E8048">7 à 8<small>Très bon</small></div>
-<div style="background:#17633A">8,5 à 10<small>Exceptionnel</small></div>
-</div>
+<section><div class="wrap">
+<h2 class="D">4 ingrédients<br><em>une note</em></h2>
+<div class="ing">
+<div class="it"><div class="num D">01</div><svg viewBox="0 0 48 48" fill="none" stroke="#FF2D3A" stroke-width="3.5" stroke-linecap="round"><path d="M6 40h36M12 40V26M22 40V14M32 40V20M42 40V8"/></svg><h3 class="D">Production</h3><p>Points, rebonds, passes, interceptions, contres… et ce qui coûte : tirs ratés, balles perdues.</p></div>
+<div class="it"><div class="num D">02</div><svg viewBox="0 0 48 48" fill="none" stroke="#FFB547" stroke-width="3.5" stroke-linecap="round"><circle cx="24" cy="26" r="16"/><path d="M24 26V16M24 6v4M18 6h12"/></svg><h3 class="D">Le moment</h3><p>Un panier à égalité ne vaut pas un panier à +25. Ce qui compte, c'est quand ça compte.</p></div>
+<div class="it"><div class="num D">03</div><svg viewBox="0 0 48 48" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-linecap="round"><path d="M24 8v32M8 24h32"/><circle cx="24" cy="24" r="19"/></svg><h3 class="D">L'impact</h3><p>Le score de l'équipe quand il est sur le parquet. Recompté panier par panier.</p></div>
+<div class="it"><div class="num D">04</div><svg viewBox="0 0 48 48" fill="none" stroke="#7AA2FF" stroke-width="3.5" stroke-linecap="round"><path d="M10 38c2-10 8-16 14-16s12 6 14 16"/><circle cx="24" cy="13" r="6"/><path d="M6 44h36"/></svg><h3 class="D">L'efficacité</h3><p>Ce qu'il fait de ses tirs et de ses minutes. Plus on joue, plus on doit peser.</p></div>
+</div></div></section>
 
-<h2>Les cinq ingrédients</h2>
-<div class="grid">
-<div class="card"><span class="w">Ingrédient 1</span><b class="t">La production</b><p>L'évaluation officielle (PIR) : points, rebonds, passes, interceptions, contres, fautes provoquées, moins les tirs ratés, balles perdues et fautes. Avec deux retouches : le rebond offensif vaut un peu plus, la balle perdue coûte un peu plus.</p></div>
-<div class="card"><span class="w r">Ingrédient 2</span><b class="t">Le moment</b><p>Chaque action est pondérée selon l'écart au tableau d'affichage à cet instant. Un panier dans un match serré compte davantage qu'un panier quand l'écart dépasse 15 points (voir le tableau plus bas).</p></div>
-<div class="card"><span class="w">Ingrédient 3</span><b class="t">L'adresse</b><p>Marquer 19 points en 8 tirs ou en 20 tirs, ce n'est pas pareil. On compare les points marqués à ce qu'un tireur moyen d'EuroLeague aurait marqué avec les mêmes tentatives.</p></div>
-<div class="card"><span class="w">Ingrédient 4</span><b class="t">L'impact sur le score</b><p>Le +/- : ce que l'équipe a gagné ou perdu quand le joueur était sur le terrain. Recalculé panier par panier, lui aussi pondéré par le moment du match.</p></div>
-<div class="card"><span class="w r">Ingrédient 5</span><b class="t">Le temps de jeu</b><p>Plus on joue, plus on doit produire. Chaque minute passée sur le terrain crée une « attente » que le joueur doit dépasser pour avoir plus de 5.</p></div>
-<div class="card"><span class="w">Enfin</span><b class="t">Le résultat</b><p>+0,5 pour les joueurs de l'équipe qui gagne, −0,5 pour ceux de l'équipe qui perd. Gagner reste ce qui compte.</p></div>
-</div>
+<section style="padding-top:0"><div class="wrap">
+<div class="potion"><div class="flask">⚗️</div><div>
+<h3 class="D">Et puis il y a<br><em>la potion</em></h3>
+<p>Les dosages, l'ordre du mélange, le petit coup de poignet à la fin : ça, c'est notre recette. Elle ne bouge pas de la saison, elle est la même pour tout le monde… et elle reste chez nous.</p>
+<div class="blur">NOTE = 5 + [ ▓▓▓ × ░░ + ▓ × ░░░ − ▓▓ ] ÷ ▓ ± ░</div>
+</div><div class="seal">RECETTE MAISON</div></div>
+</div></section>
 
-<div class="formula">Note = 5 + (production pondérée + ½ adresse + 0,35 × impact − 0,45 × minutes) ÷ 8 ± 0,5<small>Arrondie au demi-point, entre 0 et 10. Noté à partir de 4 minutes jouées.</small></div>
+<section style="padding-top:0"><div class="wrap">
+<h2 class="D">Lire une <em>note</em></h2>
+<div class="scale"><i style="left:49%"></i></div>
+<div class="marks"><span>0 · Naufrage</span><span><b>5 · Match normal</b></span><span>10 · Historique</span></div>
+</div></section>
 
-<h2>Le poids du moment</h2>
-<table><tr><th>Écart au score au moment de l'action</th><th class="n">Poids</th></tr>
-<tr><td>0 à 5 points (match serré)</td><td class="n"><b>× 1,20</b></td></tr>
-<tr><td>6 à 10 points</td><td class="n">× 1,00</td></tr>
-<tr><td>11 à 15 points</td><td class="n">× 0,70</td></tr>
-<tr><td>Plus de 15 points (match plié)</td><td class="n">× 0,40</td></tr></table>
-<div class="tip">Conséquence : un joueur qui empile les statistiques quand le match est déjà joué sera moins bien noté que son évaluation ne le laisse penser. À l'inverse, celui qui fait les bons gestes quand tout se joue est récompensé.</div>
+<section style="padding-top:20px"><div class="wrap">
+<h2 class="D">Même match,<br><em>deux histoires</em></h2>
+<p class="ctx">Barcelone – Valence, 98-94 · J9</p>
+<div class="duel">
+<div class="pc"><img src="https://note-des-joueurs.pages.dev/photos/P007464.webp" alt="Joel Parra"><div><h4 class="D">Joel Parra</h4><div class="club">FC Barcelone · 21 min</div><div class="chips"><span>19 pts</span><span class="hot">5/6 à 3 pts</span><span class="hot">match serré</span><span>victoire</span></div></div><div class="nt D" style="background:#16A34A">9</div>
+<div class="verdict"><b>Peu de tirs, presque tous dedans, au moment où tout se jouait.</b> La recette adore.</div></div>
+<div class="pc"><img src="https://note-des-joueurs.pages.dev/photos/P010581.webp" alt="Dylan Osetkowski"><div><h4 class="D">Dylan Osetkowski</h4><div class="club">Valence · 24 min</div><div class="chips"><span>11 pts</span><span class="cold">−10 sur le parquet</span><span class="cold">défaite</span></div></div><div class="nt D" style="background:#EA580C">3,5</div>
+<div class="verdict"><b>Marquer ne suffit pas</b> quand l'équipe coule pendant qu'on est sur le terrain.</div></div>
+</div></div></section>
 
-<h2>Un exemple décortiqué</h2>
-<div class="ex"><div class="hd"><div><b>Joel Parra · FC Barcelone</b><br><span>Barcelone – Valence 98-94 · J9, 30 octobre 2026 · 21 minutes</span></div><span class="note">9,0</span></div>
-<div class="bd"><p>19 points (5/6 à 3 points, 2/2 à 2 points), 5 rebonds, 1 passe, 0 balle perdue : 24 d'évaluation.</p>
-<table><tr><th>Étape</th><th class="n">Valeur</th></tr>
-<tr><td>Production, pondérée par le moment (match serré : beaucoup d'actions à × 1,20)</td><td class="n">+29,0</td></tr>
-<tr><td>Adresse : 19 points pour 8 tirs, bien au-dessus de la moyenne (9,9 × ½)</td><td class="n">+4,9</td></tr>
-<tr><td>Impact : +5 sur le terrain, pondéré (7,4 × 0,35)</td><td class="n">+2,6</td></tr>
-<tr><td>Attente liée au temps de jeu (21 min × 0,45)</td><td class="n">−9,6</td></tr>
-<tr class="tot"><td>Total</td><td class="n">27,0</td></tr>
-<tr><td>Note : 5 + 27,0 ÷ 8 + 0,5 (victoire) = 8,87, arrondi au demi-point</td><td class="n"><b>9,0</b></td></tr></table></div></div>
+<section style="padding-top:20px"><div class="wrap"><div class="trust">
+<div class="tr"><div class="D">100 % officiel</div><p>Feuille de match et déroulé action par action de l'EuroLeague. Zéro saisie à la main.</p></div>
+<div class="tr"><div class="D">Zéro favoritisme</div><p>La même recette pour tous les joueurs, toute la saison.</p></div>
+<div class="tr"><div class="D">Juste après le buzzer</div><p>Les notes tombent automatiquement dans les minutes qui suivent le match, vérifiées contre le score officiel.</p></div>
+</div></div></section>
 
-<div class="ex"><div class="hd"><div><b>Le contre-exemple : Dylan Osetkowski · Valence</b><br><span>Même match · 24 minutes</span></div><span class="note o">3,5</span></div>
-<div class="bd"><p>11 points, mais 6 d'évaluation seulement, et −10 quand il était sur le terrain dans un match perdu de 4 points. Production faible (+7,4), impact négatif (−13,4 pondéré), une attente de 10,8 pour 24 minutes et le malus de défaite : 3,5. Marquer ne suffit pas quand l'équipe coule pendant qu'on est sur le parquet.</p></div></div>
-
-<h2>Note ou évaluation : pourquoi ça diffère</h2>
-<p>La note n'est pas l'évaluation officielle, et c'est voulu. Trois situations surprennent parfois :</p>
-<div class="grid">
-<div class="card"><b class="t">Grosse évaluation, note moyenne</b><p>Un joueur qui produit beaucoup alors que son équipe prend l'eau avec lui sur le terrain (gros +/- négatif, défaite) peut finir autour de 5, voire moins.</p></div>
-<div class="card"><b class="t">Le match plié</b><p>Au-delà de 15 points d'écart, la production ne compte qu'à 40 %, mais le temps de jeu, lui, compte en entier : 28 d'évaluation dans une large victoire peuvent ne valoir que 6,5.</p></div>
-<div class="card"><b class="t">Le remplaçant décisif</b><p>Cinq minutes en fin de match serré, avec quelques gestes clés et un bon +/-, peuvent valoir 6 : il a pesé quand ça comptait.</p></div>
-</div>
-
-<h2>Transparence</h2>
-<div class="grid">
-<div class="card"><b class="t">Données officielles</b><p>Feuille de match et déroulé action par action fournis par l'EuroLeague. Aucune donnée saisie à la main, aucun avis personnel.</p></div>
-<div class="card"><b class="t">Une formule figée</b><p>La même formule pour toute la saison 2026-27, pour tous les joueurs et tous les matchs. Les notes sont donc comparables d'une journée à l'autre.</p></div>
-<div class="card"><b class="t">10 à 25 minutes après le match</b><p>Les notes sont calculées et publiées automatiquement, après vérification : le score recalculé doit correspondre au score officiel.</p></div>
-</div>
-
-<h2>Questions fréquentes</h2>
-<details><summary>Pourquoi un joueur n'a-t-il pas de note ?</summary><p>Il a joué moins de 4 minutes : trop peu pour juger.</p></details>
-<details><summary>Le +/- officiel est parfois différent du vôtre. Pourquoi ?</summary><p>Nous recalculons le +/- panier par panier à partir du déroulé du match. Le chiffre officiel contient parfois des erreurs, que notre calcul évite.</p></details>
-<details><summary>Une note peut-elle changer après publication ?</summary><p>Seulement si l'EuroLeague corrige ses statistiques officielles. La formule, elle, ne change pas en cours de saison.</p></details>
-<details><summary>Les défenseurs sont-ils désavantagés ?</summary><p>En partie : la défense qui ne se voit pas dans les statistiques (contestations, aides) n'est captée que par l'impact sur le score (+/-). C'est la limite de toute note fondée sur les données, et c'est pour ça que le +/- y a sa place.</p></details>
-
-<div class="cta"><a href="/notes-des-joueurs/">Voir les notes des joueurs</a><a class="s" href="/fantasy-challenge/">Fantasy Challenge</a></div>
+<div class="cta"><div class="wrap"><h2 class="D">À toi de <em>juger</em></h2><div class="btns"><a href="/notes-des-joueurs/">Voir les notes</a><a class="s" href="/fantasy-challenge/">Fantasy Challenge</a></div></div></div>
 </div>
 <!-- /wp:html -->
