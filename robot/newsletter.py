@@ -278,7 +278,7 @@ def notify():
     topic = os.environ.get("NTFY_TOPIC"); meta = json.load(open(os.path.join(ROOT, "robot", "newsletter_meta.json")))
     if not topic: print("::warning::NTFY_TOPIC absent"); return 0
     kit = "https://app.kit.com/campaigns" 
-    msg = {"topic": topic, "title": "Lettre du samedi prête", "message": meta["subject"] + ("\n\nBrouillon prêt dans Kit : relis puis envoie." if meta.get("kit") else "\n\nPas de brouillon Kit (clé absente ou test) : aperçu seulement.") + "\nVersion web : " + meta["web"],
+    msg = {"topic": topic, "title": "Lettre du samedi prête", "message": meta["subject"] + "\n\nLe brouillon Gmail arrive vers 9h : relis, ajoute ta liste en Cci, envoie." + "\nVersion web : " + meta["web"],
            "click": meta["web"], "tags": ["email"], "actions": [{"action": "view", "label": "Ouvrir Kit", "url": kit}, {"action": "view", "label": "Voir la lettre", "url": meta["web"]}]}
     req = urllib.request.Request("https://ntfy.sh/", data=json.dumps(msg).encode(), headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=20) as r: print("notifié", r.status)
