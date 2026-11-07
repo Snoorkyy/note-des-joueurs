@@ -45,6 +45,14 @@ def fetch(token=None):
     cfg = _get(f"/leagues/{LEAGUE}/config")["data"]
     prev = cfg.get("previous_matchday") or {}
     out = {"md": prev.get("number"), "md_id": prev.get("id"), "teams": {t["id"]: t for t in cfg.get("teams", [])}}
+    if os.environ.get("FANTASY_DEMO"):  # test du visuel sans jeton : équipe réelle de la J8 (CSP Lausanne)
+        P = [["Aliou","Diarra","VIR","Virtus Bologna","Center",16,0,1],["Azuolas","Tubelis","ZAL","Zalgiris Kaunas","Forward",23.1,0,2],["Dwayne","Bacon","DUB","Dubai Basketball","Forward",27,0,3],
+             ["Elijah","Bryant","HTA","Hapoel Tel Aviv","Guard",38.5,1,4],["Theo","Maledon","RMB","Real Madrid","Guard",17.6,0,5],["Andres","Feliz","RMB","Real Madrid","Guard",9.9,0,6],
+             ["Josep","Puerto","VBC","Valencia Basket","Guard",-2.7,0,7],["Clement","Frisch","KBA","Kosner Baskonia","Forward",2,0,8],["Marius","Grigonis","ZAL","Zalgiris Kaunas","Forward",12.1,0,9],
+             ["Mouhamed","Faye","PBB","Paris Basketball","Center",19.8,0,10],["Ibon","Navarro","CZV","Crvena Zvezda","Head Coach",25,0,11]]
+        out["best"] = {"pos": 1, "team": "CSP Lausanne", "coach": "Thomas Bourlon", "md": 211.2, "tot": 1417.7,
+                       "players": [{"first": a, "last": b, "club": c, "club_name": cn, "pos": po, "pts": pt, "cap": bool(cp), "slot": sl} for a, b, c, cn, po, pt, cp, sl in P]}
+        return out
     if not token or not prev: return out
     try:
         rnd = _get(f"/tournaments/{TOURNAMENT}/standings?matchday={prev['id']}", token)["data"]

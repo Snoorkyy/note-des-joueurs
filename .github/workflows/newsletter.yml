@@ -9,6 +9,9 @@ on:
       date:
         description: "Date de la lettre (AAAA-MM-JJ, par défaut aujourd'hui) — semaine des 7 jours précédents"
         required: false
+      demo:
+        description: "Mettre « 1 » pour tester le visuel fantasy avec une équipe d'exemple"
+        required: false
       nodraft:
         description: "Mettre « 1 » pour fabriquer la lettre sans créer de brouillon Kit"
         required: false
@@ -27,6 +30,7 @@ jobs:
         env:
           DAY: ${{ github.event.inputs.date }}
           FANTASY_TOKEN: ${{ secrets.FANTASY_TOKEN }}
+          FANTASY_DEMO: ${{ github.event.inputs.demo }}
         run: |
           D="${DAY:-$(date -u +%F)}"; echo "D=$D" >> "$GITHUB_ENV"
           pip install -q playwright && python3 -m playwright install --with-deps chromium >/dev/null

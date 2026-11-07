@@ -241,9 +241,12 @@ def run_build(day):
             tp.evaluate("D=>window.render(D)", tw)
             tp.locator("#w").screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-tweet.jpg"), type="jpeg", quality=88)
         if B["vid"]:
-            vid = B["vid"]["id"]; th = f"https://i.ytimg.com/vi/{vid}/maxresdefault.jpg"
-            try: urllib.request.urlopen(urllib.request.Request(th, headers={"User-Agent": "Mozilla/5.0"}), timeout=15)
-            except Exception: th = f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"
+            vid = B["vid"]["id"]; th = f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"
+            for q in ("maxresdefault", "sddefault"):
+                try:
+                    urllib.request.urlopen(urllib.request.Request(f"https://i.ytimg.com/vi/{vid}/{q}.jpg", headers={"User-Agent": "Mozilla/5.0"}), timeout=15)
+                    th = f"https://i.ytimg.com/vi/{vid}/{q}.jpg"; break
+                except Exception: pass
             yp = b.new_page(viewport={"width": 1200, "height": 675})
             yp.goto("file://" + os.path.join(ROOT, "robot", "share", "yt.html"))
             yp.evaluate("D=>window.render(D)", {"thumb": th})
