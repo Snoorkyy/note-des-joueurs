@@ -41,7 +41,10 @@ def norm(s):
 
 def fetch(token=None):
     """-> dict(md, overall[10], round_top[3], best{team, coach, pts, players[...]}) ou None."""
-    token = token or os.environ.get("FANTASY_TOKEN")
+    raw = token or os.environ.get("FANTASY_TOKEN") or ""
+    token = raw.strip().strip('"').strip("'").strip()
+    if token.lower().startswith("bearer "): token = token[7:].strip()
+    if raw: print(f"jeton fantasy : {len(raw)} caractères reçus, {len(token)} après nettoyage, forme {'id|clé' if '|' in token else 'autre'}")
     cfg = _get(f"/leagues/{LEAGUE}/config")["data"]
     prev = cfg.get("previous_matchday") or {}
     out = {"md": prev.get("number"), "md_id": prev.get("id"), "teams": {t["id"]: t for t in cfg.get("teams", [])}}
