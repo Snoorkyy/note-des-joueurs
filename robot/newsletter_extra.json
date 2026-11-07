@@ -10,6 +10,201 @@
    "date": "10:06 · 7 nov. 2026",
    "text": "🔍 Aliou Diarra, Virtus Bologne 🇮🇹\n\n👀 Tous les joueurs Fantasy le connaisse, mais l’intérieur 🇲🇱 fait un début de saison incroyable :\n\n12.3pts | 7rbds | 2blks | 19.2 PIR\n\nLe tout en 19 minutes 😳\n\nSurprise de ce début de saison ?\n\n#EuroLeague",
    "img": "https://pbs.twimg.com/media/HWgtWOlXMAAmIGS?format=jpg&name=large"
+  },
+  "fantasy": {
+   "_source": "Relevé manuel dans le jeu le 07/11 (sans jeton API)",
+   "md": 10,
+   "overall": [
+    {
+     "pos": 1,
+     "team": "Bingo Francisco 🔫",
+     "coach": "Bat No Track",
+     "md": 238.2,
+     "tot": 1712.25
+    },
+    {
+     "pos": 2,
+     "team": "Patty mid 🏆",
+     "coach": "Clément Carton",
+     "md": 211.6,
+     "tot": 1634.25
+    },
+    {
+     "pos": 3,
+     "team": "Next Big Thing",
+     "coach": "Georgios Makris",
+     "md": 198.8,
+     "tot": 1626.45
+    },
+    {
+     "pos": 4,
+     "team": "BC Palestino 🇵🇸",
+     "coach": "Bat No Track",
+     "md": 215.3,
+     "tot": 1625.35
+    },
+    {
+     "pos": 5,
+     "team": "Μόνο η Ρούλα με νοιάζει",
+     "coach": "NIKOLAOS MIXAKIS",
+     "md": 223.45,
+     "tot": 1622.35
+    },
+    {
+     "pos": 6,
+     "team": "The Last Rebounders 2",
+     "coach": "Julien Ve",
+     "md": 202.35,
+     "tot": 1621.9
+    },
+    {
+     "pos": 7,
+     "team": "Check List 👊",
+     "coach": "Donatas Di Fallah",
+     "md": 217.9,
+     "tot": 1621.2
+    },
+    {
+     "pos": 8,
+     "team": "Kleptokracija",
+     "coach": "Deni Bjelobradić",
+     "md": 203.4,
+     "tot": 1618.7
+    },
+    {
+     "pos": 9,
+     "team": "Alimos 7 ⭐️⭐️⭐️⭐️",
+     "coach": "Georgios Makris",
+     "md": 196.9,
+     "tot": 1616.25
+    },
+    {
+     "pos": 10,
+     "team": "essen7009",
+     "coach": "Dimitris Sakellaridis",
+     "md": 171.65,
+     "tot": 1613.8
+    }
+   ],
+   "best": {
+    "pos": 1,
+    "team": "Bingo Francisco 🔫",
+    "coach": "Bat No Track",
+    "md": 238.2,
+    "tot": 1712.25,
+    "players": [
+     {
+      "first": "Mathias",
+      "last": "Lessort",
+      "club": "PAO",
+      "club_name": "Panathinaikos AKTOR Athens",
+      "pos": "Center",
+      "pts": 33,
+      "cap": true,
+      "slot": 1
+     },
+     {
+      "first": "Alberto",
+      "last": "Abalde",
+      "club": "RMB",
+      "club_name": "Real Madrid",
+      "pos": "Forward",
+      "pts": 23,
+      "cap": false,
+      "slot": 2
+     },
+     {
+      "first": "Sasha",
+      "last": "Vezenkov",
+      "club": "OLY",
+      "club_name": "Olympiacos Piraeus",
+      "pos": "Forward",
+      "pts": 28,
+      "cap": false,
+      "slot": 3
+     },
+     {
+      "first": "Cameron",
+      "last": "Payne",
+      "club": "EFS",
+      "club_name": "Anadolu Efes Istanbul",
+      "pos": "Guard",
+      "pts": 29,
+      "cap": false,
+      "slot": 4
+     },
+     {
+      "first": "Andres",
+      "last": "Feliz",
+      "club": "RMB",
+      "club_name": "Real Madrid",
+      "pos": "Guard",
+      "pts": 28,
+      "cap": false,
+      "slot": 5
+     },
+     {
+      "first": "Aliou",
+      "last": "Diarra",
+      "club": "VIR",
+      "club_name": "Virtus Bologna",
+      "pos": "Center",
+      "pts": 30,
+      "cap": false,
+      "slot": 6
+     },
+     {
+      "first": "Codi",
+      "last": "Miller-Mcintyre",
+      "club": "OLY",
+      "club_name": "Olympiacos Piraeus",
+      "pos": "Guard",
+      "pts": -2,
+      "cap": false,
+      "slot": 7
+     },
+     {
+      "first": "Marius",
+      "last": "Grigonis",
+      "club": "ZAL",
+      "club_name": "Zalgiris Kaunas",
+      "pos": "Forward",
+      "pts": 15.4,
+      "cap": false,
+      "slot": 8
+     },
+     {
+      "first": "Braxton",
+      "last": "Key",
+      "club": "FBT",
+      "club_name": "Fenerbahce Tarfin Istanbul",
+      "pos": "Forward",
+      "pts": 11,
+      "cap": false,
+      "slot": 9
+     },
+     {
+      "first": "Marcus",
+      "last": "Carr",
+      "club": "VIR",
+      "club_name": "Virtus Bologna",
+      "pos": "Guard",
+      "pts": 4,
+      "cap": false,
+      "slot": 10
+     },
+     {
+      "first": "Saras",
+      "last": "Jasikevicius",
+      "club": "FBT",
+      "club_name": "Fenerbahce Tarfin Istanbul",
+      "pos": "Head Coach",
+      "pts": 20,
+      "cap": false,
+      "slot": 11
+     }
+    ]
+   }
   }
  }
 }

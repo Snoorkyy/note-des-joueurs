@@ -94,11 +94,14 @@ def build(day):
     import fantasy_league as FL
     try: FA = FL.fetch()
     except Exception as e: print("::warning::fantasy :", e); FA = {}
+    try: ov = json.load(open(os.path.join(ROOT, "robot", "newsletter_extra.json"), encoding="utf-8")).get(day, {}).get("fantasy")
+    except Exception: ov = None
+    if ov and not FA.get("best"): FA.update({k: v for k, v in ov.items() if not k.startswith("_")})
     FA["lots"] = FL.lots(W["end"].month); FA["join"] = FL.JOIN
     fcard = None
     if FA.get("best"):
         idx = {FL.norm(" ".join(reversed(v["name"].split(", ")))): k for k, v in d["players"].items()}
-        FMAP = {"EFS": "IST", "RMB": "MAD", "VBC": "PAM", "KBA": "BAS", "PBB": "PRS", "CZV": "RED", "FBB": "ULK", "PAO": "PAN"}
+        FMAP = {"EFS": "IST", "RMB": "MAD", "VBC": "PAM", "KBA": "BAS", "PBB": "PRS", "CZV": "RED", "FBB": "ULK", "FBT": "ULK", "PAO": "PAN"}
         def logo(p):
             c = FMAP.get(p["club"], p["club"])
             if c in d["clubs"]: return c

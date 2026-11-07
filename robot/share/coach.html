@@ -56,6 +56,6 @@ window.render=D=>{const S=D.players.filter(p=>p.slot<=5),B=D.players.filter(p=>p
  <div class="court"><div class="ln"></div>${S.map(p=>`<div class="p ${p.cap?'cp':''}" style="left:${POS[p.slot][0]-56}px;top:${POS[p.slot][1]}px">
    ${p.cap?'<div class="cap">C</div>':''}<div class="ph">${p.cut?`<img class="cut" src="${p.cut}">`:`<div class="ini">${ini(p)}</div>`}</div>
    <div class="nm">${p.first}<br>${p.last}</div><div class="row">${p.logo?`<div class="cl"><img src="../../logos/${p.logo}.webp"></div>`:`<div class="cl t">${p.club}</div>`}<div class="pt">${f1(p.cap?p.pts*2:p.pts)}</div>${p.cap?'<div class="x2">×2</div>':''}</div></div>`).join('')}</div>
- <div class="bench">${B.map(p=>`<div class="b ${/coach/i.test(p.pos)?'coach':''}"><div class="bp">${p.cut?`<img src="${p.cut}">`:`<div class="ini">${ini(p)}</div>`}</div><div class="n">${p.last}</div><div class="v">${/coach/i.test(p.pos)?'Coach':'Banc'} · <b>${f1(p.pts)}</b></div></div>`).join('')}</div>`;
+ <div class="bench">${B.map(p=>`<div class="b ${/coach/i.test(p.pos)?'coach':''}"><div class="bp">${p.cut?`<img src="${p.cut}">`:`<div class="ini">${ini(p)}</div>`}</div><div class="n">${p.last}</div><div class="v">${/coach/i.test(p.pos)?'Coach':p.slot===6?'6e homme':'Banc ½'} · <b>${f1(/coach/i.test(p.pos)||p.slot===6?p.pts:p.pts/2)}</b></div></div>`).join('')}</div>`;
  return document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r})))).then(()=>new Promise(r=>setTimeout(r,300)))};
 </script></body></html>
