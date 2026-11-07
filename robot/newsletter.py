@@ -34,6 +34,13 @@ def collect(day):
     start, end = dt.date.fromisoformat(min(m["date"] for m in ms)), dt.date.fromisoformat(max(m["date"] for m in ms))
     return d, dict(ms=sorted(ms, key=lambda m: (m["date"], int(m["id"].split("-")[1]))), N=N, by=by, frs=frs, ph=ph, rounds=rounds, start=start, end=end)
 
+def jdays(days):
+    ds = [dt.date.fromisoformat(x) for x in days]
+    if len({x.month for x in ds}) == 1:
+        n = [("1er" if x.day == 1 else str(x.day)) for x in ds]
+        return (", ".join(n[:-1]) + " et " + n[-1] if len(n) > 1 else n[0]) + " " + MOIS[ds[0].month - 1]
+    return " et ".join(dfr(x) for x in days)
+
 def B_short(W): return "J" + "-J".join(str(r) for r in W["rounds"])
 def span_short(W):
     a, b = W["start"], W["end"]; M = MOIS[b.month - 1][:4].rstrip(".")
@@ -160,7 +167,7 @@ def html_email(B, day):
         inner = ""
         if B["fx"]:
             days = sorted({x[1] for x in B["fx"]})
-            inner += (f'<div style="{F}font-size:13px;font-weight:800;color:#8E9AC4;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Au programme · {" et ".join(dfr(x) for x in days)}</div>'
+            inner += (f'<div style="{F}font-size:13px;font-weight:800;color:#8E9AC4;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Au programme · {jdays(days)}</div>'
                       f'<div style="{F}font-size:15px;line-height:1.7;color:#fff;margin-bottom:12px">' + "<br>".join(f'{E(club(x[2]))} – {E(club(x[3]))}' for x in B["fx"]) + '</div>')
         if B["inj"]:
             S = {"out": ("FORFAIT", "#A01E16"), "doubt": ("INCERTAIN", "#B08816")}
