@@ -216,7 +216,7 @@ def html_email(B, day):
     a(f"""<tr><td align="center" style="padding:14px 24px 8px">
  <a href="{vote}" style="display:block;padding:18px;border-radius:14px;background:#FFB547;background-color:#FFB547;color:#140C00;{F}font-size:18px;font-weight:800;letter-spacing:1px;text-decoration:none;text-align:center">À TOI DE NOTER LES JOUEURS</a></td></tr>
 <tr><td align="center" style="padding:22px 16px 6px"><div style="{F}font-size:12px;font-weight:800;letter-spacing:3px;color:#8E9AC4;margin-bottom:8px">SUIS-NOUS</div>{social()}</td></tr>
-<tr><td style="padding:20px 28px 26px;{F}font-size:12px;line-height:1.6;color:#6F7AA3;text-align:center">Tu reçois la lettre du samedi d'EuroLeague France.<br>Notes calculées par notre formule à partir des statistiques officielles EuroLeague. <a href="{SITE}/newsletter/{day}.html" style="color:#8E9AC4">Version web</a></td></tr>
+<tr><td style="padding:20px 28px 26px;{F}font-size:12px;line-height:1.6;color:#6F7AA3;text-align:center">Tu reçois la lettre du samedi d'EuroLeague France. Pour ne plus la recevoir, réponds simplement « STOP » à cet e-mail.<br>Notes calculées par notre formule à partir des statistiques officielles EuroLeague. <a href="{SITE}/newsletter/{day}.html" style="color:#8E9AC4">Version web</a></td></tr>
 <tr><td style="height:6px;background:#002395;background-image:linear-gradient(90deg,#002395 0 33%,#ffffff 33% 66%,#ED2939 66%)"></td></tr>
 </table></td></tr></table></body></html>""")
     subj = f"{pn(m[0])} {nfr(m[6])}/10 : la lettre de la {B['rshort']}"
