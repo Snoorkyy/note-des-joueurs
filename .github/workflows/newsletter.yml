@@ -26,6 +26,7 @@ jobs:
       - name: Fabriquer et publier la lettre
         env:
           DAY: ${{ github.event.inputs.date }}
+          FANTASY_TOKEN: ${{ secrets.FANTASY_TOKEN }}
         run: |
           D="${DAY:-$(date -u +%F)}"; echo "D=$D" >> "$GITHUB_ENV"
           pip install -q playwright && python3 -m playwright install --with-deps chromium >/dev/null

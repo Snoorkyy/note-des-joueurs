@@ -82,15 +82,27 @@ def build(day):
     gaps = sorted(gaps, key=lambda z: -z[0])[:3]
     nvotes = sum(r[1] for m in va.values() for r in m.values() if True) if va else 0
     # fantasy : prochaine journée, blessés notables
-    nxt = min([f[0] for f in d.get("fixtures", []) if f[1] > W["end"].isoformat()] or [0])
-    fx = [f for f in d.get("fixtures", []) if f[0] == nxt]
-    fp = d.get("fantasy", {}).get("p", {})
-    inj = [x for x in d.get("news", {}).get("list", []) if x.get("s") in ("out", "doubt") and x.get("p") and fp.get(x["p"], [0, 0])[1] >= 11]
-    inj = sorted(inj, key=lambda x: (x["s"] != "out", -fp[x["p"]][1]))[:8]
+    # championnat EuroLeague France du Fantasy Challenge
+    import fantasy_league as FL
+    try: FA = FL.fetch()
+    except Exception as e: print("::warning::fantasy :", e); FA = {}
+    FA["lots"] = FL.lots(W["end"].month); FA["join"] = FL.JOIN
+    fcard = None
+    if FA.get("best"):
+        idx = {FL.norm(" ".join(reversed(v["name"].split(", ")))): k for k, v in d["players"].items()}
+        FMAP = {"EFS": "IST", "RMB": "MAD", "VBC": "PAM", "KBA": "BAS", "PBB": "PRS", "CZV": "RED", "FBB": "ULK", "PAO": "PAN"}
+        def logo(p):
+            c = FMAP.get(p["club"], p["club"])
+            if c in d["clubs"]: return c
+            n = FL.norm(p["club_name"])
+            return next((k for k, v in d["clubs"].items() if FL.norm(v["name"]).split()[-1] in n), None)
+        bp = FA["best"]
+        fcard = {"pill": f"J{FA['md']} · FANTASY", "team": bp["team"], "coach": bp["coach"], "pts": bp["md"] or 0,
+                 "players": [dict(p, logo=logo(p), cut=heads.get(idx.get(FL.norm(p["first"] + " " + p["last"]), ""))) for p in bp["players"]]}
     vid = ((get(SITE + "/api/videos") or {}).get("videos") or [None])[0]
     std = d.get("standings", {}).get("rows", [])[:8]
-    return dict(d=d, W=W, rtxt=rtxt, rshort=rshort, five=five, mvp=mvp, flop=flop, fr_rows=fr_rows, card=card, gaps=gaps, nxt=nxt, fx=fx,
-                inj=inj, vid=vid, std=std, pn=pn, club=club, nvotes=nvotes)
+    return dict(d=d, W=W, rtxt=rtxt, rshort=rshort, five=five, mvp=mvp, flop=flop, fr_rows=fr_rows, card=card, gaps=gaps,
+                FA=FA, fcard=fcard, vid=vid, std=std, pn=pn, club=club, nvotes=nvotes)
 
 class Math:
     @staticmethod
@@ -163,19 +175,23 @@ def html_email(B, day):
     if B["std"]:
         a(card("Classement", "Le haut du tableau", rows([(f'<span style="display:inline-block;width:26px;color:#FFB547;font-weight:800">{r[0]}</span>{E(club(r[1]))}',
             f'<span style="{F}font-size:15px;color:#fff;font-weight:800">{r[3]}-{r[4]}</span> <span style="{F}font-size:13px;color:#8E9AC4">{r[5]}</span>') for r in B["std"]])))
-    if B["fx"] or B["inj"]:
-        inner = ""
-        if B["fx"]:
-            days = sorted({x[1] for x in B["fx"]})
-            inner += (f'<div style="{F}font-size:13px;font-weight:800;color:#8E9AC4;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Au programme · {jdays(days)}</div>'
-                      f'<div style="{F}font-size:15px;line-height:1.7;color:#fff;margin-bottom:12px">' + "<br>".join(f'{E(club(x[2]))} – {E(club(x[3]))}' for x in B["fx"]) + '</div>')
-        if B["inj"]:
-            S = {"out": ("FORFAIT", "#A01E16"), "doubt": ("INCERTAIN", "#B08816")}
-            inner += f'<div style="{F}font-size:13px;font-weight:800;color:#8E9AC4;letter-spacing:1px;text-transform:uppercase">À surveiller</div>' + rows(
-                [(f'<b>{E(x["n"])}</b> <span style="color:#8E9AC4">· {E(club(x["c"]))}</span><br><span style="color:#8E9AC4;font-size:12px">{E(x["t"])}</span>',
-                  f'<span style="{F}font-size:11px;font-weight:800;color:#fff;background:{S[x["s"]][1]};padding:5px 8px;border-radius:7px">{S[x["s"]][0]}</span>') for x in B["inj"]])
-        inner += f'<a href="https://www.euroleague-france.com/fantasy-challenge/" style="display:inline-block;margin-top:14px;{F}font-size:14px;font-weight:800;color:#FFB547;text-decoration:none">Projections et crédits de la J{B["nxt"]} →</a>'
-        a(card("Fantasy Challenge", f"Prépare la J{B['nxt']}" if B["nxt"] else "Fantasy", inner))
+    FA = B["FA"]
+    inner = ""
+    if B["fcard"]:
+        inner += (f'<a href="{FA["join"]}"><img src="{SITE}/og/nl/{day}-coach.jpg" width="512" alt="L\'équipe du meilleur coach de la J{FA["md"]} : {E(B["fcard"]["team"])}" style="display:block;width:100%;height:auto;border-radius:14px;border:0"></a>'
+                  f'<div style="{F}font-size:15px;line-height:1.5;color:#C2CBEF;margin:12px 0 4px">Bravo à <b style="color:#fff">{E(B["fcard"]["coach"])}</b> ({E(B["fcard"]["team"])}), meilleur score de la J{FA["md"]} avec <b style="color:#FFB547">{nfr(round(B["fcard"]["pts"], 1))} points</b>.</div>')
+    if FA.get("overall"):
+        inner += (f'<div style="{F}font-size:13px;font-weight:800;color:#8E9AC4;letter-spacing:1px;text-transform:uppercase;margin:16px 0 2px">Classement général · après la J{FA["md"]}</div>'
+                  + rows([(f'<span style="display:inline-block;width:26px;color:#FFB547;font-weight:800">{r["pos"]}</span><b>{E(r["team"])}</b><br><span style="color:#8E9AC4;font-size:13px;padding-left:26px">{E(r["coach"])}</span>',
+                           f'<span style="{F}font-size:15px;color:#fff;font-weight:800">{nfr(round(r["tot"] or 0, 1))}</span> <span style="{F}font-size:12px;color:#8E9AC4">pts</span>') for r in FA["overall"]]))
+    L = FA.get("lots")
+    if L:
+        inner += (f'<div style="margin-top:18px;padding:16px;border-radius:14px;background:#1B2A66;background-color:#1B2A66;border:1px solid #FFB547">'
+                  f'<div style="{F}font-size:12px;font-weight:800;letter-spacing:3px;color:#FFB547">🎁 LOTS À GAGNER EN {L["month"].upper()} · J{L["from"]} À J{L["to"]}</div>'
+                  + "".join(f'<div style="{F}font-size:15px;line-height:1.4;color:#fff;margin-top:10px">{ic} <b>{E(pr)}</b><br><span style="color:#AEB9E0;font-size:13px">{E(w)}</span></div>' for ic, pr, w in L["items"])
+                  + f'<div style="{F}font-size:13px;color:#AEB9E0;margin-top:12px">{L["season"][0]} Et en fin de saison : {E(L["season"][1].lower())} pour le vainqueur du classement général.</div></div>')
+    inner += f'<a href="{FA["join"]}" style="display:inline-block;margin-top:16px;padding:12px 18px;border-radius:12px;border:1px solid #FFB547;color:#FFB547;{F}font-size:14px;font-weight:800;text-decoration:none">REJOINDRE LE CHAMPIONNAT →</a>'
+    a(card("Fantasy Challenge", "Championnat EuroLeague France", inner))
     v = B["vid"]
     if v:
         a(card("YouTube", "La dernière émission", f'<a href="https://www.youtube.com/watch?v={v["id"]}" style="text-decoration:none"><img src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" width="512" alt="" style="display:block;width:100%;height:auto;border-radius:12px;border:0">'
@@ -198,7 +214,13 @@ def run_build(day):
         b = pw.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 1300})
         pg.goto("file://" + os.path.join(ROOT, "robot", "share", "cinq.html"))
         pg.evaluate("D=>window.render(D)", B["card"]); pg.wait_for_timeout(300)
-        pg.screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-cinq.jpg"), type="jpeg", quality=88); b.close()
+        pg.screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-cinq.jpg"), type="jpeg", quality=88)
+        if B["fcard"]:
+            cp = b.new_page(viewport={"width": 1200, "height": 1200})
+            cp.goto("file://" + os.path.join(ROOT, "robot", "share", "coach.html"))
+            cp.evaluate("D=>window.render(D)", B["fcard"]); cp.wait_for_timeout(300)
+            cp.screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-coach.jpg"), type="jpeg", quality=88)
+        b.close()
     body, subj, pre = html_email(B, day)
     open(os.path.join(ROOT, "newsletter", f"{day}.html"), "w", encoding="utf-8").write(body)
     json.dump({"date": day, "subject": subj, "preview": pre, "web": f"{SITE}/newsletter/{day}.html"},

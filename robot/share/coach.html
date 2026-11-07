@@ -1,0 +1,57 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-800-normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F}
+@font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-ext-800-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+@font-face{font-family:SC;font-weight:700;src:url(a/saira-condensed-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F}
+@font-face{font-family:SS;font-weight:700;src:url(a/source-sans-3-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:SS;font-weight:700;src:url(a/source-sans-3-latin-ext-700-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1200px;height:1200px;overflow:hidden;background:#05091C;font-family:SS;color:#F4F6FF}
+.c{position:relative;width:1200px;height:1200px;overflow:hidden;background:radial-gradient(60% 40% at 90% 5%,rgba(255,181,71,.30),transparent 70%),radial-gradient(70% 45% at 0% 100%,rgba(0,58,255,.40),transparent 70%),linear-gradient(180deg,#0A1236,#05091C 70%)}
+.top{position:absolute;left:56px;right:56px;top:44px;display:flex;justify-content:space-between;align-items:center}
+.pill{font-family:SC;font-weight:800;font-size:22px;letter-spacing:.18em;color:#05091C;background:#FFB547;padding:9px 18px;border-radius:999px}
+.top img{height:48px}
+.k{position:absolute;left:56px;top:122px;font-family:SC;font-weight:800;font-size:26px;letter-spacing:.2em;color:#8E9AC4}
+h1{position:absolute;left:56px;right:330px;top:156px;font-family:SC;font-weight:800;font-size:86px;line-height:.9;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.by{position:absolute;left:58px;top:250px;font-family:SC;font-weight:700;font-size:32px;color:#C2CBEF}.by b{color:#FFB547}
+.tot{position:absolute;right:56px;top:136px;width:250px;height:150px;border-radius:30px;background:linear-gradient(150deg,#FFB547,#FF5A64);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#140C00;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.tot b{font-family:SC;font-weight:800;font-size:84px;line-height:.9}.tot span{font-family:SC;font-weight:800;font-size:22px;letter-spacing:.18em}
+/* terrain */
+.court{position:absolute;left:56px;right:56px;top:320px;height:690px;border-radius:36px;overflow:hidden;
+ background:radial-gradient(80% 60% at 50% 0%,rgba(255,255,255,.10),transparent 70%),linear-gradient(180deg,#1A2C70,#0E1A4A);border:1px solid rgba(255,255,255,.12)}
+.court:before{content:"";position:absolute;left:50%;top:-230px;width:560px;height:560px;transform:translateX(-50%);border-radius:50%;border:3px solid rgba(255,255,255,.12)}
+.court:after{content:"";position:absolute;left:50%;top:0;width:300px;height:250px;transform:translateX(-50%);border:3px solid rgba(255,255,255,.12);border-top:0}
+.ln{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.12)}
+.p{position:absolute;width:230px;display:flex;flex-direction:column;align-items:center;text-align:center;z-index:2}
+.p .ph{position:relative;width:140px;height:140px;border-radius:50%;overflow:hidden;background:linear-gradient(160deg,#2A3E8F,#16245E);border:4px solid rgba(255,255,255,.25)}
+.p .ph img.cut{position:absolute;left:50%;top:6px;width:150%;transform:translateX(-50%)}
+.p .ph .ini{position:absolute;inset:0;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:52px;color:#fff}
+.p .cap{position:absolute;right:34px;top:-6px;width:50px;height:50px;border-radius:50%;background:#FFB547;color:#140C00;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:30px;z-index:3;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.p .nm{font-family:SC;font-weight:800;font-size:28px;line-height:.95;text-transform:uppercase;margin-top:10px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.p .row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.p .cl{width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center}.p .cl img{width:26px;height:26px;object-fit:contain}
+.p .cl.t{width:auto;padding:0 10px;border-radius:999px;font-family:SC;font-weight:800;font-size:18px;color:#0B1638}
+.p .pt{min-width:84px;height:44px;padding:0 10px;border-radius:12px;background:#fff;color:#0B1638;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:30px}
+.p.cp .pt{background:#FFB547}
+.bench{position:absolute;left:56px;right:56px;top:1030px;display:flex;gap:10px}
+.b{flex:1;height:84px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:10px 12px;display:flex;flex-direction:column;justify-content:center}
+.b .n{font-family:SC;font-weight:800;font-size:20px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b .v{font-family:SC;font-weight:700;font-size:18px;color:#8E9AC4}.b .v b{color:#fff}
+.b.coach{border-color:rgba(255,181,71,.45)}
+.foot{position:absolute;left:56px;right:56px;bottom:22px;display:flex;justify-content:space-between;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.14em;color:#8E9AC4}.foot b{color:#fff}
+.st3{position:absolute;left:0;right:0;bottom:0;height:8px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%)}
+</style></head><body><div class="c"><div id="x"></div><div class="foot"><b>EUROLEAGUE-FRANCE.COM</b><span>CHAMPIONNAT EUROLEAGUE FRANCE · FANTASY CHALLENGE</span></div><div class="st3"></div></div>
+<script>
+const f1=n=>(Math.round(n*10)/10).toFixed(1).replace('.0','').replace('.',',');
+const ini=p=>(p.first[0]||'')+(p.last[0]||'');
+// positions sur le terrain : 1 pivot (haut), 2-3 ailiers, 4-5 arrières (bas)
+const POS={1:[485,14],2:[150,170],3:[820,170],4:[330,420],5:[640,420]};
+window.render=D=>{const S=D.players.filter(p=>p.slot<=5),B=D.players.filter(p=>p.slot>5);
+ document.getElementById('x').innerHTML=`<div class="top"><div class="pill">${D.pill}</div><img src="../../logo_white.png"></div>
+ <div class="k">L'ÉQUIPE DU MEILLEUR COACH</div><h1>${D.team}</h1><div class="by">par <b>${D.coach}</b></div>
+ <div class="tot"><b>${f1(D.pts)}</b><span>POINTS FANTASY</span></div>
+ <div class="court"><div class="ln"></div>${S.map(p=>`<div class="p ${p.cap?'cp':''}" style="left:${POS[p.slot][0]-56}px;top:${POS[p.slot][1]}px">
+   ${p.cap?'<div class="cap">C</div>':''}<div class="ph">${p.cut?`<img class="cut" src="${p.cut}">`:`<div class="ini">${ini(p)}</div>`}</div>
+   <div class="nm">${p.first}<br>${p.last}</div><div class="row">${p.logo?`<div class="cl"><img src="../../logos/${p.logo}.webp"></div>`:`<div class="cl t">${p.club}</div>`}<div class="pt">${f1(p.pts)}</div></div></div>`).join('')}</div>
+ <div class="bench">${B.map(p=>`<div class="b ${/coach/i.test(p.pos)?'coach':''}"><div class="n">${/coach/i.test(p.pos)?'🧑‍💼 ':''}${p.last}</div><div class="v">${/coach/i.test(p.pos)?'Coach':'Banc'} · <b>${f1(p.pts)}</b></div></div>`).join('')}</div>`;
+ return document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r})))).then(()=>new Promise(r=>setTimeout(r,300)))};
+</script></body></html>
