@@ -189,7 +189,7 @@ def html_email(B, day):
         inner += (f'<div style="margin-top:18px;padding:16px;border-radius:14px;background:#1B2A66;background-color:#1B2A66;border:1px solid #FFB547">'
                   f'<div style="{F}font-size:12px;font-weight:800;letter-spacing:3px;color:#FFB547">🎁 LOTS À GAGNER EN {L["month"].upper()} · J{L["from"]} À J{L["to"]}</div>'
                   + "".join(f'<div style="{F}font-size:15px;line-height:1.4;color:#fff;margin-top:10px">{ic} <b>{E(pr)}</b><br><span style="color:#AEB9E0;font-size:13px">{E(w)}</span></div>' for ic, pr, w in L["items"])
-                  + f'<div style="{F}font-size:13px;color:#AEB9E0;margin-top:12px">{L["season"][0]} Et en fin de saison : {E(L["season"][1].lower())} pour le vainqueur du classement général.</div></div>')
+                  + f'<div style="{F}font-size:13px;color:#AEB9E0;margin-top:12px">{L["season"][0]} Et en fin de saison : {E(L["season"][1][0].lower() + L["season"][1][1:])} pour le vainqueur du classement général.</div></div>')
     inner += f'<a href="{FA["join"]}" style="display:inline-block;margin-top:16px;padding:12px 18px;border-radius:12px;border:1px solid #FFB547;color:#FFB547;{F}font-size:14px;font-weight:800;text-decoration:none">REJOINDRE LE CHAMPIONNAT →</a>'
     a(card("Fantasy Challenge", "Championnat EuroLeague France", inner))
     v = B["vid"]
