@@ -257,6 +257,12 @@ def run_build(day):
         b.close()
     body, subj, pre = html_email(B, day)
     open(os.path.join(ROOT, "newsletter", f"{day}.html"), "w", encoding="utf-8").write(body)
+    # version prête pour un brouillon Gmail (corps seul, compacté) + objet
+    g = body[body.index("<table"):body.rindex("</table>") + 8]
+    g = re.sub(r"\n\s*", "", g).replace("font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;", "font-family:Arial,sans-serif;")
+    g = g.replace('role="presentation" ', "").replace(' cellpadding="0" cellspacing="0"', " cellpadding=0 cellspacing=0")
+    open(os.path.join(ROOT, "newsletter", f"{day}.gmail.html"), "w", encoding="utf-8").write(g)
+    json.dump({"subject": subj, "preview": pre, "web": f"{SITE}/newsletter/{day}.html"}, open(os.path.join(ROOT, "newsletter", f"{day}.json"), "w"), ensure_ascii=False)
     json.dump({"date": day, "subject": subj, "preview": pre, "web": f"{SITE}/newsletter/{day}.html"},
               open(os.path.join(ROOT, "robot", "newsletter_meta.json"), "w"), ensure_ascii=False, indent=1)
     print("lettre fabriquée :", subj)
