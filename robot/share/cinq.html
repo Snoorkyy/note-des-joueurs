@@ -1,32 +1,57 @@
 <!doctype html><html><head><meta charset="utf-8"><style>
 @font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-800-normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F}
 @font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-ext-800-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+@font-face{font-family:SC;font-weight:700;src:url(a/saira-condensed-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F}
 @font-face{font-family:SS;font-weight:700;src:url(a/source-sans-3-latin-700-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F}
 @font-face{font-family:SS;font-weight:700;src:url(a/source-sans-3-latin-ext-700-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
 *{box-sizing:border-box;margin:0;padding:0}
-body{width:1200px;height:640px;overflow:hidden;background:#060D24;font-family:SS;color:#F4F6FF}
-.c{position:relative;width:1200px;height:640px;overflow:hidden;background:radial-gradient(60% 90% at 100% 0%,rgba(255,45,58,.28),transparent 60%),radial-gradient(55% 80% at 0% 100%,rgba(0,35,149,.5),transparent 60%),#060D24;padding:44px 48px}
-.c:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.022) 0 2px,transparent 2px 22px)}
-.st{position:absolute;left:0;right:0;bottom:0;height:10px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%)}
-.k{position:relative;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.2em;color:#FFB547}
-h1{position:relative;font-family:SC;font-weight:800;font-size:64px;line-height:1;text-transform:uppercase;margin:6px 0 30px}
-.g{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
-.p{border-radius:22px;background:linear-gradient(165deg,#15275F,#0B1638);border:1px solid rgba(255,255,255,.1);padding:22px 12px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 16px 40px rgba(0,0,0,.4)}
-.p.m{border:2px solid rgba(255,181,71,.6)}
-.ph{width:132px;height:132px;border-radius:50%;background:#E8EFF8 center/cover;border:4px solid rgba(255,255,255,.22);display:grid;place-items:center;font-family:SC;font-weight:800;font-size:48px;color:#0B1638}
-.cl{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;margin:-22px 0 0 90px;position:relative}.cl img{width:30px;height:30px;object-fit:contain}
-.pn{font-family:SC;font-weight:800;font-size:27px;line-height:1;text-transform:uppercase;margin-top:10px;min-height:54px;display:flex;align-items:center}
-.mt{font-weight:700;font-size:15px;color:#AEB9E0;margin-top:6px}
-.nt{margin-top:14px;width:96px;height:62px;border-radius:16px;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:40px;color:#fff}
-.lab{font-family:SC;font-weight:800;font-size:14px;letter-spacing:.18em;color:#FFB547;height:18px;margin-bottom:8px}
-.url{position:absolute;left:48px;bottom:30px;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.08em}.url span{color:#8E9AC4}
-</style></head><body><div class="c"><div id="x"></div><div class="url">EUROLEAGUE-FRANCE.COM <span>· LA LETTRE DU SAMEDI</span></div><div class="st"></div></div>
+body{width:1200px;height:1300px;overflow:hidden;background:#05091C;font-family:SS;color:#F4F6FF}
+.c{position:relative;width:1200px;height:1300px;overflow:hidden;
+ background:radial-gradient(70% 45% at 85% 8%,rgba(255,45,58,.38),transparent 70%),radial-gradient(70% 50% at 5% 95%,rgba(0,58,255,.45),transparent 70%),linear-gradient(180deg,#0A1236,#05091C 60%)}
+.grain{position:absolute;inset:0;background:repeating-linear-gradient(118deg,rgba(255,255,255,.028) 0 2px,transparent 2px 26px)}
+.big{position:absolute;left:-12px;top:96px;font-family:SC;font-weight:800;font-size:330px;line-height:.8;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.07);white-space:nowrap}
+.top{position:absolute;left:56px;right:56px;top:46px;display:flex;align-items:center;justify-content:space-between}
+.top img{height:50px;opacity:.95}
+.pill{font-family:SC;font-weight:800;font-size:22px;letter-spacing:.18em;color:#05091C;background:#FFB547;padding:9px 18px;border-radius:999px}
+h1{position:absolute;left:56px;top:136px;font-family:SC;font-weight:800;font-size:112px;line-height:.86;text-transform:uppercase;letter-spacing:-.01em}
+h1 em{font-style:normal;background:linear-gradient(90deg,#FFB547,#FF5A64);-webkit-background-clip:text;color:transparent}
+.sub{position:absolute;left:60px;top:346px;font-family:SC;font-weight:700;font-size:28px;letter-spacing:.14em;color:#8E9AC4;text-transform:uppercase}
+/* MVP */
+.mvp{position:absolute;left:56px;top:410px;width:610px;height:830px;border-radius:36px;overflow:hidden;background:linear-gradient(170deg,#1D2F78 0%,#0E1A4A 55%,#0A1236 100%);box-shadow:0 30px 80px rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12)}
+.mvp .glow{position:absolute;left:50%;top:38%;width:560px;height:560px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,181,71,.35),transparent 65%)}
+.mvp .cut{position:absolute;left:50%;bottom:150px;height:640px;transform:translateX(-50%);object-fit:contain;filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
+.mvp .rnd{position:absolute;left:50%;top:150px;transform:translateX(-50%);width:380px;height:380px;border-radius:50%;background:#E8EFF8 center/cover;border:8px solid rgba(255,255,255,.25)}
+.mvp .shade{position:absolute;left:0;right:0;bottom:0;height:360px;background:linear-gradient(transparent,rgba(5,9,28,.92) 55%)}
+.mvp .lab{position:absolute;left:34px;top:30px;font-family:SC;font-weight:800;font-size:28px;letter-spacing:.22em;color:#FFB547}
+.mvp .cl{position:absolute;right:30px;top:24px;width:74px;height:74px;border-radius:50%;background:#fff;display:grid;place-items:center}.mvp .cl img{width:54px;height:54px;object-fit:contain}
+.mvp .nm{position:absolute;left:34px;right:200px;bottom:78px;font-family:SC;font-weight:800;font-size:76px;line-height:.86;text-transform:uppercase}
+.mvp .st{position:absolute;left:36px;bottom:34px;font-weight:700;font-size:24px;color:#C2CBEF}
+.mvp .nt{position:absolute;right:30px;bottom:34px;width:150px;height:118px;border-radius:28px;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:92px;color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+/* 4 autres */
+.lst{position:absolute;left:694px;top:410px;width:450px;display:flex;flex-direction:column;gap:18px}
+.r{position:relative;height:194px;border-radius:28px;overflow:hidden;background:linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12)}
+.r .cut{position:absolute;left:-6px;top:10px;height:300px;object-fit:contain;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45))}
+.r .rnd{position:absolute;left:24px;top:37px;width:120px;height:120px;border-radius:50%;background:#E8EFF8 center/cover}
+.r .k{position:absolute;left:200px;top:30px;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.2em;color:#8E9AC4}
+.r .nm{position:absolute;left:200px;right:16px;top:56px;font-family:SC;font-weight:800;font-size:34px;line-height:.92;text-transform:uppercase}
+.r .ft{position:absolute;left:200px;bottom:16px;display:flex;align-items:center;gap:12px}
+.r .cl{width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center}.r .cl img{width:32px;height:32px;object-fit:contain}
+.r .nt{width:96px;height:62px;border-radius:16px;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:44px;color:#fff}
+.foot{position:absolute;left:56px;right:56px;bottom:22px;display:flex;justify-content:space-between;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.14em;color:#8E9AC4}
+.foot b{color:#fff}
+.st3{position:absolute;left:0;right:0;bottom:0;height:8px;background:linear-gradient(90deg,#002395 0 33.3%,#fff 33.3% 66.6%,#ED2939 66.6%)}
+</style></head><body><div class="c"><div class="grain"></div><div class="big">LE CINQ</div><div id="x"></div>
+<div class="foot"><b>EUROLEAGUE-FRANCE.COM</b><span>LA LETTRE DU SAMEDI</span></div><div class="st3"></div></div>
 <script>
 const NC=n=>n>=8.5?"#17633A":n>=7?"#2E8048":n>=5.5?"#6F7F3F":n>=4.5?"#B08816":n>=3?"#C4521E":"#A01E16";
 const fr=n=>(Math.round(n*2)/2).toFixed(1).replace('.0','').replace('.',',');
-const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
-window.render=D=>{document.getElementById('x').innerHTML=`<div class="k">${D.kicker}</div><h1>Le cinq de la semaine</h1>
- <div class="g">${D.five.map((p,i)=>`<div class="p ${i?'':'m'}"><div class="lab">${i?'':'★ MVP'}</div><div class="ph" ${p.photo?`style="background-image:url(../../photos/${p.id}.webp)"`:''}>${p.photo?'':ini(p.n)}</div>
- <div class="cl"><img src="../../logos/${p.club}.webp"></div><div class="pn">${p.fra?'🇫🇷 ':''}${p.n}</div><div class="mt">${p.mt}</div><div class="nt" style="background:${NC(p.note)}">${fr(p.note)}</div></div>`).join('')}</div>`;
- return document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r}))))};
+const pic=(p,cls)=>p.cut?`<img class="cut" src="${p.cut}" onerror="this.outerHTML='<div class=rnd style=background-image:url(../../photos/${p.id}.webp)></div>'">`:`<div class="rnd" style="${p.photo?`background-image:url(../../photos/${p.id}.webp)`:''}"></div>`;
+window.render=D=>{const [m,...o]=D.five;
+ document.getElementById('x').innerHTML=`<div class="top"><div class="pill">${D.pill}</div><img src="../../logo_white.png"></div>
+ <h1>Le cinq de<br><em>la semaine</em></h1><div class="sub">${D.sub}</div>
+ <div class="mvp"><div class="glow"></div>${pic(m)}<div class="shade"></div><div class="lab">★ MVP</div><div class="cl"><img src="../../logos/${m.club}.webp"></div>
+  <div class="nm">${m.fra?'🇫🇷 ':''}${m.n.replace(' ','<br>')}</div><div class="st">${m.mt}</div><div class="nt" style="background:${NC(m.note)}">${fr(m.note)}</div></div>
+ <div class="lst">${o.map((p,i)=>`<div class="r">${pic(p)}<div class="k">N°${i+2}</div><div class="nm">${p.fra?'🇫🇷 ':''}${p.n.replace(' ','<br>')}</div>
+  <div class="ft"><div class="cl"><img src="../../logos/${p.club}.webp"></div><div class="nt" style="background:${NC(p.note)}">${fr(p.note)}</div></div></div>`).join('')}</div>`;
+ return document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r})))).then(()=>new Promise(r=>setTimeout(r,300)))};
 </script></body></html>

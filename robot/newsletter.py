@@ -34,6 +34,11 @@ def collect(day):
     start, end = dt.date.fromisoformat(min(m["date"] for m in ms)), dt.date.fromisoformat(max(m["date"] for m in ms))
     return d, dict(ms=sorted(ms, key=lambda m: (m["date"], int(m["id"].split("-")[1]))), N=N, by=by, frs=frs, ph=ph, rounds=rounds, start=start, end=end)
 
+def B_short(W): return "J" + "-J".join(str(r) for r in W["rounds"])
+def span_short(W):
+    a, b = W["start"], W["end"]; M = MOIS[b.month - 1][:4].rstrip(".")
+    return f"{a.day}–{b.day} {MOIS[b.month-1]}" if a.month == b.month and a != b else dfr(b.isoformat())
+
 def opp(W, n):
     m = W["by"][n[1]]; return m["away"] if m["home"] == n[2] else m["home"]
 
@@ -53,9 +58,14 @@ def build(day):
     flop = min([n for n in N if n[3] >= 20], key=lambda n: (n[6], n[4]))
     fr_rows = sorted([n for n in N if n[0] in W["frs"] and n[3] >= 5], key=lambda n: -n[6])
     # visuel
-    card = {"kicker": f"{rtxt} · {span(W)}".upper(),
-            "five": [{"id": n[0], "n": pn(n[0]), "note": n[6], "photo": n[0] in W["ph"], "club": n[2], "fra": n[0] in W["frs"],
-                      "mt": f"{Math.r(n[3])} min · {n[4]} d'éval · vs {club(opp(W, n))}"} for n in five]}
+    heads = {}
+    pp = get("https://api-live.euroleague.net/v2/competitions/E/seasons/E%d/people?personType=J" % int(W["end"].year if W["end"].month >= 8 else W["end"].year - 1))
+    for x in (pp or {}).get("data", pp if isinstance(pp, list) else []):
+        try: heads["P" + x["person"]["code"]] = (x.get("images") or {}).get("headshot")
+        except Exception: pass
+    card = {"pill": f"{B_short(W)} · {span_short(W)}".upper(), "sub": f"Les 5 meilleures notes · {len(W['ms'])} matchs",
+            "five": [{"id": n[0], "n": pn(n[0]), "note": n[6], "photo": n[0] in W["ph"], "club": n[2], "fra": n[0] in W["frs"], "cut": heads.get(n[0]),
+                      "mt": f"{n[4]} d'éval · {Math.r(n[3])} min · vs {club(opp(W, n))}"} for n in five]}
     # votes des lecteurs (écarts avec nos notes, ≥ 5 votes)
     va = (get(SITE + "/api/vote") or {}).get("a", {})
     gaps = []
@@ -79,90 +89,97 @@ class Math:
     @staticmethod
     def r(x): return int(round(x))
 
-def chip(n, size=16):
-    return (f'<span style="display:inline-block;min-width:40px;padding:5px 8px;border-radius:8px;background:{NC(n)};color:#fff;'
-            f'font:800 {size}px Arial,Helvetica,sans-serif;text-align:center">{nfr(round(n * 2) / 2)}</span>')
+F = "font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;"
+def chip(n, size=16, w=44):
+    return (f'<span style="display:inline-block;min-width:{w}px;padding:6px 8px;border-radius:9px;background:{NC(n)};color:#fff;'
+            f'{F}font-weight:800;font-size:{size}px;line-height:1;text-align:center">{nfr(round(n * 2) / 2)}</span>')
 
-def h2(t, sub=""):
-    return (f'<tr><td style="padding:30px 28px 10px"><div style="font:800 13px Arial,Helvetica,sans-serif;letter-spacing:2px;color:#ED2939;text-transform:uppercase">{sub}</div>'
-            f'<div style="font:800 24px Arial,Helvetica,sans-serif;color:#0B1638;text-transform:uppercase;margin-top:2px">{t}</div></td></tr>')
+def card(eyebrow, title, inner):
+    return (f'<tr><td style="padding:0 20px 16px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#111C4A;background-color:#111C4A;border-radius:18px">'
+            f'<tr><td style="padding:22px 22px 6px"><div style="{F}font-size:12px;font-weight:800;letter-spacing:3px;color:#FFB547;text-transform:uppercase">{eyebrow}</div>'
+            f'<div style="{F}font-size:24px;line-height:1.1;font-weight:800;color:#FFFFFF;text-transform:uppercase;margin-top:4px">{title}</div></td></tr>'
+            f'<tr><td style="padding:8px 22px 20px">{inner}</td></tr></table></td></tr>')
+
+def rows(items):
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' + "".join(
+        f'<tr><td style="padding:11px 0;border-top:1px solid rgba(255,255,255,.08);border-top-color:#22305F;{F}font-size:15px;line-height:1.35;color:#FFFFFF">{l}</td>'
+        f'<td align="right" style="padding:11px 0 11px 10px;border-top:1px solid #22305F;white-space:nowrap">{r}</td></tr>' for l, r in items) + '</table>'
+
+def social():
+    def pill(href, bg, label, fg="#FFFFFF", border="transparent"):
+        return (f'<a href="{href}" style="display:inline-block;margin:4px;padding:11px 16px;border-radius:999px;background:{bg};background-color:{bg.split(",")[-1].strip(") ") if "gradient" in bg else bg};'
+                f'border:1px solid {border};color:{fg};{F}font-size:14px;font-weight:800;text-decoration:none;letter-spacing:.5px">{label}</a>')
+    return (pill("https://x.com/EuroLeagueFr", "#000000", "𝕏&nbsp; @EuroLeagueFr", border="#3A4570")
+            + pill("https://www.instagram.com/euroleague_fr/", "linear-gradient(45deg,#F58529,#DD2A7B,#8134AF,#515BD4)", "◎&nbsp; Instagram · @euroleague_fr")
+            + pill("https://www.youtube.com/@EuroLeagueFrance", "#E62117", "▶&nbsp; YouTube"))
 
 def html_email(B, day):
     d, W, pn, club = B["d"], B["W"], B["pn"], B["club"]
-    img = f"{SITE}/og/nl/{day}-cinq.jpg"
-    vote = f"{SITE}/vote.html"
-    notes = f"{NOTES}#journee-{W['rounds'][-1]}"
-    T = []
-    a = T.append
-    pre = f"{pn(B['mvp'][0])} {nfr(B['mvp'][6])}/10, le cinq de la semaine, les Français et la fantasy de la {B['rshort']}."
-    a(f'''<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>La lettre EuroLeague France · {B['rshort']}</title></head>
-<body style="margin:0;padding:0;background:#EEF1F8">
-<div style="display:none;max-height:0;overflow:hidden">{E(pre)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EEF1F8"><tr><td align="center" style="padding:20px 10px">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden">
-<tr><td style="background:#060D24;padding:26px 28px 22px" align="left">
- <a href="{NOTES}"><img src="{SITE}/logo_white.png" alt="EuroLeague France" height="44" style="display:block;height:44px;border:0"></a>
- <div style="font:800 13px Arial,Helvetica,sans-serif;letter-spacing:3px;color:#FFB547;margin-top:18px">LA LETTRE DU SAMEDI · {E(B['rtxt'].upper())}</div>
- <div style="font:800 30px/1.1 Arial,Helvetica,sans-serif;color:#ffffff;margin-top:6px">{E(pn(B['mvp'][0]))} règne sur la semaine</div>
- <div style="font:15px/1.5 Arial,Helvetica,sans-serif;color:#AEB9E0;margin-top:8px">{len(W['ms'])} matchs et {len(W['N'])} joueurs notés {span(W)}. Voici ce qu'il fallait retenir.</div>
-</td></tr>
-<tr><td style="height:6px;background:linear-gradient(90deg,#002395 0 33%,#fff 33% 66%,#ED2939 66%);background-color:#002395"></td></tr>
-<tr><td style="padding:0"><a href="{notes}"><img src="{img}" width="600" alt="Le cinq de la semaine" style="display:block;width:100%;height:auto;border:0"></a></td></tr>''')
-    # MVP / flop
+    img = f"{SITE}/og/nl/{day}-cinq.jpg"; vote = f"{SITE}/vote.html"; notes = f"{NOTES}#journee-{W['rounds'][-1]}"
     m, f = B["mvp"], B["flop"]
-    a(h2("MVP et flop de la semaine", "Les extrêmes"))
-    a(f'''<tr><td style="padding:0 28px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><td style="padding:12px 14px;background:#F4F7FD;border-radius:12px;font:15px/1.45 Arial,Helvetica,sans-serif;color:#1B2440">⭐ <b>{E(pn(m[0]))}</b> ({E(club(m[2]))}) {chip(m[6])}<br><span style="color:#5B6584">{Math.r(m[3])} min · {m[4]} d'évaluation face à {E(club(opp(W, m)))}</span></td></tr>
-<tr><td style="height:8px"></td></tr>
-<tr><td style="padding:12px 14px;background:#FFF4F4;border-radius:12px;font:15px/1.45 Arial,Helvetica,sans-serif;color:#1B2440">📉 <b>{E(pn(f[0]))}</b> ({E(club(f[2]))}) {chip(f[6])}<br><span style="color:#5B6584">{Math.r(f[3])} min · {f[4]} d'évaluation face à {E(club(opp(W, f)))}</span></td></tr>
-</table></td></tr>''')
-    # Français
+    pre = f"{pn(m[0])} {nfr(m[6])}/10, le cinq de la semaine, les Français et la fantasy de la {B['rshort']}."
+    T = []; a = T.append
+    a(f"""<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><meta name="supported-color-schemes" content="dark light"><title>La lettre EuroLeague France · {B['rshort']}</title></head>
+<body style="margin:0;padding:0;background:#05091C;background-color:#05091C">
+<div style="display:none;max-height:0;overflow:hidden">{E(pre)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#05091C;background-color:#05091C"><tr><td align="center" style="padding:18px 8px 30px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#0A1236;background-color:#0A1236;border-radius:22px;overflow:hidden">
+<tr><td style="padding:22px 24px 18px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+ <td><a href="{NOTES}"><img src="{SITE}/logo_white.png" alt="EuroLeague France" height="36" style="display:block;height:36px;border:0"></a></td>
+ <td align="right" style="{F}font-size:12px;font-weight:800;letter-spacing:2px;color:#8E9AC4;text-transform:uppercase">La lettre du samedi<br><span style="color:#FFB547">{E(B['rshort'])} · {E(span_short(W))}</span></td></tr></table></td></tr>
+<tr><td><a href="{notes}"><img src="{img}" width="600" alt="Le cinq de la semaine : {E(', '.join(pn(n[0]) for n in B['five']))}" style="display:block;width:100%;height:auto;border:0"></a></td></tr>
+<tr><td style="padding:28px 24px 22px">
+ <div style="{F}font-size:34px;line-height:1.02;font-weight:800;color:#FFFFFF;text-transform:uppercase;letter-spacing:-.5px">{E(pn(m[0]))} <span style="color:#FFB547">a régné</span> sur la {E(B['rshort'])}</div>
+ <div style="{F}font-size:16px;line-height:1.55;color:#AEB9E0;margin-top:12px">{len(W['ms'])} matchs, {len(W['N'])} joueurs notés {span(W)}. Ton résumé en 2 minutes, et à toi de noter.</div>
+ <a href="{vote}" style="display:inline-block;margin-top:18px;padding:14px 22px;border-radius:12px;background:#FFB547;background-color:#FFB547;color:#140C00;{F}font-size:15px;font-weight:800;letter-spacing:1px;text-decoration:none">NOTER LES JOUEURS →</a>
+</td></tr>""")
+    # MVP / flop
+    def big(lbl, n, col):
+        return (f'<td width="50%" valign="top" style="padding:0 6px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:{col};background-color:{col};border-radius:16px">'
+                f'<tr><td style="padding:16px"><div style="{F}font-size:11px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.75)">{lbl}</div>'
+                f'<div style="{F}font-size:20px;line-height:1.05;font-weight:800;color:#fff;text-transform:uppercase;margin:6px 0 4px">{E(pn(n[0]))}</div>'
+                f'<div style="{F}font-size:13px;color:rgba(255,255,255,.8)">{E(club(n[2]))} · {n[4]} d\'éval · {Math.r(n[3])} min</div>'
+                f'<div style="{F}font-size:40px;font-weight:800;color:#fff;margin-top:8px">{nfr(round(n[6]*2)/2)}<span style="font-size:16px;opacity:.7">/10</span></div></td></tr></table></td>')
+    a(f'<tr><td style="padding:0 14px 16px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>{big("★ MVP DE LA SEMAINE", m, "#1E6B40")}{big("▼ FLOP DE LA SEMAINE", f, "#8E1B15")}</tr></table></td></tr>')
     if B["fr_rows"]:
-        a(h2("Les Français", "🇫🇷 Nos joueurs"))
-        rows = "".join(f'<tr><td style="padding:8px 0;border-bottom:1px solid #E8ECF5;font:15px Arial,Helvetica,sans-serif;color:#1B2440"><b>{E(pn(n[0]))}</b> <span style="color:#7A84A3">· {E(club(n[2]))} vs {E(club(opp(W, n)))} · {Math.r(n[3])} min</span></td><td align="right" style="padding:8px 0;border-bottom:1px solid #E8ECF5">{chip(n[6], 15)}</td></tr>' for n in B["fr_rows"][:12])
-        a(f'<tr><td style="padding:0 28px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table></td></tr>')
-    # résultats
-    a(h2("Les résultats", "À toi de noter"))
-    rows = ""
+        a(card("🇫🇷 Nos joueurs", "Les Français", rows([(f'<b>{E(pn(n[0]))}</b><br><span style="color:#8E9AC4;font-size:13px">{E(club(n[2]))} vs {E(club(opp(W, n)))} · {Math.r(n[3])} min</span>', chip(n[6])) for n in B["fr_rows"][:10]])))
+    res = []
     for g in W["ms"]:
         hw = g["hs"] > g["as"]
-        rows += (f'<tr><td style="padding:9px 0;border-bottom:1px solid #E8ECF5;font:15px Arial,Helvetica,sans-serif;color:#1B2440">'
-                 f'<span style="{"font-weight:800" if hw else "color:#7A84A3"}">{E(club(g["home"]))}</span> <b>{g["hs"]}-{g["as"]}</b> '
-                 f'<span style="{"color:#7A84A3" if hw else "font-weight:800"}">{E(club(g["away"]))}</span></td>'
-                 f'<td align="right" style="padding:9px 0;border-bottom:1px solid #E8ECF5"><a href="{vote}?m={g["id"]}" style="font:800 13px Arial,Helvetica,sans-serif;color:#002395;text-decoration:none">NOTER ›</a></td></tr>')
-    a(f'<tr><td style="padding:0 28px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table></td></tr>')
-    # lecteurs vs nous
+        L = (f'<span style="{"" if hw else "color:#8E9AC4"}">{E(club(g["home"]))}</span> <b style="color:#FFB547">{g["hs"]}-{g["as"]}</b> '
+             f'<span style="{"color:#8E9AC4" if hw else ""}">{E(club(g["away"]))}</span>')
+        res.append((L, f'<a href="{vote}?m={g["id"]}" style="display:inline-block;padding:7px 12px;border-radius:999px;border:1px solid #FFB547;color:#FFB547;{F}font-size:12px;font-weight:800;text-decoration:none">NOTER</a>'))
+    a(card("Les scores", "À toi de noter chaque match", rows(res)))
     if B["gaps"]:
-        a(h2("Lecteurs contre EuroLeague France", "Vos votes"))
-        rows = "".join(f'<tr><td style="padding:8px 0;border-bottom:1px solid #E8ECF5;font:15px Arial,Helvetica,sans-serif;color:#1B2440"><b>{E(pn(n[0]))}</b><br><span style="color:#7A84A3;font-size:13px">{r[1]} votes</span></td><td align="right" style="padding:8px 0;border-bottom:1px solid #E8ECF5;font:13px Arial,Helvetica,sans-serif;color:#7A84A3">Nous {chip(n[6], 14)} &nbsp; Vous {chip(r[0], 14)}</td></tr>' for _, n, r in B["gaps"])
-        a(f'<tr><td style="padding:0 28px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table></td></tr>')
-    # classement
+        a(card("Vos votes", "Lecteurs contre EuroLeague France", rows([(f'<b>{E(pn(n[0]))}</b><br><span style="color:#8E9AC4;font-size:13px">{r[1]} votes</span>',
+            f'<span style="{F}font-size:11px;color:#8E9AC4">NOUS</span> {chip(n[6], 14, 36)} &nbsp;<span style="{F}font-size:11px;color:#8E9AC4">VOUS</span> {chip(r[0], 14, 36)}') for _, n, r in B["gaps"]])))
     if B["std"]:
-        a(h2("Le classement", "Le haut du tableau"))
-        rows = "".join(f'<tr><td style="padding:6px 0;border-bottom:1px solid #E8ECF5;font:14px Arial,Helvetica,sans-serif;color:#1B2440"><b style="display:inline-block;width:24px">{r[0]}</b>{E(club(r[1]))}</td><td align="right" style="padding:6px 0;border-bottom:1px solid #E8ECF5;font:14px Arial,Helvetica,sans-serif;color:#1B2440"><b>{r[3]}-{r[4]}</b> <span style="color:#7A84A3">({r[5]})</span></td></tr>' for r in B["std"])
-        a(f'<tr><td style="padding:0 28px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table></td></tr>')
-    # fantasy
+        a(card("Classement", "Le haut du tableau", rows([(f'<span style="display:inline-block;width:26px;color:#FFB547;font-weight:800">{r[0]}</span>{E(club(r[1]))}',
+            f'<span style="{F}font-size:15px;color:#fff;font-weight:800">{r[3]}-{r[4]}</span> <span style="{F}font-size:13px;color:#8E9AC4">{r[5]}</span>') for r in B["std"]])))
     if B["fx"] or B["inj"]:
-        a(h2(f"Fantasy : prépare la J{B['nxt']}" if B["nxt"] else "Fantasy", "Fantasy Challenge"))
+        inner = ""
         if B["fx"]:
             days = sorted({x[1] for x in B["fx"]})
-            fxs = " · ".join(f'{E(club(x[2]))}–{E(club(x[3]))}' for x in B["fx"])
-            a(f'<tr><td style="padding:0 28px 8px;font:14px/1.6 Arial,Helvetica,sans-serif;color:#1B2440"><b>Au programme ({" et ".join(dfr(x) for x in days)})</b><br>{fxs}</td></tr>')
+            inner += (f'<div style="{F}font-size:13px;font-weight:800;color:#8E9AC4;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Au programme · {" et ".join(dfr(x) for x in days)}</div>'
+                      f'<div style="{F}font-size:15px;line-height:1.7;color:#fff;margin-bottom:12px">' + "<br>".join(f'{E(club(x[2]))} – {E(club(x[3]))}' for x in B["fx"]) + '</div>')
         if B["inj"]:
-            S = {"out": ("Forfait", "#A01E16"), "doubt": ("Incertain", "#B08816")}
-            rows = "".join(f'<tr><td style="padding:7px 0;border-bottom:1px solid #E8ECF5;font:14px Arial,Helvetica,sans-serif;color:#1B2440"><b>{E(x["n"])}</b> <span style="color:#7A84A3">· {E(club(x["c"]))}</span><br><span style="color:#7A84A3;font-size:12px">{E(x["t"])}</span></td><td align="right" style="padding:7px 0;border-bottom:1px solid #E8ECF5"><span style="font:800 11px Arial,Helvetica,sans-serif;color:#fff;background:{S[x["s"]][1]};padding:4px 7px;border-radius:6px">{S[x["s"]][0].upper()}</span></td></tr>' for x in B["inj"])
-            a(f'<tr><td style="padding:0 28px"><div style="font:800 14px Arial,Helvetica,sans-serif;color:#1B2440;margin:6px 0 2px">Blessés et incertains à surveiller</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0">{rows}</table></td></tr>')
-    # vidéo
+            S = {"out": ("FORFAIT", "#A01E16"), "doubt": ("INCERTAIN", "#B08816")}
+            inner += f'<div style="{F}font-size:13px;font-weight:800;color:#8E9AC4;letter-spacing:1px;text-transform:uppercase">À surveiller</div>' + rows(
+                [(f'<b>{E(x["n"])}</b> <span style="color:#8E9AC4">· {E(club(x["c"]))}</span><br><span style="color:#8E9AC4;font-size:12px">{E(x["t"])}</span>',
+                  f'<span style="{F}font-size:11px;font-weight:800;color:#fff;background:{S[x["s"]][1]};padding:5px 8px;border-radius:7px">{S[x["s"]][0]}</span>') for x in B["inj"]])
+        inner += f'<a href="https://www.euroleague-france.com/fantasy-challenge/" style="display:inline-block;margin-top:14px;{F}font-size:14px;font-weight:800;color:#FFB547;text-decoration:none">Projections et crédits de la J{B["nxt"]} →</a>'
+        a(card("Fantasy Challenge", f"Prépare la J{B['nxt']}" if B["nxt"] else "Fantasy", inner))
     v = B["vid"]
     if v:
-        a(h2("La dernière vidéo", "YouTube"))
-        a(f'<tr><td style="padding:0 28px"><a href="https://www.youtube.com/watch?v={v["id"]}" style="text-decoration:none;color:#1B2440"><img src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" width="544" alt="" style="display:block;width:100%;height:auto;border-radius:12px;border:0"><div style="font:800 16px/1.35 Arial,Helvetica,sans-serif;margin-top:8px">▶ {E(v["title"])}</div></a></td></tr>')
-    # appel
-    a(f'''<tr><td align="center" style="padding:34px 28px 10px"><a href="{vote}" style="display:inline-block;background:#FFB547;color:#1B1300;font:800 17px Arial,Helvetica,sans-serif;text-decoration:none;padding:16px 28px;border-radius:12px;letter-spacing:1px">NOTE LES JOUEURS DE LA SEMAINE</a>
-<div style="font:14px Arial,Helvetica,sans-serif;color:#7A84A3;margin-top:12px"><a href="{notes}" style="color:#002395">Toutes nos notes</a> · <a href="https://www.euroleague-france.com/fantasy-challenge/" style="color:#002395">Fantasy</a> · <a href="https://x.com/EuroLeagueFr" style="color:#002395">X</a> · <a href="https://www.instagram.com/euroleague_fr/" style="color:#002395">Instagram</a></div></td></tr>
-<tr><td style="padding:22px 28px 26px;font:12px/1.5 Arial,Helvetica,sans-serif;color:#9AA3BF;text-align:center">Tu reçois cette lettre car tu fais partie du réseau EuroLeague France. Notes calculées par notre formule à partir des statistiques officielles EuroLeague.</td></tr>
-</table></td></tr></table></body></html>''')
-    subj = f"{pn(B['mvp'][0])} {nfr(B['mvp'][6])}/10 : la lettre de la {B['rshort']}"
+        a(card("YouTube", "La dernière émission", f'<a href="https://www.youtube.com/watch?v={v["id"]}" style="text-decoration:none"><img src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" width="512" alt="" style="display:block;width:100%;height:auto;border-radius:12px;border:0">'
+                f'<div style="{F}font-size:16px;line-height:1.35;font-weight:800;color:#fff;margin-top:10px">▶ {E(v["title"])}</div></a>'))
+    a(f"""<tr><td align="center" style="padding:14px 24px 8px">
+ <a href="{vote}" style="display:block;padding:18px;border-radius:14px;background:#FFB547;background-color:#FFB547;color:#140C00;{F}font-size:18px;font-weight:800;letter-spacing:1px;text-decoration:none;text-align:center">À TOI DE NOTER LES JOUEURS</a></td></tr>
+<tr><td align="center" style="padding:22px 16px 6px"><div style="{F}font-size:12px;font-weight:800;letter-spacing:3px;color:#8E9AC4;margin-bottom:8px">SUIS-NOUS</div>{social()}</td></tr>
+<tr><td style="padding:20px 28px 26px;{F}font-size:12px;line-height:1.6;color:#6F7AA3;text-align:center">Tu reçois la lettre du samedi d'EuroLeague France.<br>Notes calculées par notre formule à partir des statistiques officielles EuroLeague. <a href="{SITE}/newsletter/{day}.html" style="color:#8E9AC4">Version web</a></td></tr>
+<tr><td style="height:6px;background:#002395;background-image:linear-gradient(90deg,#002395 0 33%,#ffffff 33% 66%,#ED2939 66%)"></td></tr>
+</table></td></tr></table></body></html>""")
+    subj = f"{pn(m[0])} {nfr(m[6])}/10 : la lettre de la {B['rshort']}"
     return "\n".join(T), subj, pre
 
 def run_build(day):
@@ -171,7 +188,7 @@ def run_build(day):
     os.makedirs(os.path.join(ROOT, "og", "nl"), exist_ok=True); os.makedirs(os.path.join(ROOT, "newsletter"), exist_ok=True)
     from playwright.sync_api import sync_playwright
     with sync_playwright() as pw:
-        b = pw.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 640})
+        b = pw.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 1300})
         pg.goto("file://" + os.path.join(ROOT, "robot", "share", "cinq.html"))
         pg.evaluate("D=>window.render(D)", B["card"]); pg.wait_for_timeout(300)
         pg.screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-cinq.jpg"), type="jpeg", quality=88); b.close()
