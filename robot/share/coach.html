@@ -32,9 +32,13 @@ h1{position:absolute;left:56px;right:330px;top:156px;font-family:SC;font-weight:
 .p .cl.t{width:auto;padding:0 10px;border-radius:999px;font-family:SC;font-weight:800;font-size:18px;color:#0B1638}
 .p .pt{min-width:84px;height:44px;padding:0 10px;border-radius:12px;background:#fff;color:#0B1638;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:30px}
 .p.cp .pt{background:#FFB547}
+.p .x2{font-family:SC;font-weight:800;font-size:20px;color:#FFB547}
 .bench{position:absolute;left:56px;right:56px;top:1030px;display:flex;gap:10px}
-.b{flex:1;height:84px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:10px 12px;display:flex;flex-direction:column;justify-content:center}
-.b .n{font-family:SC;font-weight:800;font-size:20px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b{position:relative;flex:1;height:92px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:8px 10px 8px 76px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.b .bp{position:absolute;left:8px;top:12px;width:62px;height:62px;border-radius:50%;overflow:hidden;background:linear-gradient(160deg,#2A3E8F,#16245E)}
+.b .bp img{position:absolute;left:50%;top:3px;width:150%;transform:translateX(-50%)}
+.b .bp .ini{position:absolute;inset:0;display:grid;place-items:center;font-family:SC;font-weight:800;font-size:24px;color:#fff}
+.b .n{font-family:SC;font-weight:800;font-size:19px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .b .v{font-family:SC;font-weight:700;font-size:18px;color:#8E9AC4}.b .v b{color:#fff}
 .b.coach{border-color:rgba(255,181,71,.45)}
 .foot{position:absolute;left:56px;right:56px;bottom:22px;display:flex;justify-content:space-between;font-family:SC;font-weight:800;font-size:22px;letter-spacing:.14em;color:#8E9AC4}.foot b{color:#fff}
@@ -51,7 +55,7 @@ window.render=D=>{const S=D.players.filter(p=>p.slot<=5),B=D.players.filter(p=>p
  <div class="tot"><b>${f1(D.pts)}</b><span>POINTS FANTASY</span></div>
  <div class="court"><div class="ln"></div>${S.map(p=>`<div class="p ${p.cap?'cp':''}" style="left:${POS[p.slot][0]-56}px;top:${POS[p.slot][1]}px">
    ${p.cap?'<div class="cap">C</div>':''}<div class="ph">${p.cut?`<img class="cut" src="${p.cut}">`:`<div class="ini">${ini(p)}</div>`}</div>
-   <div class="nm">${p.first}<br>${p.last}</div><div class="row">${p.logo?`<div class="cl"><img src="../../logos/${p.logo}.webp"></div>`:`<div class="cl t">${p.club}</div>`}<div class="pt">${f1(p.pts)}</div></div></div>`).join('')}</div>
- <div class="bench">${B.map(p=>`<div class="b ${/coach/i.test(p.pos)?'coach':''}"><div class="n">${/coach/i.test(p.pos)?'🧑‍💼 ':''}${p.last}</div><div class="v">${/coach/i.test(p.pos)?'Coach':'Banc'} · <b>${f1(p.pts)}</b></div></div>`).join('')}</div>`;
+   <div class="nm">${p.first}<br>${p.last}</div><div class="row">${p.logo?`<div class="cl"><img src="../../logos/${p.logo}.webp"></div>`:`<div class="cl t">${p.club}</div>`}<div class="pt">${f1(p.cap?p.pts*2:p.pts)}</div>${p.cap?'<div class="x2">×2</div>':''}</div></div>`).join('')}</div>
+ <div class="bench">${B.map(p=>`<div class="b ${/coach/i.test(p.pos)?'coach':''}"><div class="bp">${p.cut?`<img src="${p.cut}">`:`<div class="ini">${ini(p)}</div>`}</div><div class="n">${p.last}</div><div class="v">${/coach/i.test(p.pos)?'Coach':'Banc'} · <b>${f1(p.pts)}</b></div></div>`).join('')}</div>`;
  return document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r})))).then(()=>new Promise(r=>setTimeout(r,300)))};
 </script></body></html>

@@ -5,7 +5,7 @@
                                                           + robot/newsletter_meta.json (objet, pré-en-tête)
   python3 robot/newsletter.py draft                      -> crée le brouillon dans Kit (secret KIT_API_KEY), sans l'envoyer
 Toutes les données viennent de data.json ; votes des lecteurs et vidéo YouTube lus sur le site (facultatifs)."""
-import json, os, sys, datetime as dt, urllib.request, urllib.parse, html
+import json, os, re, sys, datetime as dt, urllib.request, urllib.parse, html
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import share
 ROOT = share.ROOT; SITE = share.SITE; NOTES = share.NOTES
@@ -40,6 +40,14 @@ def jdays(days):
         n = [("1er" if x.day == 1 else str(x.day)) for x in ds]
         return (", ".join(n[:-1]) + " et " + n[-1] if len(n) > 1 else n[0]) + " " + MOIS[ds[0].month - 1]
     return " et ".join(dfr(x) for x in days)
+
+def coach_cut(club):
+    """Détourage officiel de l'entraîneur (URL du CDN EuroLeague listée dans le workflow coachs.yml)."""
+    try:
+        y = open(os.path.join(ROOT, ".github", "workflows", "coachs.yml"), encoding="utf-8").read()
+        base = re.search(r'B = "([^"]+)"', y).group(1); m = re.search(r'"%s":"([^"]+)"' % club, y)
+        return base + m.group(1) if m else None
+    except Exception: return None
 
 def B_short(W): return "J" + "-J".join(str(r) for r in W["rounds"])
 def span_short(W):
@@ -98,11 +106,13 @@ def build(day):
             return next((k for k, v in d["clubs"].items() if FL.norm(v["name"]).split()[-1] in n), None)
         bp = FA["best"]
         fcard = {"pill": f"J{FA['md']} · FANTASY", "team": bp["team"], "coach": bp["coach"], "pts": bp["md"] or 0,
-                 "players": [dict(p, logo=logo(p), cut=heads.get(idx.get(FL.norm(p["first"] + " " + p["last"]), ""))) for p in bp["players"]]}
+                 "players": [dict(p, logo=logo(p), cut=(coach_cut(logo(p)) if "coach" in p["pos"].lower() else heads.get(idx.get(FL.norm(p["first"] + " " + p["last"]), "")))) for p in bp["players"]]}
     vid = ((get(SITE + "/api/videos") or {}).get("videos") or [None])[0]
+    try: extra = json.load(open(os.path.join(ROOT, "robot", "newsletter_extra.json"), encoding="utf-8")).get(day, {})
+    except Exception: extra = {}
     std = d.get("standings", {}).get("rows", [])[:8]
     return dict(d=d, W=W, rtxt=rtxt, rshort=rshort, five=five, mvp=mvp, flop=flop, fr_rows=fr_rows, card=card, gaps=gaps,
-                FA=FA, fcard=fcard, vid=vid, std=std, pn=pn, club=club, nvotes=nvotes)
+                FA=FA, fcard=fcard, vid=vid, extra=extra, std=std, pn=pn, club=club, nvotes=nvotes)
 
 class Math:
     @staticmethod
@@ -160,6 +170,10 @@ def html_email(B, day):
                 f'<div style="{F}font-size:13px;color:rgba(255,255,255,.8)">{E(club(n[2]))} · {n[4]} d\'éval · {Math.r(n[3])} min</div>'
                 f'<div style="{F}font-size:40px;font-weight:800;color:#fff;margin-top:8px">{nfr(round(n[6]*2)/2)}<span style="font-size:16px;opacity:.7">/10</span></div></td></tr></table></td>')
     a(f'<tr><td style="padding:0 14px 16px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>{big("★ MVP DE LA SEMAINE", m, "#1E6B40")}{big("▼ FLOP DE LA SEMAINE", f, "#8E1B15")}</tr></table></td></tr>')
+    tw = B["extra"].get("tweet")
+    if tw:
+        a(card("Sur notre compte X", tw.get("title", "Vu sur X"), f'<a href="{tw["url"]}"><img src="{SITE}/og/nl/{day}-tweet.jpg" width="512" alt="{E(tw["text"][:120])}" style="display:block;width:100%;height:auto;border-radius:14px;border:0"></a>'
+                f'<a href="{tw["url"]}" style="display:inline-block;margin-top:14px;padding:11px 16px;border-radius:999px;background:#000;border:1px solid #3A4570;color:#fff;{F}font-size:14px;font-weight:800;text-decoration:none">𝕏&nbsp; Réagir au post</a>'))
     if B["fr_rows"]:
         a(card("🇫🇷 Nos joueurs", "Les Français", rows([(f'<b>{E(pn(n[0]))}</b><br><span style="color:#8E9AC4;font-size:13px">{E(club(n[2]))} vs {E(club(opp(W, n)))} · {Math.r(n[3])} min</span>', chip(n[6])) for n in B["fr_rows"][:10]])))
     res = []
@@ -194,7 +208,7 @@ def html_email(B, day):
     a(card("Fantasy Challenge", "Championnat EuroLeague France", inner))
     v = B["vid"]
     if v:
-        a(card("YouTube", "La dernière émission", f'<a href="https://www.youtube.com/watch?v={v["id"]}" style="text-decoration:none"><img src="https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg" width="512" alt="" style="display:block;width:100%;height:auto;border-radius:12px;border:0">'
+        a(card("YouTube", "La dernière émission", f'<a href="https://www.youtube.com/watch?v={v["id"]}" style="text-decoration:none"><img src="{SITE}/og/nl/{day}-yt.jpg" width="512" alt="Regarder l\'émission sur YouTube" style="display:block;width:100%;height:auto;border-radius:12px;border:0">'
                 f'<div style="{F}font-size:16px;line-height:1.35;font-weight:800;color:#fff;margin-top:10px">▶ {E(v["title"])}</div></a>'))
     a(f"""<tr><td align="center" style="padding:14px 24px 8px">
  <a href="{vote}" style="display:block;padding:18px;border-radius:14px;background:#FFB547;background-color:#FFB547;color:#140C00;{F}font-size:18px;font-weight:800;letter-spacing:1px;text-decoration:none;text-align:center">À TOI DE NOTER LES JOUEURS</a></td></tr>
@@ -211,7 +225,7 @@ def run_build(day):
     os.makedirs(os.path.join(ROOT, "og", "nl"), exist_ok=True); os.makedirs(os.path.join(ROOT, "newsletter"), exist_ok=True)
     from playwright.sync_api import sync_playwright
     with sync_playwright() as pw:
-        b = pw.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 1300})
+        b = pw.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 860})
         pg.goto("file://" + os.path.join(ROOT, "robot", "share", "cinq.html"))
         pg.evaluate("D=>window.render(D)", B["card"]); pg.wait_for_timeout(300)
         pg.screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-cinq.jpg"), type="jpeg", quality=88)
@@ -220,6 +234,20 @@ def run_build(day):
             cp.goto("file://" + os.path.join(ROOT, "robot", "share", "coach.html"))
             cp.evaluate("D=>window.render(D)", B["fcard"]); cp.wait_for_timeout(300)
             cp.screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-coach.jpg"), type="jpeg", quality=88)
+        tw = B["extra"].get("tweet")
+        if tw:
+            tp = b.new_page(viewport={"width": 1200, "height": 800})
+            tp.goto("file://" + os.path.join(ROOT, "robot", "share", "tweet.html"))
+            tp.evaluate("D=>window.render(D)", tw)
+            tp.locator("#w").screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-tweet.jpg"), type="jpeg", quality=88)
+        if B["vid"]:
+            vid = B["vid"]["id"]; th = f"https://i.ytimg.com/vi/{vid}/maxresdefault.jpg"
+            try: urllib.request.urlopen(urllib.request.Request(th, headers={"User-Agent": "Mozilla/5.0"}), timeout=15)
+            except Exception: th = f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg"
+            yp = b.new_page(viewport={"width": 1200, "height": 675})
+            yp.goto("file://" + os.path.join(ROOT, "robot", "share", "yt.html"))
+            yp.evaluate("D=>window.render(D)", {"thumb": th})
+            yp.screenshot(path=os.path.join(ROOT, "og", "nl", f"{day}-yt.jpg"), type="jpeg", quality=85)
         b.close()
     body, subj, pre = html_email(B, day)
     open(os.path.join(ROOT, "newsletter", f"{day}.html"), "w", encoding="utf-8").write(body)

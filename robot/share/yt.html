@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-800-normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F}
+@font-face{font-family:SC;font-weight:800;src:url(a/saira-condensed-latin-ext-800-normal.woff2);unicode-range:U+0100-02AF,U+1E00-1EFF}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1200px;height:675px;overflow:hidden;background:#000}
+.v{position:relative;width:1200px;height:675px;background:#000 center/cover}
+.v:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(0,0,0,.75))}
+.pl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:170px;height:120px;border-radius:30px;background:#FF0033;display:grid;place-items:center;box-shadow:0 14px 40px rgba(0,0,0,.5);z-index:2}
+.pl:before{content:"";border-left:52px solid #fff;border-top:32px solid transparent;border-bottom:32px solid transparent;margin-left:10px}
+.lb{position:absolute;left:36px;bottom:30px;z-index:2;font-family:SC;font-weight:800;font-size:34px;letter-spacing:.12em;color:#fff}
+.lb span{background:#FF0033;padding:6px 14px;border-radius:10px;margin-right:12px}
+</style></head><body><div class="v" id="v"><div class="pl"></div><div class="lb"><span>▶ YOUTUBE</span>EUROLEAGUE FRANCE</div></div>
+<script>
+window.render=D=>{document.getElementById('v').style.backgroundImage=`url(${D.thumb})`;
+ return new Promise(r=>{const i=new Image();i.onload=i.onerror=()=>setTimeout(r,200);i.src=D.thumb})};
+</script></body></html>
