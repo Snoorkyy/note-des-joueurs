@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Les jeux · EuroLeague France</title>
-<meta name="description" content="Plus ou moins, joueur mystère du jour, Qui est-ce ?, Le bon maillot, classement à l'aveugle, ton 5 de la journée, prono MVP : les jeux EuroLeague France, avec classements.">
+<meta name="description" content="Collectionne les cartes des joueurs d'EuroLeague : Plus ou moins, joueur mystère, la grille du jour, titulaire-banc-vendu, l'intrus, prono MVP… Les jeux EuroLeague France, avec classements.">
 <meta property="og:title" content="Les jeux EuroLeague France">
 <meta property="og:description" content="Plus ou moins, joueur mystère du jour, prono MVP… Joue, grimpe au classement et partage ton score.">
 <meta property="og:image" content="https://note-des-joueurs.pages.dev/og/partage-accueil.jpg">
@@ -153,6 +153,79 @@ button.avslot:hover{border-color:var(--blue);color:var(--blue)}
 .modal .box{background:#fff;border-radius:18px;max-width:440px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
 .modal img{width:100%;border-radius:12px;display:block;background:var(--soft);aspect-ratio:1080/1350}
 .modal .row .btn{flex:1 1 140px}
+/* ---------- collection ---------- */
+.tab.gold{border-color:#D9B65C;background:linear-gradient(135deg,#FFF6DA,#F4E1A6);color:#5A4210}
+.tab.gold[aria-selected=true]{background:linear-gradient(135deg,#E9C46A,#B8862B);border-color:#B8862B;color:#fff}
+.colpill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:18px;border:none;cursor:pointer;font-weight:800;font-size:14px;background:linear-gradient(135deg,#F7E3A3,#D9B25A);color:#3F2E08}
+.colhead{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between;background:radial-gradient(120% 140% at 20% 0%,#11308F 0%,#061553 55%,#020a2c 100%);color:#fff;border-radius:20px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+.colhead:after{content:"";position:absolute;right:-80px;top:-80px;width:280px;height:280px;border-radius:50%;border:40px solid rgba(232,196,106,.12)}
+.colhead h2{color:#fff;margin:0}
+.colhead .big{font-size:52px;font-weight:900;line-height:1}
+.colhead .big small{font-size:22px;color:rgba(255,255,255,.65);font-weight:700}
+.bar{height:10px;border-radius:5px;background:rgba(255,255,255,.15);overflow:hidden;min-width:220px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#F3D27B,#C8A24A);border-radius:5px}
+.btn.goldb{background:linear-gradient(135deg,#F3D27B,#C8A24A);color:#2B1F05}
+.sets{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;scrollbar-width:thin}
+.set{flex:none;display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;border-radius:21px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.set[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.set img{width:22px;height:22px;object-fit:contain}
+.set .c{font-weight:600;opacity:.7}
+.set.done{border-color:#C8A24A}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.cardbtn{border:none;background:none;padding:0;cursor:pointer;display:block;width:100%;border-radius:12px;transition:transform .15s}
+.cardbtn:hover{transform:translateY(-3px)}
+.cardbtn canvas{width:100%;aspect-ratio:600/840;display:block}
+.cardbtn:disabled{cursor:default}.cardbtn:disabled:hover{transform:none}
+/* nouvelle carte */
+.newcard{position:fixed;left:16px;bottom:16px;z-index:25;display:flex;align-items:center;gap:12px;background:#0B1A55;color:#fff;border-radius:16px;padding:10px 16px 10px 10px;box-shadow:0 12px 30px rgba(0,0,0,.35);transform:translateY(140%);transition:transform .35s cubic-bezier(.2,.9,.3,1.2);cursor:pointer;max-width:calc(100vw - 32px);border:1.5px solid rgba(232,196,106,.6)}
+.newcard.on{transform:none}
+.newcard canvas{width:64px;aspect-ratio:600/840;flex:none}
+.newcard b{display:block;font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:#F3D27B}
+.newcard span{font-weight:800;font-size:15px}
+/* pack */
+.pack{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;perspective:1200px;margin:6px 0}
+.flip{width:min(30vw,200px);aspect-ratio:600/840;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.3,1.3,.5,1);cursor:pointer;border:none;background:none;padding:0}
+.flip.on{transform:rotateY(180deg)}
+.flip canvas{position:absolute;inset:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.flip canvas.front{transform:rotateY(180deg)}
+.modal .box.wide{max-width:720px}
+/* titulaire · banc · vendu */
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:640px){.trio{grid-template-columns:minmax(0,1fr)}.trio .tcol{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;align-items:center}}
+.tcol canvas{width:100%;aspect-ratio:600/840;display:block}
+.roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+.role{height:44px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-weight:800;font-size:13px;cursor:pointer}
+.role.t[aria-pressed=true]{background:#1F8A3B;border-color:#1F8A3B;color:#fff}
+.role.r[aria-pressed=true]{background:#002496;border-color:#002496;color:#fff}
+.role.v[aria-pressed=true]{background:#D21F33;border-color:#D21F33;color:#fff}
+.role:disabled{cursor:default}
+.res{margin-top:8px;display:grid;gap:4px;font-size:12px;font-weight:700}
+.res div{display:grid;grid-template-columns:70px 1fr 38px;gap:6px;align-items:center}
+.res i{display:block;height:8px;border-radius:4px;background:var(--soft);overflow:hidden}
+.res i b{display:block;height:100%;border-radius:4px}
+/* grille */
+.grid3{display:grid;grid-template-columns:minmax(70px,.8fr) repeat(3,minmax(0,1fr));gap:8px;max-width:640px}
+.ghd{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:13px;line-height:1.2;padding:6px;border-radius:12px;background:var(--soft);min-height:56px}
+.ghd img{width:44px;height:44px;object-fit:contain}
+.ghd.row{flex-direction:column;gap:4px;font-size:11px}
+.gcell{aspect-ratio:1;border-radius:14px;border:2px dashed #C7CDD8;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;font-weight:700;font-size:12px;text-align:center;color:var(--muted)}
+.gcell:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}
+.gcell.ok{border:2px solid #1F8A3B;background:var(--okbg);color:var(--ink)}
+.gcell.ok .av{--s:min(64px,13vw)}
+.gcell.sel{border-color:var(--red);border-style:solid;background:#FFF1F2}
+.gcell small{font-weight:600;font-size:11px;color:var(--muted)}
+.gcell:disabled{cursor:default}
+/* l'intrus */
+.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.icard{border:2px solid var(--line);border-radius:16px;background:#fff;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;text-align:center}
+.icard .av{--s:86px}
+.icard:hover:not(:disabled){border-color:#9AA6BF;transform:translateY(-2px)}
+.icard.ok{border-color:var(--ok);background:var(--okbg)}.icard.ko{border-color:var(--ko);background:var(--kobg)}
+.icard:disabled{cursor:default}
+.icard .facts{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 8px;justify-content:center;align-items:center}
+.icard .facts img{width:18px;height:18px;object-fit:contain}
+
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:20px;font-weight:700;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:30}
 .toast.on{opacity:1}
 </style>
@@ -196,7 +269,7 @@ const ISO2={USA:"US",FRA:"FR",ESP:"ES",SRB:"RS",GER:"DE",ITA:"IT",LTU:"LT",GRE:"
 const flag=c=>{const i=ISO2[c];return i?String.fromCodePoint(...[...i].map(x=>127397+x.charCodeAt(0))):""};
 const POS={G:"Arrière",F:"Ailier",C:"Pivot"};
 const PHOTOS=new Set(D.photos||[]);
-const fixN=s=>s.replace(/\b(Tj|Cj|Dj|Jj|Aj|Pj|Rj|Kj|Bj|Jt|Jd|Ii|Iii|Iv)\b/g,w=>w.toUpperCase());
+const fixN=s=>s.replace(/\b(Tj|Cj|Dj|Jj|Aj|Pj|Rj|Kj|Bj|Jt|Jd|Ii|Iii|Iv)\b/g,w=>w.toUpperCase()).replace(/\bMc([a-z])/g,(m,c)=>"Mc"+c.toUpperCase());
 const full=n=>{const i=n.indexOf(", ");return fixN(i<0?n:n.slice(i+2)+" "+n.slice(0,i))};
 const NAME={};for(const p in D.players)NAME[p]=full(D.players[p].name);
 const ini=p=>NAME[p].split(" ").map(w=>w[0]).slice(0,2).join("");
@@ -204,10 +277,9 @@ const photoUrl=p=>PHOTOS.has(p)?`../photos-c/${p}.webp`:null;
 const av=(p,cls="",alt="",style="")=>`<span class="av ${cls}"><span class="in">${PHOTOS.has(p)?`<img src="${photoUrl(p)}" alt="${esc(alt)}" loading="lazy" ${style?`style="${style}"`:""} onerror="this.onerror=null;this.src='../photos/${p}.webp'">`:`<i aria-hidden="true">${esc(ini(p))}</i>`}</span></span>`;
 const logo=c=>`<img class="logo" src="../logos/${c}.webp" alt="">`;
 
-// statistiques de saison par joueur
-const ST={};
-for(const [p,m,c,min,ev,pm,note] of D.notes){const s=ST[p]||(ST[p]={n:0,note:0,ev:0,min:0});s.n++;s.note+=note;s.ev+=ev;s.min+=min}
-for(const p in ST){const s=ST[p];s.note/=s.n;s.ev/=s.n;s.min/=s.n;s.club=D.players[p]?D.players[p].club:null;s.pos=((D.fantasy&&D.fantasy.p&&D.fantasy.p[p])||[])[0]||null;s.nat=D.nat[p]||null}
+// statistiques de saison par joueur (logique commune avec le serveur)
+const L=await import("./logic.js?v=1");
+const ST=L.buildST(D);
 const pool=(min,needPhoto=true)=>Object.keys(ST).filter(p=>D.players[p]&&ST[p].n>=min&&(!needPhoto||PHOTOS.has(p))).sort();
 const played=D.matches.filter(m=>m.hs!=null);
 const LAST=Math.max(...played.map(m=>m.round));
@@ -228,8 +300,9 @@ function idbar(edit){
   if(edit){el.innerHTML=`<form id="pf"><label class="sr" for="pi">Ton pseudo</label><input id="pi" maxlength="20" value="${esc(PSEUDO||"")}" placeholder="Ton pseudo"><button class="btn" style="height:36px;padding:0 14px;font-size:14px" type="submit">OK</button></form>`;
     const i=$("#pi");i.focus();i.select();
     $("#pf").onsubmit=async e=>{e.preventDefault();const r=await api("scores",{pseudo:i.value});if(r.error){toast(r.error);return}PSEUDO=r.pseudo;LS.set("jx-pseudo",PSEUDO);idbar();refreshBoard()};return}
-  el.innerHTML=PSEUDO?`<span>Tu joues sous le nom <b>${esc(PSEUDO)}</b></span><button class="link" id="pe" type="button">Changer</button>`:"";
+  el.innerHTML=`<button class="colpill" id="colp" type="button">Ma collection</button>`+(PSEUDO?`<span>Tu joues sous le nom <b>${esc(PSEUDO)}</b></span><button class="link" id="pe" type="button">Changer</button>`:"");
   const b=$("#pe");if(b)b.onclick=()=>idbar(true);
+  $("#colp").onclick=()=>go("collection",true);setTimeout(()=>{try{colPill()}catch(e){}},0);
 }
 api("scores?me=1&dev="+encodeURIComponent(DEV)).then(r=>{if(r&&r.pseudo){PSEUDO=r.pseudo;LS.set("jx-pseudo",PSEUDO)}idbar()});
 idbar();
@@ -312,7 +385,7 @@ async function makeCard(sp){
   return await new Promise(res=>cv.toBlob(res,"image/png"));
 }
 async function shareScore(sp,text,file){
-  const m=$("#modal"),img=$("#mimg");m.hidden=false;img.removeAttribute("src");$("#mbtns").innerHTML='<p class="muted" style="margin:0">Création de ton image…</p>';
+  const m=$("#modal"),img=$("#mimg");m.hidden=false;$("#mt").textContent="Partage ton score";img.style.display="";{const h=$("#mcard");if(h)h.innerHTML=""}img.removeAttribute("src");$("#mbtns").innerHTML='<p class="muted" style="margin:0">Création de ton image…</p>';
   const blob=await makeCard(sp);const url=URL.createObjectURL(blob);img.src=url;
   const f=new File([blob],(file||"score")+"-euroleague-france.png",{type:"image/png"});
   const canFile=navigator.canShare&&navigator.canShare({files:[f]});
@@ -324,7 +397,7 @@ async function shareScore(sp,text,file){
   const s=$("#ms");if(s)s.onclick=async()=>{try{await navigator.share({files:[f],text:full})}catch(e){}};
   $("#md").onclick=()=>toast("Image téléchargée");
 }
-const closeModal=()=>{$("#modal").hidden=true};
+const closeModal=()=>{$("#modal").hidden=true;$("#mimg").style.display="";const h=$("#mcard");if(h)h.innerHTML="";$("#modal .box").classList.remove("wide")};
 $("#mx").onclick=closeModal;$("#modal").onclick=e=>{if(e.target.id==="modal")closeModal()};
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 const shareBtn=(id,label)=>`<button class="btn red" id="${id}" type="button">${ICON_SHARE}${label||"Partager mon score"}</button>`;
@@ -350,7 +423,7 @@ function pm(){
   </div>${boardHTML()}</div>`;
   loadBoard(PMCFG);
   $$(".pcard[data-p]").forEach(b=>b.onclick=()=>{PM.pick=b.dataset.p;
-    if(PM.pick===win){PMS.streak++;PMS.run.push([win,lose]);if(PMS.streak>rec.best){rec.best=PMS.streak;LS.set("jx-pm",rec)}clearTimeout(pm.t);const run=PMS.run.slice();pm.t=setTimeout(()=>submit({g:"pm",run},PMCFG),600)}
+    if(PM.pick===win){award([win],"pm");PMS.streak++;PMS.run.push([win,lose]);if(PMS.streak>rec.best){rec.best=PMS.streak;LS.set("jx-pm",rec)}clearTimeout(pm.t);const run=PMS.run.slice();pm.t=setTimeout(()=>submit({g:"pm",run},PMCFG),600)}
     else{PM.end=PMS.streak;PM.endRun=PMS.run.map(x=>x[0]);PMS.streak=0;PMS.run=[]}
     pm()});
   const n=$("#pn");if(n)n.onclick=()=>{newPM();pm()};
@@ -415,7 +488,7 @@ async function mystere(){
     if(!p){$("#mm").textContent="Joueur introuvable : choisis un nom dans la liste.";return}
     if(st.g.includes(p)){$("#mm").textContent="Déjà proposé.";return}
     st.g.push(p);
-    if(p===MYST||st.g.length>=MAXG){st.done=true;st.won=p===MYST;
+    if(p===MYST||st.g.length>=MAXG){st.done=true;st.won=p===MYST;if(st.won)award([MYST],"myst");
       if(stats.last!==todayKey){stats.played++;if(st.won){stats.won++;const y=new Date(Date.parse(todayKey)-864e5).toISOString().slice(0,10);stats.streak=stats.last===y&&stats.lastWon?stats.streak+1:1}else stats.streak=0;stats.best=Math.max(stats.best,stats.streak);stats.last=todayKey;stats.lastWon=st.won;LS.set("jx-myst-stats",stats)}
       submit({g:"myst",guesses:st.g},MYCFG)}
     LS.set(key,st);mystere()}}
@@ -445,7 +518,7 @@ function quiz(){
   </div>${boardHTML()}</div>`;
   loadBoard(QCFG);
   $$(".opt[data-p]").forEach(b=>b.onclick=()=>{const p=b.dataset.p;
-    if(p===Q.p){Q.done=true;Q.found=true;QS.pts+=3-Q.wrong.length;QS.streak++;QS.run.push(Q.p);if(QS.streak>rec.best){rec.best=QS.streak;LS.set("jx-qui",rec)}const run=QS.run.slice();submit({g:"qui",run},QCFG)}
+    if(p===Q.p){award([Q.p],"qui");Q.done=true;Q.found=true;QS.pts+=3-Q.wrong.length;QS.streak++;QS.run.push(Q.p);if(QS.streak>rec.best){rec.best=QS.streak;LS.set("jx-qui",rec)}const run=QS.run.slice();submit({g:"qui",run},QCFG)}
     else{Q.wrong.push(p);if(Q.wrong.length>=3){Q.done=true;Q.found=false;Q.end=QS.streak;Q.endRun=QS.run.slice();QS.streak=0;QS.run=[]}}
     quiz()});
   const n=$("#qn");if(n)n.onclick=()=>{newQ();quiz()};
@@ -471,7 +544,7 @@ function maillot(){
   </div>${boardHTML()}</div>`;
   loadBoard(BCFG);
   $$(".opt[data-c]").forEach(b=>b.onclick=()=>{BM.pick=b.dataset.c;BMS.n++;
-    if(BM.pick===c){BMS.ok++;BMS.streak++;BMS.run.push([BM.p,c]);if(BMS.streak>rec.best){rec.best=BMS.streak;LS.set("jx-bm",rec)}const run=BMS.run.slice();submit({g:"maillot",run},BCFG)}
+    if(BM.pick===c){award([BM.p],"maillot");BMS.ok++;BMS.streak++;BMS.run.push([BM.p,c]);if(BMS.streak>rec.best){rec.best=BMS.streak;LS.set("jx-bm",rec)}const run=BMS.run.slice();submit({g:"maillot",run},BCFG)}
     else{BM.end=BMS.streak;BM.endRun=BMS.run.map(x=>x[0]);BMS.streak=0;BMS.run=[]}
     maillot()});
   const n=$("#bn");if(n)n.onclick=()=>{newBM();maillot()};
@@ -519,7 +592,7 @@ function aveugle(){
   const sel=$("#anat");if(sel)sel.onchange=()=>{AVS.c=sel.value;LS.set("jx-av",AVS);aveugle()};
   $("#anew").onclick=()=>{avNew();aveugle()};
   $$("[data-s]").forEach(b=>b.onclick=()=>{const k=+b.dataset.s;if(AV.slots[k]||AV.i>=AV.N)return;const z=AV.pick[AV.i++];AV.slots[k]=z;AV.order.push([z.p,k+1]);
-    if(AV.i>=AV.N&&!AV.sent){AV.sent=true;submit({g:"av",order:AV.order},AVCFG)}aveugle()});
+    if(AV.i>=AV.N&&!AV.sent){AV.sent=true;submit({g:"av",order:AV.order},AVCFG);award(avEval().rows.filter(r=>r.d===0).map(r=>r.p),"av")}aveugle()});
   const a=$("#aagain");if(a)a.onclick=()=>{avNew();aveugle()};
   const s=$("#ash");if(s)s.onclick=()=>{const e=avEval();shareScore({kicker:`Classement à l’aveugle · ${avTitle()}`,title:`${e.score}/100`,list:AV.slots.map((z,k)=>{const r=e.rows[k];return {rank:k+1,p:z.p,sub:r.d===0?"bonne place":"vrai rang",val:r.d===0?"✓":(r.lo===r.hi?String(r.lo):r.lo+"-"+r.hi),col:r.d===0?"#5BE38A":"rgba(255,255,255,.6)"}}),cta:`${e.rows.filter(r=>r.d===0).length} bonne(s) place(s). Et toi ?`},`🏀 ${e.score}/100 au classement à l’aveugle d’EuroLeague France (${avTitle()}). Et toi, tu classes mieux ?`,"classement-aveugle")};
 }
@@ -558,7 +631,7 @@ function cinq(){
   $("#app").innerHTML=html;
   loadBoard(CFG);
   $$(".pbtn[data-p]").forEach(b=>b.onclick=()=>{const p=b.dataset.p;st.pick=st.pick.includes(p)?st.pick.filter(x=>x!==p):st.pick.concat([p]);LS.set(key,st);const y=window.scrollY;cinq();window.scrollTo(0,y)});
-  const v=$("#fv");if(v)v.onclick=()=>{st.done=true;LS.set(key,st);submit({g:"cinq",picks:st.pick},CFG);cinq();window.scrollTo({top:0,behavior:"smooth"})};
+  const v=$("#fv");if(v)v.onclick=()=>{st.done=true;LS.set(key,st);award(st.pick,"cinq");submit({g:"cinq",picks:st.pick},CFG);cinq();window.scrollTo({top:0,behavior:"smooth"})};
   const sh=$("#fsh");if(sh)sh.onclick=()=>shareScore({kicker:`Mon 5 de la journée ${R}`,title:`${fr(sum(st.pick))} / 50`,list:st.pick.map(p=>({p,sub:CLUB[CL[p]]||CL[p],val:fr(NOTE[p]),col:NOTE[p]>=7.5?"#5BE38A":NOTE[p]<3.5?"#FF7A86":"#fff"})),cta:`${Math.round(100*sum(st.pick)/sum(best))} % du 5 parfait. Et toi ?`},
     `🏀 Mon 5 de la J${R} : ${fr(sum(st.pick))}/50 (${Math.round(100*sum(st.pick)/sum(best))} % du 5 parfait)\n${st.pick.map(p=>`${NAME[p]} ${fr(NOTE[p])}`).join(" · ")}\nEt toi, quel 5 ?`,"mon-5");
 }
@@ -605,18 +678,359 @@ async function prono(){
   const s=$("#psh");if(s)s.onclick=()=>shareScore({kicker:`Mon prono MVP · J${NEXT}`,title:"Il sera le MVP de la journée",players:[mine],captions:{[mine]:`${CLUB[ST[mine].club]||""} · ${fr(ST[mine].note)} de moyenne`},cta:"Et toi, qui vois-tu MVP ?"},`🔮 Mon MVP de la J${NEXT} d’EuroLeague : ${NAME[mine]}. Et toi ?`,"prono-mvp");
 }
 
+/* =========================================================
+   CARTES DE COLLECTION : dessin (une seule fonction pour l'album, les packs et le partage)
+   ========================================================= */
+const TIER=L.tierMap(ST);
+const ALL=L.collectible(ST);
+const CNUM={};{const k={};for(const p of ALL){const c=ST[p].club;k[c]=(k[c]||0)+1;CNUM[p]=c+" · "+String(k[c]).padStart(2,"0")}}
+const TC={
+  legende:{lab:"LÉGENDE",metal:["#FFF6CF","#E9C46A","#A8781F","#FFE9A6","#C8962E"],body:["#2A1450","#140A33","#07041A"],acc:"#F5D06F",glow:"rgba(245,208,111,.38)",ink:"#2B1A00"},
+  or:{lab:"OR",metal:["#FFF0B8","#DDB253","#9C7424","#F6D985","#B78A2E"],body:["#0E2A86","#061A5E","#020B2E"],acc:"#EBC764",glow:"rgba(235,199,100,.30)",ink:"#2B1F05"},
+  argent:{lab:"ARGENT",metal:["#FFFFFF","#C9D1DC","#7F8A99","#EEF2F7","#A3ADBB"],body:["#0E2A86","#061A5E","#020B2E"],acc:"#D7DEE8",glow:"rgba(215,222,232,.22)",ink:"#1A2230"},
+  bronze:{lab:"BRONZE",metal:["#FFD7B0","#C98552","#7E4520","#F0B68A","#A8673A"],body:["#0E2A86","#061A5E","#020B2E"],acc:"#E8A877",glow:"rgba(232,168,119,.24)",ink:"#2A1406"},
+  lock:{lab:"",metal:["#5A6378","#343B4C","#1F2433","#4A5266","#2B3141"],body:["#1A2135","#10162A","#080B18"],acc:"#6E7891",glow:"rgba(110,120,145,.12)",ink:"#fff"}};
+const POSAB={G:"ARR",F:"AIL",C:"PIV"};
+const FF=(w,s)=>`${w} ${s}px "Libre Franklin", Arial, sans-serif`;
+function ls(x,v){try{x.letterSpacing=v+"px"}catch(e){}}
+function fitText(x,t,w,size,weight,maxW){let s=size;x.font=FF(weight,s);while(x.measureText(t).width>maxW&&s>14){s-=2;x.font=FF(weight,s)}return s}
+function metalGrad(x,c,W,H){const g=x.createLinearGradient(0,0,W,H);c.forEach((col,i)=>g.addColorStop(i/(c.length-1),col));return g}
+function seeded(p){let h=0;for(const c of p)h=(h*31+c.charCodeAt(0))>>>0;return()=>{h=(h*1103515245+12345)>>>0;return h/4294967296}}
+async function fontsOK(){await Promise.all(["900 60px","800 30px","700 20px","600 30px"].map(f=>document.fonts.load(f+' "Libre Franklin"').catch(()=>{})))}
+async function drawCard(x,p,X,Y,W,o={}){
+  const u=W/600,s=ST[p]||{},lock=!!o.lock,T=TC[lock?"lock":TIER[p]];
+  x.save();x.translate(X,Y);x.scale(u,u);
+  // cadre métallique + ombre
+  if(o.shadow){x.save();x.shadowColor="rgba(0,0,0,.55)";x.shadowBlur=60;x.shadowOffsetY=26;rrect(x,0,0,600,840,46);x.fillStyle="#000";x.fill();x.restore()}
+  rrect(x,0,0,600,840,46);x.fillStyle=metalGrad(x,T.metal,600,840);x.fill();
+  // reflets du cadre
+  const sh=x.createLinearGradient(0,0,600,0);sh.addColorStop(0,"rgba(255,255,255,0)");sh.addColorStop(.48,"rgba(255,255,255,.55)");sh.addColorStop(.52,"rgba(255,255,255,0)");x.fillStyle=sh;rrect(x,0,0,600,840,46);x.fill();
+  // corps
+  x.save();rrect(x,14,14,572,812,36);x.clip();
+  const bg=x.createLinearGradient(0,14,0,826);bg.addColorStop(0,T.body[0]);bg.addColorStop(.55,T.body[1]);bg.addColorStop(1,T.body[2]);x.fillStyle=bg;x.fillRect(0,0,600,840);
+  const gl=x.createRadialGradient(300,300,20,300,300,330);gl.addColorStop(0,T.glow);gl.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=gl;x.fillRect(0,0,600,840);
+  // filigrane : logo du club
+  const lgo=s.club?await loadImg(`../logos/${s.club}.webp`):null;
+  if(lgo){x.globalAlpha=lock?.05:.07;x.drawImage(lgo,250,380,420,420);x.globalAlpha=1}
+  // lignes de lumière
+  x.fillStyle="rgba(255,255,255,.045)";x.beginPath();x.moveTo(0,0);x.lineTo(330,0);x.lineTo(0,560);x.closePath();x.fill();
+  x.fillStyle="rgba(255,255,255,.03)";x.beginPath();x.moveTo(380,0);x.lineTo(460,0);x.lineTo(0,780);x.lineTo(0,640);x.closePath();x.fill();
+  if(TIER[p]==="legende"&&!lock){const r=seeded(p);for(let i=0;i<46;i++){const a=r();x.fillStyle=`rgba(255,226,140,${.25+.5*r()})`;x.beginPath();x.arc(20+560*r(),20+560*r(),.8+2.6*a,0,7);x.fill()}}
+  x.restore();
+  // filet intérieur
+  x.lineWidth=2;x.strokeStyle=T.acc;x.globalAlpha=.55;rrect(x,28,28,544,784,28);x.stroke();x.globalAlpha=1;
+  if(s.nat==="FRA"&&!lock){x.fillStyle="#1D3FC4";x.fillRect(255,14,30,8);x.fillStyle="#fff";x.fillRect(285,14,30,8);x.fillStyle="#ED2839";x.fillRect(315,14,30,8)}
+  x.textBaseline="alphabetic";
+  if(lock){
+    x.setLineDash([14,12]);x.lineWidth=5;x.strokeStyle="rgba(255,255,255,.28)";x.beginPath();x.arc(300,310,150,0,7);x.stroke();x.setLineDash([]);
+    x.fillStyle="rgba(255,255,255,.55)";x.font=FF(900,150);x.textAlign="center";x.fillText("?",300,365);
+    x.font=FF(800,30);ls(x,4);x.fillStyle="rgba(255,255,255,.6)";x.fillText("À DÉBLOQUER",300,560);ls(x,0);
+    x.font=FF(800,26);x.fillStyle="rgba(255,255,255,.4)";x.fillText(CNUM[p]||"",300,790);
+    x.restore();return;
+  }
+  // note moyenne + poste + drapeau
+  x.textAlign="center";x.fillStyle=T.acc;x.font=FF(900,96);x.fillText((Math.round((s.note||0)*10)/10).toFixed(1).replace(".",","),106,138);
+  x.font=FF(800,19);ls(x,3);x.fillStyle="rgba(255,255,255,.75)";x.fillText("NOTE MOY.",106,168);
+  x.font=FF(900,34);ls(x,2);x.fillStyle="#fff";x.fillText(POSAB[s.pos]||"—",106,222);ls(x,0);
+  if(s.nat){x.font=FF(400,44);x.fillText(flag(s.nat)||s.nat,106,280)}
+  // logo du club
+  x.save();x.shadowColor="rgba(0,0,0,.35)";x.shadowBlur=18;x.beginPath();x.arc(500,104,58,0,7);x.fillStyle="#fff";x.fill();x.restore();
+  if(lgo)x.drawImage(lgo,458,62,84,84);
+  // photo
+  x.save();x.shadowColor="rgba(0,0,0,.5)";x.shadowBlur=30;x.beginPath();x.arc(300,318,164,0,7);x.fillStyle=T.acc;x.fill();x.restore();
+  x.beginPath();x.arc(300,318,164,0,7);x.fillStyle=metalGrad(x,T.metal,600,640);x.fill();
+  x.save();x.beginPath();x.arc(300,318,156,0,7);x.fillStyle="#E6E9F4";x.fill();x.clip();
+  const im=photoUrl(p)?await loadImg(photoUrl(p)):null;
+  if(im)x.drawImage(im,144,162,312,312);else{x.fillStyle="#002496";x.font=FF(900,110);x.fillText(ini(p),300,355)}
+  x.restore();
+  // rareté
+  x.font=FF(900,20);ls(x,4);const lab=T.lab,lw=x.measureText(lab).width+40;
+  rrect(x,300-lw/2,488,lw,36,18);x.fillStyle=metalGrad(x,T.metal,600,520);x.fill();x.fillStyle=T.ink;x.fillText(lab,300+2,513);ls(x,0);
+  // nom
+  const nm=NAME[p]||"",sp=nm.indexOf(" "),first=sp>0?nm.slice(0,sp):"",last=(sp>0?nm.slice(sp+1):nm).toUpperCase();
+  x.fillStyle="rgba(255,255,255,.82)";x.font=FF(600,30);x.fillText(first,300,574);
+  x.fillStyle="#fff";fitText(x,last,0,64,900,500);x.fillText(last,300,636);
+  // séparateur
+  const dv=x.createLinearGradient(80,0,520,0);dv.addColorStop(0,"rgba(0,0,0,0)");dv.addColorStop(.5,T.acc);dv.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=dv;x.fillRect(80,664,440,3);
+  // statistiques
+  const cols=[["MATCHS",String(s.n||0)],["PTS",s.ppg!=null?fr(s.ppg):"—"],["ÉVAL",fr(s.ev||0)],["MIN",String(Math.round(s.min||0))]];
+  cols.forEach(([l,v],i)=>{const cx=105+i*130;x.fillStyle="#fff";x.font=FF(900,44);x.fillText(v,cx,730);x.font=FF(800,17);ls(x,2);x.fillStyle=T.acc;x.fillText(l,cx,758);ls(x,0)});
+  // pied
+  x.font=FF(800,17);ls(x,3);x.fillStyle="rgba(255,255,255,.5)";x.textAlign="left";x.fillText("EUROLEAGUE FRANCE",56,800);x.textAlign="right";x.fillText(CNUM[p]||"",544,800);ls(x,0);x.textAlign="left";
+  x.restore();
+}
+async function drawBack(x,X,Y,W){
+  const u=W/600;x.save();x.translate(X,Y);x.scale(u,u);
+  rrect(x,0,0,600,840,46);x.fillStyle=metalGrad(x,TC.or.metal,600,840);x.fill();
+  x.save();rrect(x,14,14,572,812,36);x.clip();const g=x.createLinearGradient(0,0,600,840);g.addColorStop(0,"#0E2A86");g.addColorStop(1,"#020B2E");x.fillStyle=g;x.fillRect(0,0,600,840);
+  x.strokeStyle="rgba(235,199,100,.18)";x.lineWidth=2;for(let i=-840;i<600;i+=36){x.beginPath();x.moveTo(i,0);x.lineTo(i+840,840);x.stroke()}
+  x.restore();
+  const lg=await loadImg("../logo_white.png");if(lg){const w=420,h=w*lg.height/lg.width;x.drawImage(lg,90,420-h/2,w,h)}
+  x.lineWidth=3;x.strokeStyle="rgba(235,199,100,.6)";rrect(x,28,28,544,784,28);x.stroke();
+  x.restore();
+}
+function cardCanvas(p,w,o={}){const c=document.createElement("canvas");const r=Math.min(2,(window.devicePixelRatio||1))*w;c.width=Math.round(r);c.height=Math.round(r*1.4);c.style.width=w+"px";drawCard(c.getContext("2d"),p,0,0,c.width,o);return c}
+
+/* ---------- ma collection (stockée sur le serveur, copie locale) ---------- */
+let OWN=new Set(LS.get("jx-col",[]));let PACK_OK=false;
+const saveOwn=()=>LS.set("jx-col",[...OWN]);
+api("scores?collection=1&dev="+encodeURIComponent(DEV)).then(r=>{if(r&&r.pids){const loc=[...OWN].filter(p=>!r.pids.includes(p));r.pids.forEach(p=>OWN.add(p));saveOwn();PACK_OK=!!r.pack;if(loc.length)api("scores",{add:loc.slice(0,12),src:"sync"});colPill();if(CUR==="collection")collection()}});
+function colPill(){const b=$("#colp");if(b)b.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v4h6V3"/></svg>Ma collection ${OWN.size}/${ALL.length}${PACK_OK?" · pack offert !":""}`;const t=$("#t-collection");if(t)t.innerHTML=`Ma collection <span style="opacity:.75">${OWN.size}/${ALL.length}</span>`}
+const NEWQ=[];let NEWBUSY=false;
+function award(pids,src){
+  const nw=[...new Set(pids)].filter(p=>p&&ST[p]&&ST[p].club&&!OWN.has(p));if(!nw.length)return;
+  nw.forEach(p=>OWN.add(p));saveOwn();colPill();api("scores",{add:nw,src});
+  NEWQ.push(...nw);if(!NEWBUSY)nextNew();
+}
+function nextNew(){
+  const p=NEWQ.shift();if(!p){NEWBUSY=false;return}NEWBUSY=true;
+  let el=$("#newcard");if(!el){el=document.createElement("button");el.id="newcard";el.className="newcard";el.type="button";document.body.appendChild(el)}
+  el.innerHTML="";el.appendChild(cardCanvas(p,64));const t=document.createElement("div");t.innerHTML=`<b>Nouvelle carte · ${esc(TC[TIER[p]].lab)}</b><span>${esc(NAME[p])}</span>`;el.appendChild(t);
+  el.onclick=()=>{el.classList.remove("on");showCard(p,true)};
+  requestAnimationFrame(()=>el.classList.add("on"));
+  clearTimeout(nextNew.t);nextNew.t=setTimeout(()=>{el.classList.remove("on");setTimeout(nextNew,450)},NEWQ.length?1800:3200);
+}
+function showCard(p,isNew){
+  const m=$("#modal");m.hidden=false;$("#mt").textContent=isNew?"Nouvelle carte !":NAME[p];
+  const img=$("#mimg");img.style.display="none";
+  let host=$("#mcard");if(!host){host=document.createElement("div");host.id="mcard";host.style.cssText="display:flex;justify-content:center";img.after(host)}
+  host.innerHTML="";host.appendChild(cardCanvas(p,Math.min(340,window.innerWidth-64)));
+  $("#mbtns").innerHTML=`${shareBtn("mcs","Partager ma carte")}<button class="btn ghost" type="button" id="mcc">Voir ma collection</button>`;
+  $("#mcs").onclick=()=>{host.innerHTML="";img.style.display="";shareCard(p)};
+  $("#mcc").onclick=()=>{closeModal();go("collection",true)};
+}
+async function shareCard(p){
+  const s=ST[p];
+  await shareCustom(async x=>{
+    await drawCard(x,p,250,196,580,{shadow:true});
+    x.textAlign="center";x.fillStyle="#E2BE6A";x.font=FF(800,30);ls(x,6);x.fillText("NOUVELLE CARTE · "+TC[TIER[p]].lab,540,140);ls(x,0);
+    x.fillStyle="#fff";x.font=FF(700,32);x.fillText(`Ma collection : ${OWN.size} / ${ALL.length} cartes`,540,1150);x.textAlign="left";
+  },`🃏 Nouvelle carte dans ma collection EuroLeague France : ${NAME[p]} (${TC[TIER[p]].lab.toLowerCase()}). ${OWN.size}/${ALL.length} cartes. Et toi ?`,"carte-"+(NAME[p]||p).toLowerCase().replace(/[^a-z]+/g,"-"),"Complète ta collection !");
+}
+// image de partage « sur mesure » (fond + pied communs à toutes les images)
+async function shareCustom(draw,text,file,cta){
+  const m=$("#modal"),img=$("#mimg");m.hidden=false;$("#mt").textContent="Partage ton score";img.style.display="";const h=$("#mcard");if(h)h.innerHTML="";img.removeAttribute("src");$("#mbtns").innerHTML='<p class="muted" style="margin:0">Création de ton image…</p>';
+  await fontsOK();
+  const W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;const x=cv.getContext("2d");
+  const g=x.createRadialGradient(540,520,60,540,560,900);g.addColorStop(0,"#163A9E");g.addColorStop(.5,"#061A5E");g.addColorStop(1,"#010824");x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.save();x.globalAlpha=.07;x.fillStyle="#fff";for(let i=0;i<14;i++){x.beginPath();x.moveTo(540,560);const a=i/14*Math.PI*2;x.lineTo(540+1400*Math.cos(a),560+1400*Math.sin(a));x.lineTo(540+1400*Math.cos(a+.1),560+1400*Math.sin(a+.1));x.closePath();x.fill()}x.restore();
+  const lg=await loadImg("../logo_white.png");if(lg){const h=64;x.drawImage(lg,48,40,lg.width*h/lg.height,h)}
+  await draw(x);
+  x.fillStyle="#fff";x.fillRect(0,1200,W,150);x.fillStyle="#ED2839";x.fillRect(0,1200,W,8);
+  x.fillStyle="#151E22";x.font=FF(800,30);x.fillText(cta||"Et toi, tu fais mieux ?",64,1268);
+  x.fillStyle="#002496";x.font=FF(900,44);x.fillText("euroleague-france.com/jeux",64,1322);
+  if(PSEUDO){x.textAlign="right";x.fillStyle="#5B666B";x.font=FF(700,26);x.fillText("par "+PSEUDO,W-64,1268,360);x.textAlign="left"}
+  const blob=await new Promise(res=>cv.toBlob(res,"image/png"));
+  await shareBlob(blob,text,file);
+}
+async function shareBlob(blob,text,file){
+  const img=$("#mimg"),url=URL.createObjectURL(blob);img.src=url;
+  const f=new File([blob],(file||"score")+"-euroleague-france.png",{type:"image/png"});
+  const canFile=navigator.canShare&&navigator.canShare({files:[f]});
+  const full=text+"\n"+SITE+"\n#EuroLeague";
+  $("#mbtns").innerHTML=`${canFile?`<button class="btn red" id="ms" type="button">${ICON_SHARE}Partager l’image</button>`:""}
+    <a class="btn ${canFile?"ghost":"red"}" id="md" href="${url}" download="${f.name}">Télécharger l’image</a>
+    <a class="btn ghost" href="https://x.com/intent/post?text=${encodeURIComponent(full)}" target="_blank" rel="noopener">Publier sur X</a>
+    <p class="muted" style="margin:0;font-size:13px;flex-basis:100%">${canFile?"Choisis Instagram, X, WhatsApp… dans la liste.":"Télécharge l’image, puis ajoute-la à ton post X ou à ta story Instagram."}</p>`;
+  const s=$("#ms");if(s)s.onclick=async()=>{try{await navigator.share({files:[f],text:full})}catch(e){}};
+  $("#md").onclick=()=>toast("Image téléchargée");
+}
+
+/* ---------- album ---------- */
+let COLF=LS.get("jx-colf","all");
+const COLCFG={g:"col",what:"Nombre de cartes collectionnées",unit:s=>plural(s,"carte","cartes")};
+function setsInfo(){
+  const clubs=[...new Set(ALL.map(p=>ST[p].club))].sort();
+  const sets=[["all","Toutes",ALL],["mine","Mes cartes",ALL.filter(p=>OWN.has(p))],["fra","Les Français",ALL.filter(p=>ST[p].nat==="FRA")],["legende","Légendes",ALL.filter(p=>TIER[p]==="legende")],["or","Or",ALL.filter(p=>TIER[p]==="or")]];
+  for(const c of clubs)sets.push([c,CLUB[c]||c,ALL.filter(p=>ST[p].club===c),c]);
+  return sets;
+}
+function collection(){
+  const sets=setsInfo(),cur=sets.find(s=>s[0]===COLF)||sets[0];
+  const done=sets.filter(s=>s[0]!=="all"&&s[0]!=="mine"&&s[2].length&&s[2].every(p=>OWN.has(p)));
+  const pct=Math.round(100*OWN.size/ALL.length);
+  $("#app").innerHTML=`<div class="colhead"><div style="position:relative;z-index:1"><span class="kick" style="color:#F3D27B">Ma collection · saison ${esc(D.season)}</span><h2>Toutes les cartes de l’EuroLeague</h2>
+      <p style="margin:6px 0 12px;color:rgba(255,255,255,.78);max-width:520px;font-size:15px">Chaque bonne réponse dans les jeux débloque la carte du joueur. Un pack de 3 cartes t’attend chaque jour.</p>
+      <div class="row" style="position:relative;z-index:1">${PACK_OK?`<button class="btn goldb" id="cpack" type="button">Ouvrir mon pack du jour</button>`:`<span class="pill" style="background:rgba(255,255,255,.12);color:#fff">Prochain pack demain</span>`}${shareBtn("cshare","Partager ma collection")}</div></div>
+    <div style="position:relative;z-index:1;min-width:240px"><div class="big">${OWN.size}<small> / ${ALL.length}</small></div><div class="bar" style="margin:10px 0 6px"><i style="width:${pct}%"></i></div><span style="font-size:13px;color:rgba(255,255,255,.75)">${pct} % · ${done.length} collection${done.length>1?"s":""} complète${done.length>1?"s":""}</span></div></div>
+  <div class="lay"><div>
+    <div class="sets" role="group" aria-label="Collections">${sets.map(s=>{const n=s[2].filter(p=>OWN.has(p)).length,full=s[2].length&&n===s[2].length&&s[0]!=="mine";return `<button type="button" class="set ${full?"done":""}" data-f="${s[0]}" aria-pressed="${s[0]===cur[0]}">${s[3]?`<img src="../logos/${s[3]}.webp" alt="">`:""}${esc(s[1])}<span class="c">${s[0]==="mine"?n:`${n}/${s[2].length}`}${full?" ✓":""}</span></button>`}).join("")}</div>
+    <div class="cards" id="cards">${cur[2].map(p=>`<button type="button" class="cardbtn" data-p="${p}" ${OWN.has(p)?"":"disabled"} aria-label="${OWN.has(p)?esc(NAME[p]):"Carte à débloquer"}"><canvas data-c="${p}" width="300" height="420"></canvas></button>`).join("")||'<p class="muted">Aucune carte pour l’instant : joue pour en gagner !</p>'}</div>
+  </div>${boardHTML()}</div>`;
+  loadBoard(COLCFG);
+  $$("[data-f]").forEach(b=>b.onclick=()=>{COLF=b.dataset.f;LS.set("jx-colf",COLF);collection()});
+  const io=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){const c=e.target;io.unobserve(c);const p=c.dataset.c;drawCard(c.getContext("2d"),p,0,0,300,{lock:!OWN.has(p)})}},{rootMargin:"300px"});
+  $$("canvas[data-c]").forEach(c=>io.observe(c));
+  $$(".cardbtn[data-p]").forEach(b=>b.onclick=()=>showCard(b.dataset.p,false));
+  const pk=$("#cpack");if(pk)pk.onclick=openPack;
+  $("#cshare").onclick=shareCollection;
+}
+async function openPack(){
+  const r=await api("scores",{pack:1});
+  if(r.error&&!r.cards){toast(r.error);return}
+  const cards=r.cards||[];PACK_OK=false;cards.forEach(p=>OWN.add(p));saveOwn();colPill();
+  const m=$("#modal");m.hidden=false;$("#mt").textContent="Ton pack du jour";$("#mimg").style.display="none";m.querySelector(".box").classList.add("wide");
+  let host=$("#mcard");if(!host){host=document.createElement("div");host.id="mcard";$("#mimg").after(host)}
+  host.innerHTML=`<p class="muted" style="margin:0 0 6px;text-align:center">Touche les cartes pour les retourner</p><div class="pack">${cards.map((p,i)=>`<button type="button" class="flip" data-i="${i}" aria-label="Retourner la carte ${i+1}"></button>`).join("")}</div>`;
+  $$(".flip").forEach((b,i)=>{const w=Math.min(200,Math.floor((window.innerWidth-80)/3));const bk=document.createElement("canvas");bk.width=w*2;bk.height=w*2.8;drawBack(bk.getContext("2d"),0,0,w*2);const fr_=cardCanvas(cards[i],w);fr_.className="front";fr_.style.width="";b.append(bk,fr_);b.onclick=()=>b.classList.add("on")});
+  setTimeout(()=>$$(".flip").forEach((b,i)=>setTimeout(()=>b.classList.add("on"),500+i*650)),200);
+  $("#mbtns").innerHTML=`${shareBtn("mps","Partager mon pack")}<button class="btn ghost" type="button" id="mpc">Voir ma collection</button>`;
+  $("#mps").onclick=()=>{m.querySelector(".box").classList.remove("wide");host.innerHTML="";sharePack(cards)};
+  $("#mpc").onclick=()=>{closeModal();go("collection",true)};
+  if(CUR==="collection")collection();
+}
+async function sharePack(cards){
+  await shareCustom(async x=>{
+    x.textAlign="center";x.fillStyle="#E2BE6A";x.font=FF(800,30);ls(x,6);x.fillText("MON PACK DU JOUR",540,150);ls(x,0);
+    const W=320,H=W*1.4,pos=[[285,700,-10],[795,700,10],[540,660,0]],ord=[0,2,1];
+    for(const k of ord){if(k>=cards.length)continue;const [cx,cy,a]=pos[k===1?2:k===2?1:0];x.save();x.translate(cx,cy);x.rotate(a*Math.PI/180);await drawCard(x,cards[k],-W/2,-H/2,W,{shadow:true});x.restore()}
+    x.fillStyle="#fff";x.font=FF(700,32);x.textAlign="center";x.fillText(`Ma collection : ${OWN.size} / ${ALL.length} cartes`,540,1135);x.textAlign="left";
+  },`🃏 Mon pack du jour EuroLeague France : ${cards.map(p=>NAME[p]).join(", ")}. Ma collection : ${OWN.size}/${ALL.length}.`,"pack-du-jour","Ouvre ton pack du jour !");
+}
+async function shareCollection(){
+  const best=[...OWN].sort((a,b)=>["legende","or","argent","bronze"].indexOf(TIER[a])-["legende","or","argent","bronze"].indexOf(TIER[b])||ST[b].note-ST[a].note).slice(0,5);
+  const done=setsInfo().filter(s=>!["all","mine"].includes(s[0])&&s[2].length&&s[2].every(p=>OWN.has(p))).map(s=>s[1]);
+  await shareCustom(async x=>{
+    x.textAlign="center";x.fillStyle="#E2BE6A";x.font=FF(800,30);ls(x,6);x.fillText("MA COLLECTION",540,150);ls(x,0);
+    x.fillStyle="#fff";x.font=FF(900,120);x.fillText(String(OWN.size),540,280);x.font=FF(700,36);x.fillStyle="rgba(255,255,255,.7)";x.fillText(`cartes sur ${ALL.length}`,540,330);
+    rrect(x,290,360,500,16,8);x.fillStyle="rgba(255,255,255,.15)";x.fill();rrect(x,290,360,Math.max(16,500*OWN.size/ALL.length),16,8);const gg=x.createLinearGradient(290,0,790,0);gg.addColorStop(0,"#F3D27B");gg.addColorStop(1,"#C8A24A");x.fillStyle=gg;x.fill();
+    const n=best.length,W=300,H=W*1.4;
+    const ang=Array.from({length:n},(_,i)=>(i-(n-1)/2)*9),xs=ang.map((a,i)=>540+(i-(n-1)/2)*150);
+    const order=Array.from({length:n},(_,i)=>i).sort((a,b)=>Math.abs(ang[b])-Math.abs(ang[a]));   // la meilleure carte (au centre) par-dessus
+    const rank=Array.from({length:n},(_,i)=>i);const mid=Math.floor((n-1)/2);const place=[];{const seq=[mid];for(let d=1;seq.length<n;d++){if(mid+d<n)seq.push(mid+d);if(mid-d>=0)seq.push(mid-d)}seq.forEach((slot,i)=>place[slot]=best[i])}
+    for(const i of order){x.save();x.translate(xs[i],690+Math.abs(ang[i])*3);x.rotate(ang[i]*Math.PI/180);await drawCard(x,place[i],-W/2,-H/2,W,{shadow:true});x.restore()}
+    if(done.length){x.fillStyle="#F3D27B";x.font=FF(800,28);x.fillText("✓ "+done.slice(0,3).join(" · ")+(done.length>3?` +${done.length-3}`:""),540,1150,980)}
+    x.textAlign="left";
+  },`🃏 Ma collection EuroLeague France : ${OWN.size}/${ALL.length} cartes${done.length?` · complètes : ${done.join(", ")}`:""}. Et toi ?`,"ma-collection","Commence ta collection !");
+}
+
+/* ---------- données du jour (grille, trios) figées par le serveur ---------- */
+let JOUR=null;
+async function jourData(){if(JOUR)return JOUR;const r=await api("scores?jour=1");JOUR=r&&r.grille?r:{date:todayKey,grille:L.makeGrid(ST,todayKey),trios:L.makeTrios(ST,todayKey)};return JOUR}
+
+/* =========================================================
+   LA GRILLE 3 × 3
+   ========================================================= */
+const GRCFG={g:"grille",k:"saison",what:"Cases trouvées",unit:s=>plural(s,"case","cases"),tabs:[["saison","Saison"],["jour","Aujourd’hui"]]};
+async function grille(){
+  const J0=await jourData(),G=J0.grille;
+  if(!G){$("#app").innerHTML='<div class="card"><h2>La grille</h2><p class="lead">Pas de grille aujourd’hui.</p></div>';return}
+  const key="jx-grille-"+J0.date;let st=LS.get(key,{cells:{},left:9,done:false,sel:null});
+  const nb=Object.keys(st.cells).length;
+  const crit=G.crit.map(k=>L.critOf(k));
+  const rare=grille.rare||null;
+  let html=`<div class="lay"><div class="card"><div class="row between"><span class="kick">La grille du jour</span><span class="score">${nb}/9 · ${st.left} essai${st.left>1?"s":""} restant${st.left>1?"s":""}</span></div>
+    <h2>Un joueur différent par case</h2><p class="lead">Trouve un joueur qui coche à la fois le club de la ligne et le critère de la colonne (saison ${esc(D.season)}, 2 matchs minimum). 9 essais pour 9 cases.</p>
+    <div class="grid3"><div></div>${crit.map(c=>`<div class="ghd">${esc(c.lab)}</div>`).join("")}
+    ${G.clubs.map((c,ri)=>`<div class="ghd row"><img src="../logos/${c}.webp" alt="">${esc(CLUB[c]||c)}</div>${[0,1,2].map(ci=>{const k=ri+"-"+ci,p=st.cells[k];
+      if(p){const pc=rare&&rare.c[k]&&rare.n?Math.round(100*(rare.c[k][p]||0)/rare.n):null;return `<div class="gcell ok">${av(p)}<span>${esc(NAME[p])}</span>${pc!=null?`<small>${pc} % des joueurs</small>`:""}</div>`}
+      return `<button type="button" class="gcell ${st.sel===k?"sel":""}" data-k="${k}" ${st.done?"disabled":""}>${st.done?"—":"Choisir"}</button>`}).join("")}`).join("")}</div>
+    ${st.done?`<div class="row" style="margin-top:16px">${shareBtn("gsh","Partager ma grille")}<span class="muted">Nouvelle grille demain à minuit.</span></div>`
+      :`<form class="guess" id="gf" autocomplete="off" ${st.sel?"":"hidden"}><label class="sr" for="gi">Nom du joueur</label><input id="gi" list="gl" placeholder="Joueur pour la case choisie…"><datalist id="gl">${GUESSABLE.filter(p=>!Object.values(st.cells).includes(p)).map(p=>`<option value="${esc(NAME[p])}">`).join("")}</datalist><button class="btn red" type="submit">Valider</button></form>
+      <p class="msg" id="gm" style="margin-top:8px">${st.sel?"":"Clique sur une case pour commencer."}</p>`}
+  </div>${boardHTML()}</div>`;
+  $("#app").innerHTML=html;
+  loadBoard(GRCFG);
+  $$(".gcell[data-k]").forEach(b=>b.onclick=()=>{st.sel=b.dataset.k;LS.set(key,st);grille();setTimeout(()=>{const i=$("#gi");if(i)i.focus()},30)});
+  const f=$("#gf");
+  if(f)f.onsubmit=e=>{e.preventDefault();const p=BYNAME.get(norm($("#gi").value));const m=$("#gm");
+    if(!p){m.textContent="Joueur introuvable : choisis un nom dans la liste.";m.style.color="var(--ko)";return}
+    if(Object.values(st.cells).includes(p)){m.textContent="Déjà utilisé dans une autre case.";m.style.color="var(--ko)";return}
+    const [ri,ci]=st.sel.split("-").map(Number);st.left--;
+    if(L.gridOk(ST,p,G.clubs[ri],G.crit[ci])){st.cells[st.sel]=p;st.sel=null;award([p],"grille")}
+    else{toast(`${NAME[p]} ne coche pas cette case`)}
+    if(st.left<=0||Object.keys(st.cells).length===9){st.done=true;st.sel=null;submit({g:"grille",cells:st.cells},GRCFG).then(()=>api("scores?grille=1").then(r=>{if(r&&r.c){grille.rare=r;grille()}}))}
+    LS.set(key,st);grille()};
+  if(st.done&&!grille.rare)api("scores?grille=1").then(r=>{if(r&&r.c){grille.rare=r;if(CUR==="grille")grille()}});
+  const sh=$("#gsh");if(sh)sh.onclick=()=>shareCustom(async x=>{
+    x.textAlign="center";x.fillStyle="#E2BE6A";x.font=FF(800,30);ls(x,6);x.fillText("LA GRILLE DU JOUR",540,150);ls(x,0);
+    x.fillStyle="#fff";x.font=FF(900,76);x.fillText(`${nb} / 9`,540,240);
+    const S=230,gap=18,x0=540-(3*S+2*gap)/2+40,y0=300;
+    for(let ri=0;ri<3;ri++){const lgo=await loadImg(`../logos/${G.clubs[ri]}.webp`);x.save();x.beginPath();x.arc(x0-70,y0+ri*(S+gap)+S/2,46,0,7);x.fillStyle="#fff";x.fill();x.restore();if(lgo)x.drawImage(lgo,x0-104,y0+ri*(S+gap)+S/2-34,68,68);
+      for(let ci=0;ci<3;ci++){const X=x0+ci*(S+gap),Y=y0+ri*(S+gap),p=st.cells[ri+"-"+ci];rrect(x,X,Y,S,S,26);x.fillStyle=p?"rgba(47,181,90,.22)":"rgba(255,255,255,.08)";x.fill();x.lineWidth=3;x.strokeStyle=p?"#2FB55A":"rgba(255,255,255,.2)";x.stroke();
+        if(p){await avatarC(x,p,X+S/2,Y+S/2-14,78);x.fillStyle="#fff";x.font=FF(800,22);x.fillText(NAME[p].split(" ").slice(-1)[0],X+S/2,Y+S-18,S-20)}else{x.fillStyle="rgba(255,255,255,.35)";x.font=FF(900,80);x.fillText("✕",X+S/2,Y+S/2+28)}}}
+    x.textAlign="left";
+  },`🏀 La grille EuroLeague France du jour : ${nb}/9. Tu fais mieux ?`,"grille","À toi de remplir la grille !");
+}
+
+/* =========================================================
+   TITULAIRE · BANC · VENDU
+   ========================================================= */
+const ROLES=[["t","Titulaire","#1F8A3B"],["r","Banc","#002496"],["v","Vendu","#D21F33"]];
+async function trio(){
+  const J0=await jourData(),TR=J0.trios||[];
+  const key="jx-trio-"+J0.date;let st=LS.get(key,{i:0,a:{},res:{}});
+  if(!TR.length){$("#app").innerHTML='<div class="card"><h2>Titulaire, banc ou vendu</h2><p class="lead">Pas de trio aujourd’hui.</p></div>';return}
+  const i=Math.min(st.i,TR.length-1),tr=TR[i],ans=st.a[i]||{},res=st.res[i]||null,done=!!res;
+  const roleOf=p=>Object.keys(ans).find(k=>ans[k]===p);
+  const ready=["t","r","v"].every(k=>ans[k]);
+  const allDone=st.i>=TR.length;
+  let html=`<div class="card"><div class="row between"><span class="kick">Titulaire · banc · vendu</span><span class="score">Trio ${Math.min(i+1,TR.length)} / ${TR.length} du jour</span></div>
+    <h2>Un titulaire, un sur le banc, un vendu</h2><p class="lead">Trois grosses têtes d’affiche : à toi de trancher. Puis découvre ce qu’ont choisi les autres lecteurs.</p>
+    <div class="trio">${tr.map(p=>{const r=roleOf(p);const c=res&&res.c[p],tot=res?Math.max(1,res.n):1;
+      return `<div class="tcol"><div data-cc="${p}"></div><div><div class="roles">${ROLES.map(([k,l])=>`<button type="button" class="role ${k}" data-p="${p}" data-r="${k}" aria-pressed="${r===k}" ${done?"disabled":""}>${l}</button>`).join("")}</div>
+        ${res?`<div class="res">${ROLES.map(([k,l,col])=>{const v=Math.round(100*(c?c[k]:0)/tot);return `<div><span>${l}</span><i><b style="width:${v}%;background:${col}"></b></i><span>${v} %</span></div>`}).join("")}</div>`:""}</div></div>`}).join("")}</div>
+    <div class="row between" style="margin-top:16px"><p class="msg">${res?`${res.n} lecteur${res.n>1?"s ont":" a"} joué ce trio. ${agree(res,ans)}`:ready?"Prêt ?":"Attribue un rôle à chaque joueur."}</p>
+      <div class="row">${res?shareBtn("tsh","Partager mon trio"):""}${res?(i+1<TR.length?`<button class="btn" id="tn" type="button">Trio suivant</button>`:`<span class="muted">5 nouveaux trios demain.</span>`):`<button class="btn red" id="tv" type="button" ${ready?"":"disabled"}>Valider mon choix</button>`}</div></div></div>`;
+  $("#app").innerHTML=html;
+  tr.forEach(p=>{const h=document.querySelector(`[data-cc="${p}"]`);if(h)h.appendChild(cardCanvas(p,Math.min(260,h.clientWidth||240)))});
+  $$(".role[data-p]").forEach(b=>b.onclick=()=>{const p=b.dataset.p,k=b.dataset.r;for(const r of Object.keys(ans))if(ans[r]===p)delete ans[r];ans[k]=p;st.a[i]=ans;LS.set(key,st);trio()});
+  const v=$("#tv");if(v)v.onclick=async()=>{v.disabled=true;const r=await api("scores",{trio:{i,t:ans.t,r:ans.r,v:ans.v}});if(r&&!r.error){st.res[i]=r;LS.set(key,st);award([ans.t],"trio");trio()}else{toast(r.error||"Réessaie");v.disabled=false}};
+  const n=$("#tn");if(n)n.onclick=()=>{st.i=i+1;LS.set(key,st);trio()};
+  const sh=$("#tsh");if(sh)sh.onclick=()=>shareCustom(async x=>{
+    x.textAlign="center";x.fillStyle="#E2BE6A";x.font=FF(800,30);ls(x,6);x.fillText("TITULAIRE · BANC · VENDU",540,150);ls(x,0);
+    const W=300;for(let j=0;j<3;j++){const [k,l,col]=ROLES[j],p=ans[k],X=60+j*(W+30),Y=300;
+      rrect(x,X+30,200,W-60,58,29);x.fillStyle=col;x.fill();x.fillStyle="#fff";x.font=FF(900,28);ls(x,3);x.fillText(l.toUpperCase(),X+W/2,239);ls(x,0);
+      await drawCard(x,p,X,Y,W,{shadow:true});
+      const c=res.c[p],v=Math.round(100*(c?c[k]:0)/Math.max(1,res.n));x.fillStyle="#fff";x.font=FF(800,30);x.fillText(`${v} % d’accord`,X+W/2,Y+W*1.4+56)}
+    x.textAlign="left";
+  },`🏀 Titulaire : ${NAME[ans.t]} · Banc : ${NAME[ans.r]} · Vendu : ${NAME[ans.v]}. Et toi ?`,"titulaire-banc-vendu","Et toi, tu fais quoi ?");
+  function agree(res,ans){const m=["t","r","v"].filter(k=>{const c=res.c[ans[k]];return c&&c[k]>=Math.max(c.t,c.r,c.v)}).length;return m===3?"Tu es d’accord avec la majorité sur toute la ligne.":m===0?"Tu as fait l’inverse de la majorité !":`Tu es d’accord avec la majorité sur ${m} choix.`}
+}
+
+/* =========================================================
+   L'INTRUS
+   ========================================================= */
+let IN=null;const INS={streak:0,run:[]};
+const INCFG={g:"intrus",what:"Meilleure série d’intrus trouvés",unit:s=>plural(s,"intrus","intrus")};
+const WHY=(k,v,neg)=>{if(k==="club")return `jouent tous à ${CLUB[v]||v}`;if(k==="nat")return `ont tous la même nationalité (${PAYS[v]||v})`;if(k==="pos")return `sont tous ${({G:"arrières",F:"ailiers",C:"pivots"})[v]}`;return v==="12+"?"tournent tous à 12 points ou plus par match":"tournent tous à moins de 12 points par match"};
+function intrus(){
+  if(!IN){IN=L.makeIntrus(ST);if(IN)IN.pick=null}
+  if(!IN){$("#app").innerHTML='<div class="card"><h2>L’intrus</h2><p class="lead">Jeu indisponible pour le moment.</p></div>';return}
+  const rec=LS.get("jx-intrus",{best:0}),shown=IN.pick!=null,good=IN.pick===IN.intruder,why=L.intrusWhy(ST,IN.four,IN.intruder);
+  $("#app").innerHTML=`<div class="lay"><div class="card"><div class="row between"><span class="kick">L’intrus</span><span class="score">Record perso : ${rec.best}</span></div>
+    <h2>Trois ont un point commun. Trouve l’intrus !</h2><p class="lead">Même club, même nationalité, même poste, ou même niveau de points par match : un seul joueur ne colle pas.</p>
+    <div class="streak"><span class="n">${INS.streak}</span><span class="l">intrus trouvé${INS.streak>1?"s":""}<br>d’affilée</span></div>
+    <div class="four">${IN.four.map(p=>{const s=ST[p],cls=shown?(p===IN.intruder?"ok":p===IN.pick?"ko":""):"";return `<button type="button" class="icard ${cls}" data-p="${p}" ${shown?"disabled":""}>${av(p)}<b>${esc(NAME[p])}</b>${shown?`<span class="facts"><img src="../logos/${s.club}.webp" alt="">${esc(s.club)} · ${flag(s.nat)} · ${esc(POSAB[s.pos]||"")}${s.ppg!=null?" · "+fr(s.ppg)+" pts":""}</span>`:""}</button>`}).join("")}</div>
+    <div class="row between" style="margin-top:16px"><p class="msg" style="color:${shown?(good?"var(--ok)":"var(--ko)"):"inherit"}">${shown?`${good?"Bien vu !":"Raté…"} ${esc(NAME[IN.intruder])} était l’intrus : les trois autres ${esc(WHY(why[0],why[1]))}.`:""}</p>
+      <div class="row">${shown&&!good&&IN.end>0?shareBtn("ish","Partager ma série"):""}${shown?`<button class="btn" id="inx" type="button">${good?"Suivant":"Rejouer"}</button>`:""}</div></div>
+  </div>${boardHTML()}</div>`;
+  loadBoard(INCFG);
+  $$(".icard[data-p]").forEach(b=>b.onclick=()=>{IN.pick=b.dataset.p;
+    if(IN.pick===IN.intruder){INS.streak++;INS.run.push([IN.four,IN.intruder]);if(INS.streak>rec.best){rec.best=INS.streak;LS.set("jx-intrus",rec)}award([IN.intruder],"intrus");const run=INS.run.slice();submit({g:"intrus",run},INCFG)}
+    else{IN.end=INS.streak;IN.endRun=INS.run.map(x=>x[1]);INS.streak=0;INS.run=[]}
+    intrus()});
+  const n=$("#inx");if(n)n.onclick=()=>{IN=null;intrus()};
+  const s=$("#ish");if(s)s.onclick=()=>shareScore({kicker:"L’intrus",title:"Je trouve l’intrus à chaque fois",big:IN.end,bigLabel:`intrus trouvé${IN.end>1?"s":""} d’affilée`,players:IN.endRun.slice(-5)},`🕵️ ${IN.end} intrus trouvé${IN.end>1?"s":""} d’affilée sur EuroLeague France. À toi !`,"intrus");
+}
+
 /* ---------- onglets ---------- */
 const TABS=[
   {id:"plus-ou-moins",t:"Plus ou moins",f:pm},
+  {id:"collection",t:"Ma collection",f:collection,gold:true},
   {id:"mystere",t:"Joueur mystère",f:mystere,dot:true},
+  {id:"grille",t:"La grille",f:grille},
+  {id:"trio",t:"Titulaire · banc · vendu",f:trio},
+  {id:"intrus",t:"L’intrus",f:intrus},
   {id:"qui",t:"Qui est-ce ?",f:quiz},
   {id:"maillot",t:"Le bon maillot",f:maillot},
   {id:"aveugle",t:"Classement à l’aveugle",f:aveugle},
   {id:"cinq",t:"Mon 5 de la journée",f:cinq},
   {id:"prono",t:"Prono MVP",f:prono}];
+let CUR=null;
 const ALIAS={jeu:"aveugle"};
-function tabsHTML(){$("#tabs").innerHTML=TABS.map(x=>`<button class="tab" role="tab" id="t-${x.id}" data-t="${x.id}" aria-selected="false">${x.dot&&!LS.get("jx-myst-"+todayKey,{done:false}).done?'<span class="dot" aria-hidden="true"></span>':""}${esc(x.t)}</button>`).join("");$$(".tab").forEach(b=>b.onclick=()=>go(b.dataset.t,true))}
-function go(id,push){id=ALIAS[id]||id;const x=TABS.find(t=>t.id===id)||TABS[0];tabsHTML();$$(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===x.id));if(push)history.replaceState(null,"","#"+x.id);BOARD=null;x.f();const b=$("#t-"+x.id);if(b)b.scrollIntoView({block:"nearest",inline:"nearest"})}
+function tabsHTML(){$("#tabs").innerHTML=TABS.map(x=>`<button class="tab${x.gold?" gold":""}" role="tab" id="t-${x.id}" data-t="${x.id}" aria-selected="false">${x.dot&&!LS.get("jx-myst-"+todayKey,{done:false}).done?'<span class="dot" aria-hidden="true"></span>':""}${esc(x.t)}</button>`).join("");$$(".tab").forEach(b=>b.onclick=()=>go(b.dataset.t,true))}
+function go(id,push){id=ALIAS[id]||id;const x=TABS.find(t=>t.id===id)||TABS[0];CUR=x.id;tabsHTML();colPill();$$(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===x.id));if(push)history.replaceState(null,"","#"+x.id);BOARD=null;x.f();const b=$("#t-"+x.id);if(b)b.scrollIntoView({block:"nearest",inline:"nearest"})}
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
 go(location.hash.slice(1));
 })();
