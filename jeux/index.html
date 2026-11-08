@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Les jeux · EuroLeague France</title>
+<meta name="description" content="Joueur mystère du jour, prono MVP, ton 5 de la journée, Qui est-ce ?, Plus ou moins, Le bon maillot : les jeux EuroLeague France.">
+<meta property="og:title" content="Les jeux EuroLeague France">
+<meta property="og:description" content="Un joueur mystère chaque jour, ton prono MVP, ton 5 de la journée… À toi de jouer.">
+<meta property="og:image" content="https://note-des-joueurs.pages.dev/og/partage-accueil.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&display=swap">
+<style>
+:root{--blue:#002496;--red:#ED2839;--ink:#151E22;--muted:#5B666B;--line:#E3E6EE;--tint:#E6E9F4;--soft:#F3F5FA;--gold:#C8A24A;--ok:#1F8A3B;--okbg:#E7F5EA;--mid:#B7791F;--midbg:#FDF3DC;--ko:#D21F33;--kobg:#FDECEE}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--ink);font-family:"Libre Franklin",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45}
+a{color:var(--blue)}
+button{font-family:inherit;color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 56px}
+.hero{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px;margin-bottom:18px}
+.hero h1{margin:0;font-size:40px;line-height:1.05;font-weight:900;letter-spacing:-.5px}
+.hero h1 span{color:var(--red)}
+.hero p{margin:0;color:var(--muted);font-size:15px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin:0 -2px 8px;scrollbar-width:thin}
+.tab{flex:none;height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.tab:hover{border-color:#B9C1D3}
+.tab[aria-selected=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.tab .dot{width:7px;height:7px;border-radius:4px;background:var(--red)}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:20px}
+.grid{display:grid;gap:16px}
+h2{margin:0 0 4px;font-size:26px;font-weight:900;line-height:1.15}
+.lead{margin:0 0 16px;color:var(--muted);font-size:15px}
+.kick{font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--red)}
+.btn{height:46px;padding:0 22px;border-radius:23px;border:none;background:var(--blue);color:#fff;font-weight:800;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.red{background:var(--red)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid #C7CDD8}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.av{--s:56px;width:var(--s);height:var(--s);border-radius:50%;padding:1.5px;background:var(--gold);flex:none;display:inline-block}
+.av .in{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--tint)}
+.av img,.av i{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:var(--tint)}
+.av i{display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:800;color:var(--blue);font-size:calc(var(--s) * .32)}
+.logo{width:24px;height:24px;object-fit:contain;flex:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:14px;background:var(--soft);font-size:13px;font-weight:700}
+.score{font-size:13px;font-weight:800;color:var(--blue)}
+.msg{font-weight:700;min-height:22px}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* joueur mystère */
+.myst-top{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+.myst-ph{--s:132px}
+.myst-ph img{transition:filter .5s}
+.guess{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.guess input{flex:1 1 240px;min-width:0;height:48px;border:1.5px solid #A9B6CC;border-radius:24px;padding:0 18px;font:inherit;font-size:16px}
+.guess input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.tbl{overflow-x:auto;border:1.5px solid var(--line);border-radius:14px}
+.tbl table{width:100%;border-collapse:collapse;min-width:680px;font-size:14px}
+.tbl th{background:var(--soft);text-align:center;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:9px 6px;font-weight:700}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:14px}
+.tbl td{border-top:1px solid var(--line);padding:6px;text-align:center;vertical-align:middle}
+.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:48px;border-radius:10px;padding:4px 6px;font-weight:700}
+.c-ok{background:var(--okbg);color:var(--ok)}.c-mid{background:var(--midbg);color:var(--mid)}.c-ko{background:var(--soft);color:var(--ink)}
+.cell small{font-size:11px;font-weight:700}
+.who{display:flex;align-items:center;gap:10px;font-weight:700}
+.who .av{--s:36px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;font-size:13px;color:var(--muted)}
+.legend b{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+/* mon 5 */
+.five-bar{position:sticky;top:0;z-index:2;background:#fff;padding:10px 0;border-bottom:1.5px solid var(--line);margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.slots{display:flex;gap:8px}
+.slot{--s:46px}
+.slot.empty{width:46px;height:46px;border-radius:50%;border:2px dashed #C7CDD8}
+.matches{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.mhead{display:flex;align-items:center;gap:8px;font-weight:800;margin-bottom:10px;font-size:15px}
+.plist{display:flex;flex-direction:column;gap:6px}
+.pbtn{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:5px 10px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;text-align:left}
+.pbtn .av{--s:38px}
+.pbtn .nm{flex:1;min-width:0;font-weight:700;font-size:14px}
+.pbtn .nm small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.pbtn[aria-pressed=true]{border-color:var(--red);background:#FFF1F2}
+.pbtn:disabled{opacity:.4;cursor:default}
+.note{min-width:42px;text-align:center;font-weight:900;font-size:18px;padding:2px 6px;border-radius:8px}
+/* qcm */
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.opt{min-height:52px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:15px;cursor:pointer;padding:6px 10px;display:flex;align-items:center;justify-content:center;gap:10px}
+.opt:hover:not(:disabled){border-color:#9AA6BF}
+.opt.ok{border-color:var(--ok);background:var(--okbg);color:var(--ok)}
+.opt.ko{border-color:var(--ko);background:var(--kobg);color:var(--ko)}
+.opt:disabled{cursor:default}
+.opt img{width:34px;height:34px;object-fit:contain}
+.big-ph{--s:170px}
+.big-ph img{transition:filter .45s}
+.duel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;position:relative}
+.duel .vs{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:22px;background:var(--ink);color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.pcard{border:2px solid var(--line);border-radius:16px;background:#fff;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center}
+.pcard .av{--s:96px}
+.pcard .v{font-weight:900;font-size:34px;line-height:1}
+.pcard.ok{border-color:var(--ok);background:var(--okbg)}.pcard.ko{border-color:var(--ko)}
+.pcard:disabled{cursor:default}
+.lay{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.lay{grid-template-columns:minmax(0,1fr)}.hero h1{font-size:32px}}
+@media (max-width:520px){.tbl table{min-width:600px;font-size:13px}.who .av{--s:30px}.opts{grid-template-columns:minmax(0,1fr)}.pcard .av{--s:76px}.big-ph{--s:140px}}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:20px;font-weight:700;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+.stat{display:flex;flex-direction:column;align-items:center;min-width:70px}
+.stat b{font-size:26px;font-weight:900;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div><h1>Les jeux <span>EuroLeague France</span></h1></div>
+    <p id="maj"></p>
+  </div>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <main id="app" aria-live="polite"><p class="muted">Chargement…</p></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(async function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),2200)};
+const fr=(v,d=1)=>(Math.round(v*10**d)/10**d).toLocaleString("fr-FR",{maximumFractionDigits:d});
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+
+let D;
+try{D=await (await fetch("../data.json?x="+Date.now())).json()}catch(e){$("#app").innerHTML='<p>Impossible de charger les données. Réessaie dans un instant.</p>';return}
+
+const CLUB={ASV:"LDLC ASVEL",BAR:"FC Barcelone",BAS:"Baskonia",BES:"Besiktas",DUB:"Dubaï",HTA:"Hapoel Tel Aviv",IST:"Anadolu Efes",MAD:"Real Madrid",MIL:"Olimpia Milan",MUN:"Bayern Munich",OLY:"Olympiakos",PAM:"Valencia Basket",PAN:"Panathinaikos",PAR:"Partizan",PRS:"Paris Basketball",RED:"Étoile Rouge",TEL:"Maccabi Tel Aviv",ULK:"Fenerbahçe",VIR:"Virtus Bologne",ZAL:"Zalgiris"};
+const PAYS={USA:"États-Unis",FRA:"France",ESP:"Espagne",SRB:"Serbie",GER:"Allemagne",ITA:"Italie",LTU:"Lituanie",GRE:"Grèce",CAN:"Canada",TUR:"Turquie",NGR:"Nigeria",DOM:"Rép. dominicaine",SEN:"Sénégal",FIN:"Finlande",LAT:"Lettonie",CRO:"Croatie",SLO:"Slovénie",ISR:"Israël",DEN:"Danemark",MKD:"Macédoine du Nord",BRA:"Brésil",GUI:"Guinée",CPV:"Cap-Vert",GEO:"Géorgie",CZE:"Tchéquie",POL:"Pologne",BAH:"Bahamas",ANG:"Angola",BUL:"Bulgarie",AUS:"Australie",SSD:"Soudan du Sud",CHI:"Chili",HUN:"Hongrie",SVK:"Slovaquie",GAB:"Gabon",MLI:"Mali",SWE:"Suède",IRL:"Irlande",UK:"Royaume-Uni",UKR:"Ukraine",BIH:"Bosnie-Herzégovine"};
+const ISO2={USA:"US",FRA:"FR",ESP:"ES",SRB:"RS",GER:"DE",ITA:"IT",LTU:"LT",GRE:"GR",CAN:"CA",TUR:"TR",NGR:"NG",DOM:"DO",SEN:"SN",FIN:"FI",LAT:"LV",CRO:"HR",SLO:"SI",ISR:"IL",DEN:"DK",MKD:"MK",BRA:"BR",GUI:"GN",CPV:"CV",GEO:"GE",CZE:"CZ",POL:"PL",BAH:"BS",ANG:"AO",BUL:"BG",AUS:"AU",SSD:"SS",CHI:"CL",HUN:"HU",SVK:"SK",GAB:"GA",MLI:"ML",SWE:"SE",IRL:"IE",UK:"GB",UKR:"UA",BIH:"BA"};
+const flag=c=>{const i=ISO2[c];return i?String.fromCodePoint(...[...i].map(x=>127397+x.charCodeAt(0))):""};
+const POS={G:"Arrière",F:"Ailier",C:"Pivot"};
+const PHOTOS=new Set(D.photos||[]);
+const fix=s=>s.replace(/\b(Tj|Cj|Dj|Jj|Aj|Pj|Rj|Kj|Bj|Jt|Jd|Ii|Iii|Iv)\b/g,w=>w.toUpperCase());
+const full=n=>{const i=n.indexOf(", ");return fix(i<0?n:n.slice(i+2)+" "+n.slice(0,i))};
+const NAME={};for(const p in D.players)NAME[p]=full(D.players[p].name);
+const ini=p=>NAME[p].split(" ").map(w=>w[0]).slice(0,2).join("");
+const av=(p,cls="",alt="")=>`<span class="av ${cls}"><span class="in">${PHOTOS.has(p)?`<img src="../photos-c/${p}.webp" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.src='../photos/${p}.webp'">`:`<i aria-hidden="true">${esc(ini(p))}</i>`}</span></span>`;
+const logo=c=>`<img class="logo" src="../logos/${c}.webp" alt="">`;
+
+// statistiques de saison par joueur
+const ST={};
+for(const n of D.notes){const [p,m,c,min,ev,pm,note]=n;const s=ST[p]||(ST[p]={n:0,note:0,ev:0,min:0,club:c});s.n++;s.note+=note;s.ev+=ev;s.min+=min;s.club=D.players[p]?D.players[p].club:c}
+for(const p in ST){const s=ST[p];s.note/=s.n;s.ev/=s.n;s.min/=s.n;s.pos=(D.fantasy&&D.fantasy.p&&D.fantasy.p[p]||[])[0]||null;s.nat=D.nat[p]||null}
+const pool=(min,needPhoto=true)=>Object.keys(ST).filter(p=>D.players[p]&&ST[p].n>=min&&(!needPhoto||PHOTOS.has(p))).sort();
+const played=D.matches.filter(m=>m.hs!=null);
+const LAST=Math.max(...played.map(m=>m.round));
+const NEXT=(D.fixtures.map(f=>f[0]).filter(r=>r>LAST).sort((a,b)=>a-b)[0])||null;
+const roundMatches=r=>played.filter(m=>m.round===r);
+const noteCol=v=>v>=7.5?"#1F8A3B":v>=5?"#151E22":v>=3.5?"#C2410C":"#D21F33";
+const noteBg=v=>v>=7.5?"#E7F5EA":v>=5?"#F3F5FA":v>=3.5?"#FDF0E6":"#FDECEE";
+const dateFR=s=>new Date(s+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"});
+$("#maj").textContent="Données à jour après la journée "+LAST;
+
+// identifiant d'appareil (même que la page de vote)
+let DEV=LS.get("elf-dev",null);
+if(!DEV||!/^[A-Za-z0-9-]{16,64}$/.test(DEV)){DEV=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2,14)+"-elf");LS.set("elf-dev",DEV)}
+
+async function share(text){
+  try{if(navigator.share&&matchMedia("(pointer:coarse)").matches){await navigator.share({text});return}}catch(e){}
+  try{await navigator.clipboard.writeText(text);toast("Résultat copié : colle-le où tu veux !")}catch(e){window.open("https://x.com/intent/post?text="+encodeURIComponent(text),"_blank","noopener")}
+}
+const SITE="euroleague-france.com/jeux";
+
+/* =========================================================
+   1. JOUEUR MYSTÈRE DU JOUR
+   ========================================================= */
+const MAXG=8;
+const todayKey=new Intl.DateTimeFormat("fr-CA",{timeZone:"Europe/Paris",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+const hash=s=>{let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
+const MPOOL=pool(5).filter(p=>ST[p].pos);
+const MYST=MPOOL[hash("elf-mystere-"+todayKey)%MPOOL.length];
+const MNUM=Math.round((Date.parse(todayKey)-Date.parse("2026-11-08"))/864e5)+1;
+const GUESSABLE=pool(1,false);
+const BYNAME=new Map(GUESSABLE.map(p=>[norm(NAME[p]),p]));
+function cmpNum(a,b,okT,midT){const d=b-a;const cls=Math.abs(d)<=okT?"c-ok":Math.abs(d)<=midT?"c-mid":"c-ko";const ar=Math.abs(d)<=okT?"":d>0?"↑":"↓";return {cls,ar}}
+function rowOf(p){
+  const s=ST[p],t=ST[MYST];
+  const c1=s.club===t.club?"c-ok":"c-ko";
+  const c2=s.nat===t.nat?"c-ok":"c-ko";
+  const c3=s.pos&&s.pos===t.pos?"c-ok":"c-ko";
+  const c4=cmpNum(s.note,t.note,.25,.75),c5=cmpNum(s.ev,t.ev,1,3),c6=cmpNum(s.n,t.n,0,1);
+  return {p,cells:[
+    {cls:c1,h:`${logo(s.club)}<small>${esc(s.club)}</small>`},
+    {cls:c2,h:`<span style="font-size:20px">${flag(s.nat)}</span><small>${esc(s.nat||"?")}</small>`},
+    {cls:c3,h:`${esc(POS[s.pos]||"—")}`},
+    {cls:c4.cls,h:`${fr(s.note)} ${c4.ar}`},
+    {cls:c5.cls,h:`${fr(s.ev)} ${c5.ar}`},
+    {cls:c6.cls,h:`${s.n} ${c6.ar}`}]};
+}
+function mystere(){
+  const key="jx-myst-"+todayKey;let st=LS.get(key,{g:[],done:false,won:false});
+  const stats=LS.get("jx-myst-stats",{played:0,won:0,streak:0,best:0,last:null});
+  const t=ST[MYST];
+  const blur=st.done?0:Math.max(0,18-st.g.length*2.2);
+  const rows=st.g.map(rowOf);
+  const left=MAXG-st.g.length;
+  let html=`<div class="card"><div class="myst-top">
+    ${av(MYST,"myst-ph",st.done?NAME[MYST]:"Photo floutée du joueur mystère").replace("<img ",`<img style="filter:blur(${blur}px) ${st.done?"":"grayscale(1)"}" `)}
+    <div style="flex:1 1 300px;min-width:0">
+      <span class="kick">Joueur mystère n° ${MNUM}</span>
+      <h2>${st.done?esc(NAME[MYST]):"Qui se cache derrière la photo ?"}</h2>
+      <p class="lead" style="margin-bottom:8px">${st.done?`${esc(CLUB[t.club]||t.club)} · ${flag(t.nat)} ${esc(PAYS[t.nat]||t.nat)} · ${esc(POS[t.pos])} · ${fr(t.note)} de moyenne`:`Un joueur d’EuroLeague à trouver en ${MAXG} essais. À chaque essai, la photo se dévoile un peu plus.`}</p>
+      <div class="row">${st.done?`<span class="pill" style="background:${st.won?"var(--okbg)":"var(--kobg)"};color:${st.won?"var(--ok)":"var(--ko)"}">${st.won?`Trouvé en ${st.g.length} essai${st.g.length>1?"s":""} !`:"Perdu… À demain !"}</span>`:`<span class="pill">${left} essai${left>1?"s":""} restant${left>1?"s":""}</span>`}</div>
+    </div>
+    <div class="row" style="gap:6px">
+      <div class="stat"><b>${stats.played}</b><span>Joués</span></div>
+      <div class="stat"><b>${stats.played?Math.round(100*stats.won/stats.played):0}%</b><span>Réussite</span></div>
+      <div class="stat"><b>${stats.streak}</b><span>Série</span></div>
+      <div class="stat"><b>${stats.best}</b><span>Record</span></div>
+    </div>
+  </div>`;
+  if(!st.done)html+=`<form class="guess" id="mf" autocomplete="off"><label class="sr" for="mi">Nom du joueur</label><input id="mi" list="ml" placeholder="Tape le nom d’un joueur…"><datalist id="ml">${GUESSABLE.filter(p=>!st.g.includes(p)).map(p=>`<option value="${esc(NAME[p])}">`).join("")}</datalist><button class="btn red" type="submit">Valider</button></form><p class="msg" id="mm" style="color:var(--ko)"></p>`;
+  else html+=`<div class="row" style="margin:16px 0"><button class="btn red" id="msh" type="button">Partager mon résultat</button><span class="muted">Nouveau joueur mystère demain à minuit.</span></div>`;
+  html+=`<div class="tbl"><table><thead><tr><th>Joueur</th><th>Club</th><th>Nationalité</th><th>Poste</th><th>Note moy.</th><th>Éval moy.</th><th>Matchs</th></tr></thead><tbody>
+    ${rows.slice().reverse().map(r=>`<tr><td><span class="who">${av(r.p)}${esc(NAME[r.p])}</span></td>${r.cells.map(c=>`<td><div class="cell ${c.cls}">${c.h}</div></td>`).join("")}</tr>`).join("")||`<tr><td colspan="7" class="muted" style="padding:18px;text-align:center">Tes essais s’afficheront ici.</td></tr>`}
+  </tbody></table></div>
+  <div class="legend"><span><b style="background:var(--okbg);border:1px solid var(--ok)"></b>Exact</span><span><b style="background:var(--midbg);border:1px solid var(--mid)"></b>Tout proche</span><span>↑ ↓ : la valeur du joueur mystère est plus haute ou plus basse</span></div></div>`;
+  $("#app").innerHTML=html;
+  const f=$("#mf");
+  if(f){$("#mi").focus({preventScroll:true});f.onsubmit=e=>{e.preventDefault();const v=$("#mi").value;const p=BYNAME.get(norm(v));
+    if(!p){$("#mm").textContent="Joueur introuvable : choisis un nom dans la liste.";return}
+    if(st.g.includes(p)){$("#mm").textContent="Déjà proposé.";return}
+    st.g.push(p);
+    if(p===MYST||st.g.length>=MAXG){st.done=true;st.won=p===MYST;
+      if(stats.last!==todayKey){stats.played++;if(st.won){stats.won++;stats.streak=stats.last&&Date.parse(todayKey)-Date.parse(stats.last)<=864e5*1.5&&stats.lastWon?stats.streak+1:1}else stats.streak=0;stats.best=Math.max(stats.best,stats.streak);stats.last=todayKey;stats.lastWon=st.won;LS.set("jx-myst-stats",stats)}}
+    LS.set(key,st);mystere()}}
+  const sh=$("#msh");
+  if(sh)sh.onclick=()=>{const em=c=>c==="c-ok"?"🟩":c==="c-mid"?"🟨":"⬛";
+    share(`Joueur mystère n° ${MNUM} · EuroLeague France\n${st.won?st.g.length:"X"}/${MAXG}\n${st.g.map(p=>rowOf(p).cells.map(c=>em(c.cls)).join("")).join("\n")}\n${SITE} #EuroLeague`)};
+}
+
+/* =========================================================
+   2. MON 5 DE LA JOURNÉE
+   ========================================================= */
+function cinq(){
+  const R=LAST,ms=roundMatches(R),ids=new Set(ms.map(m=>m.id));
+  const rows=D.notes.filter(n=>ids.has(n[1])&&n[3]>=10);
+  const byM={};for(const n of rows)(byM[n[1]]||(byM[n[1]]=[])).push(n);
+  const NOTE={};for(const n of rows)NOTE[n[0]]=n[6];
+  const CL={};for(const n of rows)CL[n[0]]=n[2];
+  const key="jx-5-"+R;let st=LS.get(key,{pick:[],done:false});
+  const cnt=c=>st.pick.filter(p=>CL[p]===c).length;
+  // meilleur 5 possible (2 joueurs max par club)
+  const best=[];for(const n of rows.slice().sort((a,b)=>b[6]-a[6])){if(best.length<5&&best.filter(p=>CL[p]===n[2]).length<2)best.push(n[0])}
+  const sum=a=>a.reduce((s,p)=>s+NOTE[p],0);
+  let html=`<div class="card"><span class="kick">Journée ${R}</span><h2>Compose ton 5 de la journée</h2>
+  <p class="lead">Choisis 5 joueurs de la journée ${R}, sans voir nos notes (2 joueurs maximum par club). Ton score = la somme de nos notes.</p>
+  <div class="five-bar"><div class="slots">${[0,1,2,3,4].map(i=>st.pick[i]?av(st.pick[i],"slot",NAME[st.pick[i]]):`<span class="slot empty" aria-hidden="true"></span>`).join("")}</div>
+  ${st.done?`<div class="row"><span class="pill" style="font-size:15px">Ton 5 : <b style="font-size:20px">${fr(sum(st.pick))}</b> / 50</span><span class="pill">Le 5 parfait : ${fr(sum(best))}</span></div>`:`<button class="btn red" id="fv" type="button" ${st.pick.length<5?"disabled":""}>${st.pick.length<5?`Encore ${5-st.pick.length} joueur${5-st.pick.length>1?"s":""}`:"Révéler mes notes"}</button>`}</div>`;
+  if(st.done){
+    const pct=Math.round(100*sum(st.pick)/sum(best));
+    const verdict=pct>=95?"Coach de l’année. Tu as quasiment trouvé le 5 parfait.":pct>=85?"Très beau 5 : tu as l’œil du recruteur.":pct>=70?"Solide, mais quelques choix ont coûté cher.":"La journée t’a joué des tours… Revanche à la prochaine !";
+    html+=`<p class="msg">${pct} % du 5 parfait · ${verdict}</p>
+    <div class="lay" style="margin:12px 0 18px"><div><h3 style="margin:0 0 8px">Ton 5</h3><div class="plist">${st.pick.map(p=>pRow(p,NOTE[p],best.includes(p))).join("")}</div></div>
+    <div><h3 style="margin:0 0 8px">Le 5 parfait</h3><div class="plist">${best.map(p=>pRow(p,NOTE[p],false)).join("")}</div></div></div>
+    <div class="row"><button class="btn red" id="fsh" type="button">Partager mon 5</button><a class="btn ghost" href="https://www.euroleague-france.com/notes-des-joueurs/#journee-${R}" target="_top">Voir toutes les notes de la J${R}</a></div></div>`;
+  }else{
+    html+=`<div class="matches">${ms.map(m=>`<div><div class="mhead">${logo(m.home)}${esc(m.home)} ${m.hs}-${m.as} ${esc(m.away)}${logo(m.away)}</div><div class="plist">${(byM[m.id]||[]).sort((a,b)=>a[2]===b[2]?b[3]-a[3]:a[2]===m.home?-1:1).map(n=>{
+      const p=n[0],sel=st.pick.includes(p),dis=!sel&&(st.pick.length>=5||cnt(n[2])>=2);
+      return `<button type="button" class="pbtn" data-p="${p}" aria-pressed="${sel}" ${dis?"disabled":""}>${av(p)}<span class="nm">${esc(NAME[p])}<small>${esc(n[2])} · ${Math.round(n[3])} min</small></span>${sel?'<span class="kick">Choisi</span>':""}</button>`}).join("")}</div></div>`).join("")}</div></div>`;
+  }
+  $("#app").innerHTML=html;
+  document.querySelectorAll(".pbtn[data-p]").forEach(b=>b.onclick=()=>{const p=b.dataset.p;st.pick=st.pick.includes(p)?st.pick.filter(x=>x!==p):st.pick.concat([p]);LS.set(key,st);const y=window.scrollY;cinq();window.scrollTo(0,y)});
+  const v=$("#fv");if(v)v.onclick=()=>{st.done=true;LS.set(key,st);cinq();window.scrollTo({top:0,behavior:"smooth"})};
+  const sh=$("#fsh");if(sh)sh.onclick=()=>share(`Mon 5 de la journée ${R} · EuroLeague France\n${st.pick.map(p=>`${NAME[p]} ${fr(NOTE[p])}`).join("\n")}\nTotal : ${fr(sum(st.pick))}/50 (${Math.round(100*sum(st.pick)/sum(best))} % du 5 parfait)\nEt toi ? ${SITE} #EuroLeague`);
+  function pRow(p,v,star){return `<div class="pbtn" style="cursor:default">${av(p)}<span class="nm">${esc(NAME[p])}${star?' <span class="kick" style="color:var(--ok)">Dans le 5 parfait</span>':""}<small>${esc(CL[p])}</small></span><span class="note" style="color:${noteCol(v)};background:${noteBg(v)}">${fr(v)}</span></div>`}
+}
+
+/* =========================================================
+   3. PRONO MVP
+   ========================================================= */
+async function prono(){
+  const app=$("#app");
+  if(!NEXT){app.innerHTML='<div class="card"><h2>Prono MVP</h2><p class="lead">Pas de journée à venir pour le moment.</p></div>';return}
+  const fx=D.fixtures.filter(f=>f[0]===NEXT);
+  const lock=Date.parse(fx.map(f=>f[1]).sort()[0]+"T16:00:00Z");
+  const get=async r=>{try{const x=await fetch(`/api/prono?r=${r}&dev=${encodeURIComponent(DEV)}`,{cache:"no-store"});return x.ok?await x.json():null}catch(e){return null}};
+  const [cur,prev]=await Promise.all([get(NEXT),get(LAST)]);
+  const local=LS.get("jx-prono",{});
+  const mine=(cur&&cur.mine)||local[NEXT]||null;
+  const open=Date.now()<lock&&!(cur&&cur.locked);
+  // résultat de la journée précédente
+  const ids=new Set(roundMatches(LAST).map(m=>m.id));const rn=D.notes.filter(n=>ids.has(n[1]));
+  const top=Math.max(...rn.map(n=>n[6]));const mvps=rn.filter(n=>n[6]===top).map(n=>n[0]);
+  const prevMine=(prev&&prev.mine)||local[LAST]||null;
+  const prevNote=prevMine?(rn.find(n=>n[0]===prevMine)||[])[6]:null;
+  const hit=prevMine&&mvps.includes(prevMine);
+  const share_=prev&&prev.n?Math.round(100*mvps.reduce((s,p)=>s+(prev.c[p]||0),0)/prev.n):null;
+  const cands=p=>Object.keys(ST).filter(x=>ST[x].club===p&&ST[x].n>=3).sort((a,b)=>ST[b].note-ST[a].note).slice(0,4);
+  const t=new Date(lock);
+  let html=`RESULT<div class="card"><span class="kick">Journée ${NEXT} · ${open?"pronos ouverts":"pronos fermés"}</span>
+    <h2>Qui sera le MVP de la J${NEXT} ?</h2>
+    <p class="lead">Le MVP, c’est le joueur qui aura notre meilleure note de la journée. ${open?`Tu peux changer d’avis jusqu’au ${t.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})} à ${t.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}.`:"La journée a commencé : rendez-vous après les matchs."}</p>
+    ${mine?`<div class="pbtn" style="cursor:default;border-color:var(--red);background:#FFF1F2;margin-bottom:14px">${av(mine)}<span class="nm">Ton prono : ${esc(NAME[mine])}<small>${esc(CLUB[ST[mine]?ST[mine].club:""]||"")}</small></span><span class="kick">Enregistré</span></div>`:""}
+    <div class="matches">${fx.map(f=>`<div><div class="mhead">${logo(f[2])}${esc(f[2])} – ${esc(f[3])}${logo(f[3])}<span class="muted" style="font-weight:500;font-size:13px;margin-left:auto">${esc(dateFR(f[1]))}</span></div><div class="plist">${[...cands(f[2]),...cands(f[3])].map(p=>`<button type="button" class="pbtn" data-p="${p}" aria-pressed="${p===mine}" ${open?"":"disabled"}>${av(p)}<span class="nm">${esc(NAME[p])}<small>${esc(ST[p].club)} · ${fr(ST[p].note)} de moyenne</small></span></button>`).join("")}</div></div>`).join("")}</div>
+    ${cur?`<p class="muted" style="margin:14px 0 0">${cur.n} prono${cur.n>1?"s":""} pour cette journée.</p>`:""}
+  </div>
+  </div>`;
+  const RES=`<div class="card" style="margin-bottom:16px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center"><div style="flex:1 1 260px"><span class="kick">Résultat · journée ${LAST}</span><h2>MVP : ${mvps.map(p=>esc(NAME[p])).join(" et ")}</h2>${prevMine?`<p class="msg" style="margin:4px 0 0;color:${hit?"var(--ok)":"var(--ink)"}">${hit?"Bravo, tu avais vu juste !":`Ton prono : ${esc(NAME[prevMine])}${prevNote!=null?` (${fr(prevNote)})`:""}. Raté cette fois.`}</p>`:`<p class="muted" style="margin:4px 0 0">Tu n’avais pas fait de prono pour la J${LAST}.</p>`}${share_!=null?`<p class="muted" style="margin:4px 0 0">${share_} % des lecteurs avaient misé sur le MVP.</p>`:""}</div><div class="row">${mvps.map(p=>av(p,"","")).join("")}<span class="note" style="font-size:28px;color:${noteCol(top)};background:${noteBg(top)}">${fr(top)}</span></div></div>`;
+  html=html.replace("RESULT",()=>RES);
+  app.innerHTML=html;
+  document.querySelectorAll(".pbtn[data-p]").forEach(b=>b.onclick=async()=>{
+    const p=b.dataset.p;local[NEXT]=p;LS.set("jx-prono",local);
+    try{const x=await fetch("/api/prono",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({r:NEXT,dev:DEV,pid:p})});if(!x.ok){const e=await x.json().catch(()=>({}));toast(e.error||"Prono non enregistré");}else toast("Prono enregistré : "+NAME[p])}catch(e){toast("Hors ligne : prono gardé sur cet appareil")}
+    prono()});
+}
+
+/* =========================================================
+   4. QUI EST-CE ?
+   ========================================================= */
+const QPOOL=pool(5);
+let Q=null;
+function newQ(){const p=rnd(QPOOL);const same=QPOOL.filter(x=>x!==p&&ST[x].pos===ST[p].pos);const o=shuffle([p,...shuffle(same.length>=3?same:QPOOL.filter(x=>x!==p)).slice(0,3)]);Q={p,o,wrong:[],done:false}}
+function quiz(){
+  if(!Q)newQ();const rec=LS.get("jx-qui",{best:0});const S=quiz.s||(quiz.s={pts:0,n:0,streak:0});
+  const blurs=[16,9,4,0];const blur=Q.done?0:blurs[Q.wrong.length];
+  const t=ST[Q.p];
+  let html=`<div class="card" style="max-width:640px;margin:0 auto"><div class="row" style="justify-content:space-between"><span class="kick">Qui est-ce ?</span><span class="score">${S.pts} pts · série ${S.streak} · record ${rec.best}</span></div>
+  <h2>${Q.done?esc(NAME[Q.p]):"Devine le joueur"}</h2><p class="lead">${Q.done?`${esc(CLUB[t.club])} · ${flag(t.nat)} ${esc(PAYS[t.nat]||"")}`:`Indice : ${esc(POS[t.pos]||"joueur")} ${t.nat?"· "+flag(t.nat):""}. La photo se précise après chaque erreur (3 points, puis 2, puis 1).`}</p>
+  <div style="display:flex;justify-content:center;margin:6px 0 18px">${av(Q.p,"big-ph",Q.done?NAME[Q.p]:"Photo floutée").replace("<img ",`<img style="filter:blur(${blur}px)" `)}</div>
+  <div class="opts">${Q.o.map(p=>{const cls=Q.done&&p===Q.p?"ok":Q.wrong.includes(p)?"ko":"";return `<button type="button" class="opt ${cls}" data-p="${p}" ${Q.done||Q.wrong.includes(p)?"disabled":""}>${esc(NAME[p])}</button>`}).join("")}</div>
+  <div class="row" style="margin-top:16px;justify-content:space-between"><span class="msg">${Q.done?(Q.wrong.length<3?`+${3-Q.wrong.length} point${Q.wrong.length<2?"s":""}`:"Raté !"):""}</span>${Q.done?'<button class="btn" id="qn" type="button">Joueur suivant</button>':""}</div></div>`;
+  $("#app").innerHTML=html;
+  document.querySelectorAll(".opt[data-p]").forEach(b=>b.onclick=()=>{const p=b.dataset.p;
+    if(p===Q.p){Q.done=true;S.pts+=3-Q.wrong.length;S.n++;S.streak=Q.wrong.length===0?S.streak+1:0}
+    else{Q.wrong.push(p);if(Q.wrong.length>=3){Q.done=true;S.n++;S.streak=0}}
+    if(S.streak>rec.best){rec.best=S.streak;LS.set("jx-qui",rec)}quiz()});
+  const n=$("#qn");if(n)n.onclick=()=>{newQ();quiz()};
+}
+
+/* =========================================================
+   5. PLUS OU MOINS
+   ========================================================= */
+const PPOOL=pool(5);let PM=null;
+function newPM(){let a,b;do{a=rnd(PPOOL);b=rnd(PPOOL)}while(a===b||Math.abs(Math.round(ST[a].note*10)-Math.round(ST[b].note*10))<1);PM={a,b,pick:null}}
+function pm(){
+  if(!PM)newPM();const rec=LS.get("jx-pm",{best:0});const S=pm.s||(pm.s={streak:0});
+  const win=ST[PM.a].note>ST[PM.b].note?PM.a:PM.b;const shown=PM.pick!=null;
+  const card=p=>{const s=ST[p];const cls=shown?(p===win?"ok":p===PM.pick?"ko":""):"";return `<button type="button" class="pcard ${cls}" data-p="${p}" ${shown?"disabled":""}>${av(p)}<b style="font-size:17px">${esc(NAME[p])}</b><span class="row muted" style="gap:6px;font-size:13px;justify-content:center">${logo(s.club)}${esc(CLUB[s.club])}</span><span class="v" style="color:${shown?noteCol(s.note):"#C7CDD8"}">${shown?fr(s.note):"?"}</span><span class="muted" style="font-size:12px">${s.n} matchs</span></button>`};
+  $("#app").innerHTML=`<div class="card" style="max-width:680px;margin:0 auto"><div class="row" style="justify-content:space-between"><span class="kick">Plus ou moins</span><span class="score">Série ${S.streak} · record ${rec.best}</span></div>
+  <h2>Qui a la meilleure moyenne de notes ?</h2><p class="lead">Notes EuroLeague France, saison ${esc(D.season)}, joueurs avec 5 matchs ou plus.</p>
+  <div class="duel">${card(PM.a)}${card(PM.b)}<span class="vs" aria-hidden="true">VS</span></div>
+  <div class="row" style="margin-top:16px;justify-content:space-between"><span class="msg">${shown?(PM.pick===win?"Bien vu ! +1 à ta série.":"Raté… ta série repart de zéro."):""}</span>${shown?'<button class="btn" id="pn" type="button">Duel suivant</button>':""}</div></div>`;
+  document.querySelectorAll(".pcard[data-p]").forEach(b=>b.onclick=()=>{PM.pick=b.dataset.p;S.streak=PM.pick===win?S.streak+1:0;if(S.streak>rec.best){rec.best=S.streak;LS.set("jx-pm",rec)}pm()});
+  const n=$("#pn");if(n)n.onclick=()=>{newPM();pm()};
+}
+
+/* =========================================================
+   6. LE BON MAILLOT
+   ========================================================= */
+const MPOOL2=pool(3);let BM=null;
+function newBM(){const p=rnd(MPOOL2);const c=ST[p].club;const o=shuffle([c,...shuffle(Object.keys(CLUB).filter(x=>x!==c)).slice(0,3)]);BM={p,o,pick:null}}
+function maillot(){
+  if(!BM)newBM();const rec=LS.get("jx-bm",{best:0});const S=maillot.s||(maillot.s={ok:0,n:0,streak:0});
+  const c=ST[BM.p].club,shown=BM.pick!=null;
+  $("#app").innerHTML=`<div class="card" style="max-width:640px;margin:0 auto"><div class="row" style="justify-content:space-between"><span class="kick">Le bon maillot</span><span class="score">${S.ok}/${S.n} · série ${S.streak} · record ${rec.best}</span></div>
+  <div class="row" style="gap:16px;margin:10px 0 18px">${av(BM.p,"","")}<div><span class="muted" style="font-size:14px">Dans quel club joue</span><h2 style="margin:0">${esc(NAME[BM.p])} ?</h2></div></div>
+  <div class="opts">${BM.o.map(x=>{const cls=shown?(x===c?"ok":x===BM.pick?"ko":""):"";return `<button type="button" class="opt ${cls}" data-c="${x}" ${shown?"disabled":""}><img src="../logos/${x}.webp" alt="">${esc(CLUB[x])}</button>`}).join("")}</div>
+  <div class="row" style="margin-top:16px;justify-content:space-between"><span class="msg">${shown?(BM.pick===c?"Bonne réponse !":`Non, il joue à ${esc(CLUB[c])}.`):""}</span>${shown?'<button class="btn" id="bn" type="button">Question suivante</button>':""}</div></div>`;
+  document.querySelectorAll(".opt[data-c]").forEach(b=>b.onclick=()=>{BM.pick=b.dataset.c;S.n++;if(BM.pick===c){S.ok++;S.streak++}else S.streak=0;if(S.streak>rec.best){rec.best=S.streak;LS.set("jx-bm",rec)}maillot()});
+  const n=$("#bn");if(n)n.onclick=()=>{newBM();maillot()};
+}
+
+/* =========================================================
+   7. CLASSEMENT À L'AVEUGLE (déjà sur la page des notes)
+   ========================================================= */
+function aveugle(){
+  $("#app").innerHTML=`<div class="card" style="max-width:640px;margin:0 auto"><span class="kick">Classement à l’aveugle</span><h2>Classe les joueurs sans voir leurs notes</h2>
+  <p class="lead">Des joueurs tirés au sort un par un : place-les dans ton top, puis découvre le vrai classement selon nos notes. Tous les joueurs, les 50 meilleurs ou par nationalité.</p>
+  <a class="btn red" href="https://www.euroleague-france.com/notes-des-joueurs/#jeu" target="_top">Jouer au classement à l’aveugle</a></div>`;
+}
+
+/* ---------- onglets ---------- */
+const TABS=[
+  {id:"mystere",t:"Joueur mystère",f:mystere,dot:true},
+  {id:"cinq",t:"Mon 5 de la journée",f:cinq},
+  {id:"prono",t:"Prono MVP",f:prono},
+  {id:"qui",t:"Qui est-ce ?",f:quiz},
+  {id:"plus-ou-moins",t:"Plus ou moins",f:pm},
+  {id:"maillot",t:"Le bon maillot",f:maillot},
+  {id:"aveugle",t:"Classement à l’aveugle",f:aveugle}];
+$("#tabs").innerHTML=TABS.map(x=>`<button class="tab" role="tab" id="t-${x.id}" data-t="${x.id}" aria-selected="false">${x.dot&&!LS.get("jx-myst-"+todayKey,{done:false}).done?'<span class="dot" aria-hidden="true"></span>':""}${esc(x.t)}</button>`).join("");
+function go(id,push){const x=TABS.find(t=>t.id===id)||TABS[0];document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===x.id));if(push)history.replaceState(null,"","#"+x.id);x.f();const b=$("#t-"+x.id);if(b)b.scrollIntoView({block:"nearest",inline:"nearest"})}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>go(b.dataset.t,true));
+window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
+go(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>
