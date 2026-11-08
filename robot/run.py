@@ -215,6 +215,9 @@ def main():
         d["matches"].append({"id": f"{SEASON}-{c}", "round": g["round"], "date": g["date"], "home": g["A"], "away": g["B"],
                              "hs": g["score"][0], "as": g["score"][1]})   # toujours en fin de liste (jeu « Top à l'aveugle »)
         d["notes"] += rows
+        for pid, br in box.items():              # points par match (jeux : grille, l'intrus, cartes)
+            try: d.setdefault("pts", {}).setdefault(pid, {})[str(c)] = int(br.get("pts", 0))
+            except Exception: pass
         new.append(g)
         try:                                   # post X « en un geste » (visuel + texte), sans jamais bloquer les notes
             import share; share.queue_add([share.build(d, g, box, rows)])
