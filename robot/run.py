@@ -187,6 +187,12 @@ def main():
         todo = [c for r in played_rounds for c in range(10 * (r - 1) + 1, 10 * r + 1) if f"{SEASON}-{c}" not in have]
     print("à examiner :", todo)
     new, failed, nats = [], [], None
+    # nationalités sportives corrigées à la main (sélection nationale, pas le passeport de la feuille de match)
+    try:
+        for pid, c in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "nat_fix.json"), encoding="utf-8")).items():
+            if pid in d["players"]: d.setdefault("nat", {})[pid] = c
+        d["fr"] = [p for p in d["players"] if d.get("nat", {}).get(p) == "FRA"] or d.get("fr", [])
+    except Exception as e: print("::warning::nat_fix.json illisible :", e)
     for c in todo:
         try: g = extract(c)
         except Exception as e: print(c, "indisponible :", e); continue
@@ -201,7 +207,7 @@ def main():
             if pid not in d["players"]:
                 d["players"][pid] = {"name": title(r["name"]), "club": club}
                 if nats is None: nats = nat_lookup()
-                if nats.get(pid): d.setdefault("nat", {})[pid] = nats[pid]
+                if nats.get(pid) and pid not in d.get("nat", {}): d.setdefault("nat", {})[pid] = nats[pid]
                 if nats.get(pid) == "FRA" and pid not in d.get("fr", []): d.setdefault("fr", []).append(pid)
                 print("  nouveau joueur :", title(r["name"]), club, nats.get(pid) if nats else "")
             else:
