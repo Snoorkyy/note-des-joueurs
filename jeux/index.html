@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Les jeux · EuroLeague France</title>
-<meta name="description" content="Collectionne les cartes des joueurs d'EuroLeague : Plus ou moins, joueur mystère, la grille du jour, titulaire-banc-vendu, l'intrus, prono MVP… Les jeux EuroLeague France, avec classements.">
+<meta name="description" content="Collectionne les cartes des joueurs d'EuroLeague : Plus ou moins, la grille du jour, titulaire-banc-vendu, le bon maillot, prono MVP… Les jeux EuroLeague France, avec classements.">
 <meta property="og:title" content="Les jeux EuroLeague France">
-<meta property="og:description" content="Plus ou moins, joueur mystère du jour, prono MVP… Joue, grimpe au classement et partage ton score.">
+<meta property="og:description" content="Collectionne les cartes des joueurs, joue à Plus ou moins, à la grille du jour, au prono MVP… et partage ton score.">
 <meta property="og:image" content="https://note-des-joueurs.pages.dev/og/partage-accueil.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -772,15 +772,19 @@ async function drawBack(x,X,Y,W){
 function cardCanvas(p,w,o={}){const c=document.createElement("canvas");const r=Math.min(2,(window.devicePixelRatio||1))*w;c.width=Math.round(r);c.height=Math.round(r*1.4);c.style.width=w+"px";drawCard(c.getContext("2d"),p,0,0,c.width,o);return c}
 
 /* ---------- ma collection (stockée sur le serveur, copie locale) ---------- */
-let OWN=new Set(LS.get("jx-col",[]));let PACK_OK=false;
+let OWN=new Set(LS.get("jx-col",[]));let PACK_OK=false;const LIMIT=10;let TODAY=LS.get("jx-colday",{d:todayKey,n:0});if(TODAY.d!==todayKey)TODAY={d:todayKey,n:0};
+const setToday=n=>{TODAY={d:todayKey,n};LS.set("jx-colday",TODAY)};
 const saveOwn=()=>LS.set("jx-col",[...OWN]);
-api("scores?collection=1&dev="+encodeURIComponent(DEV)).then(r=>{if(r&&r.pids){const loc=[...OWN].filter(p=>!r.pids.includes(p));r.pids.forEach(p=>OWN.add(p));saveOwn();PACK_OK=!!r.pack;if(loc.length)api("scores",{add:loc.slice(0,12),src:"sync"});colPill();if(CUR==="collection")collection()}});
-function colPill(){const b=$("#colp");if(b)b.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v4h6V3"/></svg>Ma collection ${OWN.size}/${ALL.length}${PACK_OK?" · pack offert !":""}`;const t=$("#t-collection");if(t)t.innerHTML=`Ma collection <span style="opacity:.75">${OWN.size}/${ALL.length}</span>`}
+api("scores?collection=1&dev="+encodeURIComponent(DEV)).then(r=>{if(r&&r.pids){OWN=new Set(r.pids);saveOwn();PACK_OK=!!r.pack;if(typeof r.today==="number")setToday(r.today);colPill();if(CUR==="collection")collection()}});
+function colPill(){const b=$("#colp");if(b)b.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v4h6V3"/></svg>Ma collection ${OWN.size}/${ALL.length}${PACK_OK&&TODAY.n<LIMIT?" · pack offert !":""}`;const t=$("#t-collection");if(t)t.innerHTML=`Ma collection <span style="opacity:.75">${OWN.size}/${ALL.length}</span>`}
 const NEWQ=[];let NEWBUSY=false;
 function award(pids,src){
   const nw=[...new Set(pids)].filter(p=>p&&ST[p]&&ST[p].club&&!OWN.has(p));if(!nw.length)return;
-  nw.forEach(p=>OWN.add(p));saveOwn();colPill();api("scores",{add:nw,src});
-  NEWQ.push(...nw);if(!NEWBUSY)nextNew();
+  const left=LIMIT-TODAY.n;
+  if(left<=0){if(!award.warned){award.warned=1;toast(`Limite du jour atteinte : ${LIMIT} cartes. Reviens demain !`)}return}
+  const take=nw.slice(0,left);take.forEach(p=>OWN.add(p));setToday(TODAY.n+take.length);saveOwn();colPill();
+  api("scores",{add:take,src}).then(r=>{if(r&&Array.isArray(r.added)){take.filter(p=>!r.added.includes(p)).forEach(p=>OWN.delete(p));if(typeof r.today==="number")setToday(r.today);saveOwn();colPill()}});
+  NEWQ.push(...take);if(!NEWBUSY)nextNew();
 }
 function nextNew(){
   const p=NEWQ.shift();if(!p){NEWBUSY=false;return}NEWBUSY=true;
@@ -850,9 +854,9 @@ function collection(){
   const done=sets.filter(s=>s[0]!=="all"&&s[0]!=="mine"&&s[2].length&&s[2].every(p=>OWN.has(p)));
   const pct=Math.round(100*OWN.size/ALL.length);
   $("#app").innerHTML=`<div class="colhead"><div style="position:relative;z-index:1"><span class="kick" style="color:#F3D27B">Ma collection · saison ${esc(D.season)}</span><h2>Toutes les cartes de l’EuroLeague</h2>
-      <p style="margin:6px 0 12px;color:rgba(255,255,255,.78);max-width:520px;font-size:15px">Chaque bonne réponse dans les jeux débloque la carte du joueur. Un pack de 3 cartes t’attend chaque jour.</p>
-      <div class="row" style="position:relative;z-index:1">${PACK_OK?`<button class="btn goldb" id="cpack" type="button">Ouvrir mon pack du jour</button>`:`<span class="pill" style="background:rgba(255,255,255,.12);color:#fff">Prochain pack demain</span>`}${shareBtn("cshare","Partager ma collection")}</div></div>
-    <div style="position:relative;z-index:1;min-width:240px"><div class="big">${OWN.size}<small> / ${ALL.length}</small></div><div class="bar" style="margin:10px 0 6px"><i style="width:${pct}%"></i></div><span style="font-size:13px;color:rgba(255,255,255,.75)">${pct} % · ${done.length} collection${done.length>1?"s":""} complète${done.length>1?"s":""}</span></div></div>
+      <p style="margin:6px 0 12px;color:rgba(255,255,255,.78);max-width:520px;font-size:15px">Chaque bonne réponse dans les jeux débloque la carte du joueur, et un pack de 3 cartes t’attend chaque jour. ${LIMIT} nouvelles cartes maximum par jour.</p>
+      <div class="row" style="position:relative;z-index:1">${PACK_OK&&TODAY.n<LIMIT?`<button class="btn goldb" id="cpack" type="button">Ouvrir mon pack du jour</button>`:`<span class="pill" style="background:rgba(255,255,255,.12);color:#fff">Prochain pack demain</span>`}${shareBtn("cshare","Partager ma collection")}</div></div>
+    <div style="position:relative;z-index:1;min-width:240px"><div class="big">${OWN.size}<small> / ${ALL.length}</small></div><div class="bar" style="margin:10px 0 6px"><i style="width:${pct}%"></i></div><span style="font-size:13px;color:rgba(255,255,255,.75)">${pct} % · ${done.length} collection${done.length>1?"s":""} complète${done.length>1?"s":""}</span><div style="margin-top:10px"><span class="pill" style="background:${TODAY.n>=LIMIT?"rgba(237,40,57,.25)":"rgba(255,255,255,.12)"};color:#fff">Aujourd’hui : ${Math.min(TODAY.n,LIMIT)} / ${LIMIT} cartes${TODAY.n>=LIMIT?" · reviens demain":""}</span></div></div></div>
   <div class="lay"><div>
     <div class="sets" role="group" aria-label="Collections">${sets.map(s=>{const n=s[2].filter(p=>OWN.has(p)).length,full=s[2].length&&n===s[2].length&&s[0]!=="mine";return `<button type="button" class="set ${full?"done":""}" data-f="${s[0]}" aria-pressed="${s[0]===cur[0]}">${s[3]?`<img src="../logos/${s[3]}.webp" alt="">`:""}${esc(s[1])}<span class="c">${s[0]==="mine"?n:`${n}/${s[2].length}`}${full?" ✓":""}</span></button>`}).join("")}</div>
     <div class="cards" id="cards">${cur[2].map(p=>`<button type="button" class="cardbtn" data-p="${p}" ${OWN.has(p)?"":"disabled"} aria-label="${OWN.has(p)?esc(NAME[p]):"Carte à débloquer"}"><canvas data-c="${p}" width="300" height="420"></canvas></button>`).join("")||'<p class="muted">Aucune carte pour l’instant : joue pour en gagner !</p>'}</div>
@@ -868,7 +872,7 @@ function collection(){
 async function openPack(){
   const r=await api("scores",{pack:1});
   if(r.error&&!r.cards){toast(r.error);return}
-  const cards=r.cards||[];PACK_OK=false;cards.forEach(p=>OWN.add(p));saveOwn();colPill();
+  const cards=r.cards||[];PACK_OK=false;cards.forEach(p=>OWN.add(p));if(typeof r.today==="number")setToday(r.today);saveOwn();colPill();
   const m=$("#modal");m.hidden=false;$("#mt").textContent="Ton pack du jour";$("#mimg").style.display="none";m.querySelector(".box").classList.add("wide");
   let host=$("#mcard");if(!host){host=document.createElement("div");host.id="mcard";$("#mimg").after(host)}
   host.innerHTML=`<p class="muted" style="margin:0 0 6px;text-align:center">Touche les cartes pour les retourner</p><div class="pack">${cards.map((p,i)=>`<button type="button" class="flip" data-i="${i}" aria-label="Retourner la carte ${i+1}"></button>`).join("")}</div>`;
@@ -1016,19 +1020,16 @@ function intrus(){
 
 /* ---------- onglets ---------- */
 const TABS=[
-  {id:"plus-ou-moins",t:"Plus ou moins",f:pm},
   {id:"collection",t:"Ma collection",f:collection,gold:true},
-  {id:"mystere",t:"Joueur mystère",f:mystere,dot:true},
+  {id:"plus-ou-moins",t:"Plus ou moins",f:pm},
   {id:"grille",t:"La grille",f:grille},
   {id:"trio",t:"Titulaire · banc · vendu",f:trio},
-  {id:"intrus",t:"L’intrus",f:intrus},
-  {id:"qui",t:"Qui est-ce ?",f:quiz},
   {id:"maillot",t:"Le bon maillot",f:maillot},
   {id:"aveugle",t:"Classement à l’aveugle",f:aveugle},
   {id:"cinq",t:"Mon 5 de la journée",f:cinq},
   {id:"prono",t:"Prono MVP",f:prono}];
 let CUR=null;
-const ALIAS={jeu:"aveugle"};
+const ALIAS={jeu:"aveugle",mystere:"collection",qui:"collection",intrus:"collection"};
 function tabsHTML(){$("#tabs").innerHTML=TABS.map(x=>`<button class="tab${x.gold?" gold":""}" role="tab" id="t-${x.id}" data-t="${x.id}" aria-selected="false">${x.dot&&!LS.get("jx-myst-"+todayKey,{done:false}).done?'<span class="dot" aria-hidden="true"></span>':""}${esc(x.t)}</button>`).join("");$$(".tab").forEach(b=>b.onclick=()=>go(b.dataset.t,true))}
 function go(id,push){id=ALIAS[id]||id;const x=TABS.find(t=>t.id===id)||TABS[0];CUR=x.id;tabsHTML();colPill();$$(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===x.id));if(push)history.replaceState(null,"","#"+x.id);BOARD=null;x.f();const b=$("#t-"+x.id);if(b)b.scrollIntoView({block:"nearest",inline:"nearest"})}
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));

@@ -28,6 +28,15 @@ async function sha(s) {
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 const autoPseudo = async dev => "Fan " + (parseInt((await sha(dev + "|pseudo")).slice(0, 6), 16) % 9000 + 1000);
+const LIMITE = 10;   // cartes gagnées par jour au maximum (toutes sources, pack compris)
+// minuit (heure de Paris) du jour en cours, en millisecondes
+function parisMidnight() {
+  const now = new Date(), date = today();
+  const off = (new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Paris", timeZoneName: "shortOffset" }).formatToParts(now).find(x => x.type === "timeZoneName") || {}).value || "GMT+1";
+  const m = off.match(/GMT([+-]\d+)(?::(\d+))?/), h = m ? parseInt(m[1], 10) : 1, mi = m && m[2] ? parseInt(m[2], 10) : 0;
+  return Date.parse(date + "T00:00:00Z") - (h * 60 + Math.sign(h) * mi) * 60000;
+}
+const gotToday = async (db, dev) => (await db.prepare("SELECT COUNT(*) n FROM collection WHERE dev=? AND ts>=?").bind(dev, parisMidnight()).first()).n;
 const today = () => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
 // ---------- données ----------
@@ -143,7 +152,8 @@ export async function onRequestGet({ request, env }) {
     if (!dev) return J({ error: "appareil" }, 400);
     const own = (await db.prepare("SELECT pid FROM collection WHERE dev=? ORDER BY ts").bind(dev).all()).results.map(r => r.pid);
     const pk = await db.prepare("SELECT v FROM packs WHERE dev=? AND d=?").bind(dev, date).first();
-    return J({ pids: own, pack: !pk, packToday: pk ? JSON.parse(pk.v) : null });
+    const got = await gotToday(db, dev);
+    return J({ pids: own, pack: !pk, packToday: pk ? JSON.parse(pk.v) : null, today: got, limit: LIMITE });
   }
   if (q("trio") !== "") {
     const i = parseInt(q("trio"), 10), o = await jour(db, d, date);
@@ -184,20 +194,23 @@ export async function onRequestPost({ request, env }) {
 
   // ---------- collection ----------
   if (Array.isArray(b.add)) {
-    const ok = [...new Set(b.add)].filter(p => ST[p] && ST[p].club).slice(0, 12);
-    if (ok.length) await db.batch(ok.map(p => db.prepare("INSERT OR IGNORE INTO collection (dev, pid, src, ts) VALUES (?,?,?,?)").bind(dev, p, String(b.src || "").slice(0, 12), ts)));
-    const n = await db.prepare("SELECT COUNT(*) n FROM collection WHERE dev=?").bind(dev).first();
-    return J({ n: n.n });
+    const own = new Set((await db.prepare("SELECT pid FROM collection WHERE dev=?").bind(dev).all()).results.map(r => r.pid));
+    const left = Math.max(0, LIMITE - await gotToday(db, dev));
+    const added = [...new Set(b.add)].filter(p => ST[p] && ST[p].club && !own.has(p)).slice(0, left);
+    if (added.length) await db.batch(added.map(p => db.prepare("INSERT OR IGNORE INTO collection (dev, pid, src, ts) VALUES (?,?,?,?)").bind(dev, p, String(b.src || "").slice(0, 12), ts)));
+    return J({ n: own.size + added.length, added, today: LIMITE - left + added.length, limit: LIMITE });
   }
   if (b.pack) {
     const done = await db.prepare("SELECT v FROM packs WHERE dev=? AND d=?").bind(dev, date).first();
     if (done) return J({ error: "Pack déjà ouvert aujourd’hui", cards: JSON.parse(done.v) }, 409);
     const own = new Set((await db.prepare("SELECT pid FROM collection WHERE dev=?").bind(dev).all()).results.map(r => r.pid));
+    const left = Math.max(0, LIMITE - await gotToday(db, dev));
+    if (!left) return J({ error: `Limite atteinte : ${LIMITE} cartes aujourd’hui. Ton pack t’attend demain !` }, 429);
     const all = collectible(ST), byT = {}, TM = tierMap(ST);
     for (const p of all) (byT[TM[p]] = byT[TM[p]] || []).push(p);
     const r = rng(dev + "|" + date + "|pack"), cards = [];
     const W = [["legende", .07], ["or", .2], ["argent", .33], ["bronze", .4]];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < Math.min(3, left); i++) {
       let x = r(), t = "bronze"; for (const [id, w] of W) { if (x < w) { t = id; break; } x -= w; }
       let list = (byT[t] || []).filter(p => !own.has(p) && !cards.includes(p));
       if (!list.length) list = all.filter(p => !own.has(p) && !cards.includes(p));
@@ -208,7 +221,7 @@ export async function onRequestPost({ request, env }) {
       db.prepare("INSERT INTO packs (dev, d, v) VALUES (?,?,?)").bind(dev, date, JSON.stringify(cards)),
       ...cards.map(p => db.prepare("INSERT OR IGNORE INTO collection (dev, pid, src, ts) VALUES (?,?,?,?)").bind(dev, p, "pack", ts)),
     ]);
-    return J({ cards });
+    return J({ cards, today: LIMITE - left + cards.length, limit: LIMITE });
   }
 
   // ---------- titulaire · remplaçant · vendu ----------
@@ -217,7 +230,6 @@ export async function onRequestPost({ request, env }) {
     const trio = o.trios[i];
     if (!trio || ![t, r, v].every(p => trio.includes(p)) || new Set([t, r, v]).size !== 3) return J({ error: "trio invalide" }, 400);
     await db.prepare("INSERT OR IGNORE INTO trio_rep (d, i, dev, t, r, v, ts) VALUES (?,?,?,?,?,?,?)").bind(date, i, dev, t, r, v, ts).run();
-    await db.prepare("INSERT OR IGNORE INTO collection (dev, pid, src, ts) VALUES (?,?,?,?)").bind(dev, t, "trio", ts).run();
     return J(await trioStats(db, date, i, trio));
   }
 
