@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded",function(){if(VUE==="fantasy"){var 
 </script>
 <style>
 html[data-vue="notes"] #tabs a[href="#fantasy"]{display:none}
+#tabs a[href="#jeu"]{display:none}
 html[data-vue="fantasy"] #tabs{display:none}
 </style>
 <script>
@@ -2319,7 +2320,8 @@ button.gslot:disabled{cursor:default;opacity:.6}
     el.innerHTML=h}
   function route(){const h=location.hash.replace("#","");
     if(VUE==="fantasy"&&!h.startsWith("fantasy")){location.replace("#fantasy");return}
-    if(VUE==="notes"&&h.startsWith("fantasy")){location.replace("#");return}{const st=$("#standings");if(st)st.classList.toggle("fxoff",h.startsWith("fantasy"))}
+    if(VUE==="notes"&&h.startsWith("fantasy")){location.replace("#");return}
+    if(h.startsWith("jeu")){location.replace("#");return}{const st=$("#standings");if(st)st.classList.toggle("fxoff",h.startsWith("fantasy"))}
     if(h==="classement")classement();else if(h.startsWith("fantasy"))fantasy();else if(h.startsWith("jeu"))jeu();else if(h.startsWith("francais"))francais(parseInt(h.split("-")[1])||0);else if(h==="admin")ADMIN?visuals(D.maxRound):lock(D.maxRound);else if(h.startsWith("visuels"))visuals(parseInt(h.split("-")[1])||D.maxRound);else if(h.startsWith("journee"))rounds(parseInt(h.split("-")[1])||D.maxRound);else if(h.startsWith("club-"))club(h.slice(5));else home();
     domVis();enApply();
     document.querySelectorAll("#tabs a").forEach(a=>{const k=a.getAttribute("href").slice(1),sec=["journee","visuels","francais","jeu","fantasy"];const on=k===""?!sec.some(x=>h.startsWith(x)):k==="journees"?(h.startsWith("journee")||h.startsWith("visuels")):h.startsWith(k);if(on)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});}
