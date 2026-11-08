@@ -2,15 +2,21 @@
 Sert aux jeux (grille, l'intrus, cartes de collection). Rattrape tous les matchs publiés qui manquent.
 Usage : python3 robot/points.py
 """
-import json, os, sys, urllib.request
+import json, os, sys, time, urllib.request, urllib.error
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data.json")
 UA = {"User-Agent": "Mozilla/5.0 (EuroLeague France robot)"}
 
 def box_points(season, code):
-    req = urllib.request.Request(f"https://live.euroleague.net/api/Boxscore?gamecode={code}&seasoncode={season}", headers=UA)
-    with urllib.request.urlopen(req, timeout=30) as r:
-        b = json.loads(r.read().decode("utf-8"))
+    for k in range(6):                       # le serveur limite le débit (429) : on patiente et on réessaie
+        try:
+            req = urllib.request.Request(f"https://live.euroleague.net/api/Boxscore?gamecode={code}&seasoncode={season}", headers=UA)
+            with urllib.request.urlopen(req, timeout=30) as r:
+                b = json.loads(r.read().decode("utf-8"))
+            break
+        except urllib.error.HTTPError as e:
+            if e.code != 429 or k == 5: raise
+            time.sleep(10 * (k + 1))
     out = {}
     for s in b["Stats"]:
         for q in s["PlayersStats"]:
@@ -34,6 +40,7 @@ def main():
         except Exception as e: print(code, "indisponible :", e); continue
         for pid, p in bp.items(): pts.setdefault(pid, {})[code] = p
         n += 1
+        time.sleep(1.5)
     if n:
         json.dump(d, open(DATA, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     print("matchs ajoutés :", n)
