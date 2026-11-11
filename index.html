@@ -913,7 +913,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const lg=await img("logo_white.png");if(lg){const lh=46,lw=lg.width*lh/lg.height;x.save();x.globalAlpha=.92;x.drawImage(lg,540-lw/2,1146,lw,lh);x.restore()}
     // carte détourée : seul le cadre est gardé (PNG transparent autour)
     out.width=X1-X0;out.height=Y1-Y0;const o=out.getContext("2d");o.clearRect(0,0,out.width,out.height);o.drawImage(cv,-X0,-Y0)}
-  const CFMT={carte:{lab:"Carte seule",tag:"carte",info:"PNG détouré, fond transparent"},x:{lab:"X / Twitter",tag:"x",info:"1600 × 900"},story:{lab:"Story Instagram",tag:"story",info:"1080 × 1920"}};
+  const CFMT={carte:{lab:"Carte seule",tag:"carte",info:"PNG détouré, fond transparent"},x:{lab:"X / Twitter",tag:"x",info:"1600 × 900"},story:{lab:"Story Instagram",tag:"story",info:"1080 × 1920"},terrain:{lab:"Tout le match (terrain)",tag:"terrain",info:"toutes les cartes du match · 1440 × 1800"}};
   const cardName=(n,f="carte")=>`carte_J${D.matches.find(z=>z.id===n[1]).round}_${D.players[n[0]].name.split(",")[0].normalize("NFD").replace(/[^A-Za-z0-9]+/g,"-").toUpperCase()}${f==="carte"?"":"_"+f}.png`;
   async function cardBg(x,W,H,n){const T=CT[cTier(n[6])],CC=(D.clubs[n[2]]||{}).color||"#002395";
     x.fillStyle="#070B22";x.fillRect(0,0,W,H);
@@ -929,19 +929,44 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const lg=await img("logo_white.png"),ml=`J${m.round} · ${D.clubs[m.home].name.toUpperCase()} ${m.hs}-${m.as} ${D.clubs[m.away].name.toUpperCase()}`;
     const [last,first]=D.players[n[0]].name.split(", ");
     if(f==="x"){glow(420,450,520);const w=put(110,40,820);const L=110+w+90,R=W-90,cx=(L+R)/2;
-      if(lg){const lh=96,lw=lg.width*lh/lg.height;x.drawImage(lg,cx-lw/2,130,lw,lh)}
-      txt(x,"LA NOTE /10",cx,330,{s:34,w:800,c:T.acc,a:"center",ls:10});
-      txt(x,(first||"").toUpperCase(),cx,420,{s:40,w:700,c:"rgba(255,255,255,.85)",a:"center",ls:5,max:R-L});
-      txt(x,(last||"").toUpperCase(),cx,505,{s:96,w:800,c:"#fff",a:"center",max:R-L});
-      x.fillStyle=T.acc;x.fillRect(cx-60,540,120,3);
-      txt(x,ml,cx,605,{s:28,w:700,c:"rgba(255,255,255,.85)",a:"center",ls:3,max:R-L});
-      txt(x,"TOUTES LES NOTES SUR",cx,730,{s:24,w:700,c:"rgba(255,255,255,.55)",a:"center",ls:5});
-      txt(x,"EUROLEAGUE-FRANCE.COM",cx,775,{s:38,w:800,c:"#fff",a:"center",ls:4})}
-    else{if(lg){const lh=96,lw=lg.width*lh/lg.height;x.drawImage(lg,W/2-lw/2,150,lw,lh)}
-      txt(x,"LA NOTE /10",W/2,320,{s:34,w:800,c:T.acc,a:"center",ls:12});
-      glow(W/2,950,640);const h=1180,w=card.width*h/card.height;put(W/2-w/2,370,h);
-      txt(x,"TOUTES LES NOTES SUR",W/2,1680,{s:24,w:700,c:"rgba(255,255,255,.55)",a:"center",ls:5});
-      txt(x,"EUROLEAGUE-FRANCE.COM",W/2,1730,{s:40,w:800,c:"#fff",a:"center",ls:4})}}
+      if(lg){const lh=84,lw=lg.width*lh/lg.height;x.drawImage(lg,cx-lw/2,190,lw,lh)}
+      txt(x,(first||"").toUpperCase(),cx,410,{s:40,w:700,c:T.acc,a:"center",ls:5,max:R-L});
+      txt(x,(last||"").toUpperCase(),cx,500,{s:100,w:800,c:"#fff",a:"center",max:R-L});
+      x.fillStyle=T.acc;x.fillRect(cx-50,538,100,3);
+      txt(x,ml,cx,600,{s:28,w:700,c:"rgba(255,255,255,.8)",a:"center",ls:3,max:R-L});
+      txt(x,"EUROLEAGUE-FRANCE.COM",cx,850,{s:20,w:700,c:"rgba(255,255,255,.45)",a:"center",ls:5})}
+    else{if(lg){const lh=78,lw=lg.width*lh/lg.height;x.drawImage(lg,W/2-lw/2,120,lw,lh)}
+      glow(W/2,960,700);const w=1010,h=card.height*w/card.width;put(W/2-w/2,250,h);
+      txt(x,"EUROLEAGUE-FRANCE.COM",W/2,1830,{s:22,w:700,c:"rgba(255,255,255,.45)",a:"center",ls:5})}}
+  /* Toutes les cartes du match sur un terrain : équipe à domicile en haut, extérieur en bas, triées par note */
+  const CARDC=new Map();
+  async function cardImg(n){const k=n[0]+"|"+n[1]+"|"+n[6];if(!CARDC.has(k)){const c=document.createElement("canvas");await drawCard(c,n);CARDC.set(k,c)}return CARDC.get(k)}
+  async function drawTerrain(out,mid,say){
+    const m=D.matches.find(z=>z.id===mid),W=1440,H=1800;out.width=W;out.height=H;const x=out.getContext("2d");
+    // parquet sombre + lignes du terrain
+    x.fillStyle="#0A0F2C";x.fillRect(0,0,W,H);
+    for(let i=0;i<W;i+=72){x.fillStyle=i/72%2?"rgba(255,255,255,.018)":"rgba(0,0,0,.05)";x.fillRect(i,0,72,H)}
+    let g=x.createRadialGradient(W/2,H/2,40,W/2,H/2,900);g.addColorStop(0,"rgba(120,80,220,.30)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(0,0,W,H);
+    x.strokeStyle="rgba(255,255,255,.16)";x.lineWidth=4;x.strokeRect(40,40,W-80,H-80);
+    x.beginPath();x.moveTo(40,H/2);x.lineTo(W-40,H/2);x.stroke();x.beginPath();x.arc(W/2,H/2,130,0,7);x.stroke();
+    // rond central : score
+    x.beginPath();x.arc(W/2,H/2,118,0,7);x.fillStyle="#0A0F2C";x.fill();
+    txt(x,`${m.hs} – ${m.as}`,W/2,H/2+26,{s:76,w:800,c:"#fff",a:"center"});
+    txt(x,`J${m.round}`,W/2,H/2-46,{s:26,w:800,c:"#F2C75C",a:"center",ls:5});
+    const lg=await img("logo_white.png");if(lg){const lh=34,lw=lg.width*lh/lg.height;x.save();x.globalAlpha=.8;x.drawImage(lg,W/2-lw/2,H/2+50,lw,lh);x.restore()}
+    let done=0;const tot=D.notes.filter(n=>n[1]===mid).length;
+    for(const [c,top] of [[m.home,true],[m.away,false]]){
+      const L=D.notes.filter(n=>n[1]===mid&&n[2]===c).sort((a,b)=>b[6]-a[6]||b[4]-a[4]);
+      const y0=top?60:H/2+150,hh=H/2-210;
+      // en-tête d'équipe, côté ligne de fond
+      const cr=await img("logos-hd/"+c+".webp")||await img("logos/"+c+".webp"),hy=top?92:H-92;
+      if(cr)contain(x,cr,W/2-170,hy-6,64,64);txt(x,D.clubs[c].name.toUpperCase(),W/2-120,hy+10,{s:38,w:800,c:"#fff",ls:3,max:520});
+      // rangées : les 5 meilleures notes puis le reste
+      const rows=[L.slice(0,5),L.slice(5,10),L.slice(10)].filter(r=>r.length),cw=230,gap=18,ch=cw*1220/908;
+      const rowY=top?[140,140+ch+16]:[H-140-2*ch-16,H-140-ch];
+      for(let r=0;r<Math.min(rows.length,2);r++){const R=rows[r],w=R.length*cw+(R.length-1)*gap;let X=W/2-w/2;
+        for(const n of R){say&&say(`Préparation ${++done}/${tot}…`);const ci=await cardImg(n);x.save();x.shadowColor="rgba(0,0,0,.55)";x.shadowBlur=24;x.shadowOffsetY=10;x.drawImage(ci,X,rowY[r],cw,ch);x.restore();X+=cw+gap}}}
+    txt(x,"EUROLEAGUE-FRANCE.COM",W-60,H-12,{s:18,w:700,c:"rgba(255,255,255,.35)",a:"right",ls:4})}
   async function zipCards(L,name,say,f="carte"){
     const files=[];for(let i=0;i<L.length;i++){say(`Préparation ${i+1}/${L.length}…`);const cv=document.createElement("canvas");await drawCardFmt(cv,L[i],f);
       const b=await new Promise(r=>cv.toBlob(r,"image/png"));files.push({name:cardName(L[i],f),data:new Uint8Array(await b.arrayBuffer())})}
@@ -956,15 +981,16 @@ button.gslot:disabled{cursor:default;opacity:.6}
       <div class="dbody shr"><div class="cpick">${L.map((n,i)=>`<button data-ci="${i}" aria-pressed="${i===cur}">${face(n[0],n[2],"xs")}<span>${esc(D.players[n[0]].name.split(",")[0])}</span><b style="background:${NHEX(n[6])}">${fr(n[6])}</b></button>`).join("")}</div>
       <span class="seg sm" role="group" aria-label="Format">${Object.entries(CFMT).map(([k,v])=>`<button data-cf="${k}" aria-pressed="${k===CF}">${v.lab}</button>`).join("")}</span>
       <div class="vfig pvfig"><canvas id="pvc"></canvas></div>
-      <div class="shrlinks"><button class="vbtn" id="pvdl">Télécharger</button><button class="vbtn ghost" id="pvsh">Partager</button><button class="vbtn ghost" id="pvzip">Toutes les cartes du match (ZIP)</button></div>
+      <div class="shrlinks"><button class="vbtn" id="pvdl">Télécharger</button><button class="vbtn ghost" id="pvsh">Partager</button><button class="vbtn ghost" id="pvzip">Cartes séparées (ZIP)</button></div>
       <p class="label" id="pvmsg" role="status" style="min-height:1.2em;text-transform:none;letter-spacing:0"></p></div>`;
-    const cv=$("#pvc"),say=t=>$("#pvmsg").textContent=t,draw=()=>drawCardFmt(cv,L[cur],CF).catch(e=>console.error(e));
+    const cv=$("#pvc"),say=t=>$("#pvmsg").textContent=t,draw=()=>(CF==="terrain"?drawTerrain(cv,mid,say).then(()=>say("")):drawCardFmt(cv,L[cur],CF)).catch(e=>console.error(e));
+    const fileName=()=>CF==="terrain"?`cartes_J${m.round}_${m.home}-${m.away}_terrain.png`:cardName(L[cur],CF);
     $("#x").addEventListener("click",()=>dlg.close());
     dlg.querySelectorAll("[data-ci]").forEach(b=>b.addEventListener("click",()=>{cur=+b.dataset.ci;dlg.querySelectorAll("[data-ci]").forEach(z=>z.setAttribute("aria-pressed",z===b));say("");draw()}));
     dlg.querySelectorAll("[data-cf]").forEach(b=>b.addEventListener("click",()=>{CF=b.dataset.cf;try{localStorage.setItem("cfmt",CF)}catch(e){}dlg.querySelectorAll("[data-cf]").forEach(z=>z.setAttribute("aria-pressed",z===b));$("#cfinfo").textContent=CFMT[CF].info;say("");draw()}));
-    $("#pvdl").addEventListener("click",()=>downloadPNG(cv,cardName(L[cur],CF),say));
-    $("#pvsh").addEventListener("click",e=>shareCanvas(cv,cardName(L[cur],CF),e.currentTarget));
-    $("#pvzip").addEventListener("click",async e=>{const b=e.currentTarget;b.disabled=true;try{await zipCards(L,`cartes_J${m.round}_${m.home}-${m.away}${CF==="carte"?"":"_"+CF}.zip`,say,CF)}finally{b.disabled=false}});
+    $("#pvdl").addEventListener("click",()=>downloadPNG(cv,fileName(),say));
+    $("#pvsh").addEventListener("click",e=>shareCanvas(cv,fileName(),e.currentTarget));
+    $("#pvzip").addEventListener("click",async e=>{const b=e.currentTarget;b.disabled=true;try{const f=CF==="terrain"?"carte":CF;await zipCards(L,`cartes_J${m.round}_${m.home}-${m.away}${f==="carte"?"":"_"+f}.zip`,say,f)}finally{b.disabled=false}});
     if(!dlg.open)dlg.showModal();await draw()}
   /* ---------- Visuel « Infirmerie » : absents et incertains, classés par match de la prochaine journée ---------- */
   function injData(){const N=D.news,K={out:0,doubt:1,dtd:2},L=(N&&N.list||[]).filter(x=>D.clubs[x.c]&&x.s in K);
