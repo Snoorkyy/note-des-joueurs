@@ -880,13 +880,22 @@ button.gslot:disabled{cursor:default;opacity:.6}
     // note géante en métal
     x.save();x.font=`800 250px ${FD}`;let z=250;while(z>120&&x.measureText(fr(note)).width>300){z-=6;x.font=`800 ${z}px ${FD}`}
     x.textAlign="center";x.shadowColor=T.glow;x.shadowBlur=40;x.fillStyle=metal(x,T.metal,90,330);x.fillText(fr(note),250,322);x.restore();
-    txt(x,"NOTE /10",250,370,{s:30,w:800,c:"#fff",a:"center",ls:8});
-    rr(x,175,392,150,40,20);x.fillStyle=metal(x,T.metal,392,432);x.fill();txt(x,T.lab,250,421,{s:24,w:800,c:"#1A1206",a:"center",ls:4});
-    await logoDisc(x,250,520,60,c);
-    const nat=(D.nat||{})[pid];if(nat){if(nat==="FRA")cflag(x,212,604,76,50);else txt(x,nat,250,646,{s:44,w:800,c:"#fff",a:"center",ls:4})}
+    rr(x,175,350,150,40,20);x.fillStyle=metal(x,T.metal,350,390);x.fill();txt(x,T.lab,250,379,{s:24,w:800,c:"#1A1206",a:"center",ls:4});
+    // logo du club : grand, dans un rond blanc cerclé de métal
+    x.save();x.beginPath();x.arc(250,505,86,0,7);x.fillStyle=metal(x,T.metal,419,591);x.shadowColor="rgba(0,0,0,.5)";x.shadowBlur=24;x.fill();x.restore();
+    x.beginPath();x.arc(250,505,78,0,7);x.fillStyle="#fff";x.fill();contain(x,await img("logos/"+c+".webp"),250,505,124,124);
+    // tampon MVP
     const best=Math.max(...D.notes.filter(q=>q[1]===mid).map(q=>q[6]));
-    if(note===best){x.save();x.translate(250,712);x.rotate(-.06);rr(x,-110,-30,220,58,12);x.fillStyle="#ED2939";x.shadowColor="rgba(237,41,57,.6)";x.shadowBlur=24;x.fill();x.restore();
-      x.save();x.translate(250,712);x.rotate(-.06);txt(x,"MVP DU MATCH",0,10,{s:28,w:800,c:"#fff",a:"center",ls:2});x.restore()}
+    if(note===best){const sx=250,sy=690,R0=84,red="#E8263A";x.save();x.translate(sx,sy);x.rotate(-.21);x.globalAlpha=.94;
+      x.strokeStyle=red;x.lineWidth=7;x.beginPath();x.arc(0,0,R0,0,7);x.stroke();x.lineWidth=2.5;x.beginPath();x.arc(0,0,R0-13,0,7);x.stroke();
+      for(let i=0;i<24;i++){const a=i*Math.PI/12;if(Math.abs(Math.sin(a))>.5)continue;x.fillStyle=red;x.beginPath();x.arc(Math.cos(a)*(R0-6.5),Math.sin(a)*(R0-6.5),2,0,7);x.fill()}
+      x.fillStyle=red;[[-44,-42],[44,-42],[-44,46],[44,46],[0,52]].forEach(([u,v])=>{x.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*4*Math.PI/5;x.lineTo(u+Math.cos(a)*10,v+Math.sin(a)*10)}x.closePath();x.fill()});
+      rr(x,-R0-14,-26,2*R0+28,56,6);x.fill();
+      x.font=`800 54px ${FD}`;x.textAlign="center";x.textBaseline="middle";x.letterSpacing="6px";x.fillStyle="#fff";x.fillText("MVP",3,3);x.letterSpacing="0px";
+      x.textBaseline="alphabetic";
+      // usure du tampon
+      x.globalCompositeOperation="destination-out";let sd=7;const r=()=>(sd=(sd*1664525+1013904223)>>>0)/4294967296;for(let i=0;i<260;i++){x.beginPath();x.arc((r()*2-1)*(R0+16),(r()*2-1)*(R0+4),.6+1.8*r(),0,7);x.fill()}
+      x.restore()}
     // nom
     const [last,first]=pl.name.split(", ");
     if(first)txt(x,first.toUpperCase(),540,808,{s:42,w:700,c:T.acc,a:"center",ls:8,max:760});
@@ -899,11 +908,9 @@ button.gslot:disabled{cursor:default;opacity:.6}
       txt(x,v,tx+tw/2,1032,{s:76,w:800,c:"#fff",a:"center",max:tw-16});txt(x,l,tx+tw/2,1064,{s:24,w:800,c:T.acc,a:"center",ls:4})});
     // match
     const home=m.home===c,us=home?m.hs:m.as,th=home?m.as:m.hs;
-    txt(x,`J${m.round} · ${D.clubs[m.home].name.toUpperCase()} ${m.hs}-${m.as} ${D.clubs[m.away].name.toUpperCase()}`,540,1124,{s:30,w:700,c:"#fff",a:"center",max:700});
-    txt(x,`${us>th?"VICTOIRE":"DÉFAITE"} · ${dateL(m.date)}`,540,1162,{s:22,w:800,c:us>th?"#7BE3A0":"#FF8A8A",a:"center",ls:3});
-    // pied
-    const lg=await img("logo_white.png");if(lg){const lh=54;x.drawImage(lg,86,1274,lg.width*lh/lg.height,lh)}
-    txt(x,"LA NOTE /10 · EUROLEAGUE-FRANCE.COM",994,1312,{s:24,w:800,c:"rgba(255,255,255,.6)",a:"right",ls:2})}
+    txt(x,`J${m.round} · ${D.clubs[m.home].name.toUpperCase()} ${m.hs}-${m.as} ${D.clubs[m.away].name.toUpperCase()}`,540,1136,{s:32,w:700,c:"rgba(255,255,255,.9)",a:"center",max:700});
+    // pied : logo seul
+    const lg=await img("logo_white.png");if(lg){const lh=66,lw=lg.width*lh/lg.height;x.drawImage(lg,540-lw/2,1266,lw,lh)}}
   const cardName=n=>`carte_J${D.matches.find(z=>z.id===n[1]).round}_${D.players[n[0]].name.split(",")[0].normalize("NFD").replace(/[^A-Za-z0-9]+/g,"-").toUpperCase()}.png`;
   async function zipCards(L,name,say){
     const files=[];for(let i=0;i<L.length;i++){say(`Préparation ${i+1}/${L.length}…`);const cv=document.createElement("canvas");await drawCard(cv,L[i]);
