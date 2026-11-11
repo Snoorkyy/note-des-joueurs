@@ -15,7 +15,8 @@ items = j.get("data", j) if isinstance(j, dict) else j
 heads = {}
 for x in items:
     u = (x.get("images") or {}).get("headshot")
-    if u: heads["P" + str(x["person"]["code"]).zfill(6)] = u
+    if u:
+        code = str(x["person"]["code"]); heads["P" + code.zfill(6)] = u; heads["P" + code] = u  # codes alphabétiques anciens (Llull : PTGB)
 ok = miss = 0
 for p in sorted(want):
     f = f"photos-hd/{p}.webp"
