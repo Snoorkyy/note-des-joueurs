@@ -951,16 +951,20 @@ button.gslot:disabled{cursor:default;opacity:.6}
     x.beginPath();x.moveTo(40,H/2);x.lineTo(W-40,H/2);x.stroke();x.beginPath();x.arc(W/2,H/2,130,0,7);x.stroke();
     // rond central : score
     x.beginPath();x.arc(W/2,H/2,118,0,7);x.fillStyle="#0A0F2C";x.fill();
-    txt(x,`${m.hs} – ${m.as}`,W/2,H/2+26,{s:76,w:800,c:"#fff",a:"center"});
-    txt(x,`J${m.round}`,W/2,H/2-46,{s:26,w:800,c:"#F2C75C",a:"center",ls:5});
-    const lg=await img("logo_white.png");if(lg){const lh=34,lw=lg.width*lh/lg.height;x.save();x.globalAlpha=.8;x.drawImage(lg,W/2-lw/2,H/2+50,lw,lh);x.restore()}
+    txt(x,`J${m.round}`,W/2,H/2-30,{s:40,w:800,c:"#F2C75C",a:"center",ls:6});
+    const lg=await img("logo_white.png");if(lg){const lh=46,lw=lg.width*lh/lg.height;x.save();x.globalAlpha=.85;x.drawImage(lg,W/2-lw/2,H/2-6,lw,lh);x.restore()}
     let done=0;const tot=D.notes.filter(n=>n[1]===mid).length;
     for(const [c,top] of [[m.home,true],[m.away,false]]){
       const L=D.notes.filter(n=>n[1]===mid&&n[2]===c).sort((a,b)=>b[6]-a[6]||b[4]-a[4]);
       const y0=top?60:H/2+150,hh=H/2-210;
       // en-tête d'équipe, côté ligne de fond
       const cr=await img("logos-hd/"+c+".webp")||await img("logos/"+c+".webp"),hy=top?92:H-92;
-      if(cr)contain(x,cr,W/2-170,hy-6,64,64);txt(x,D.clubs[c].name.toUpperCase(),W/2-120,hy+10,{s:38,w:800,c:"#fff",ls:3,max:520});
+      const sc=top?m.hs:m.as,win=sc>(top?m.as:m.hs),nm=D.clubs[c].name.toUpperCase();
+      x.save();x.font=`800 38px ${FD}`;x.letterSpacing="3px";const nw=Math.min(560,x.measureText(nm).width);x.font=`800 64px ${FD}`;x.letterSpacing="0px";const sw=x.measureText(String(sc)).width;x.restore();
+      const gw=64+18+nw+36+sw,gx=W/2-gw/2;
+      if(cr)contain(x,cr,gx+32,hy-6,64,64);txt(x,nm,gx+82,hy+12,{s:38,w:800,c:"#fff",ls:3,max:560});
+      x.fillStyle="rgba(255,255,255,.25)";x.fillRect(gx+82+nw+16,hy-22,2,40);
+      txt(x,String(sc),gx+82+nw+36,hy+20,{s:64,w:800,c:win?"#F2C75C":"rgba(255,255,255,.55)"});
       // rangées : les 5 meilleures notes puis le reste
       const rows=[L.slice(0,5),L.slice(5,10),L.slice(10)].filter(r=>r.length),cw=230,gap=18,ch=cw*1220/908;
       const rowY=top?[140,140+ch+16]:[H-140-2*ch-16,H-140-ch];
