@@ -849,15 +849,14 @@ button.gslot:disabled{cursor:default;opacity:.6}
   let HD=null;const hdList=()=>HD||(HD=fetch("photos-hd/index.json",{cache:"no-store"}).then(r=>r.ok?r.json():[]).then(a=>new Set(a)).catch(()=>new Set()));
   function shield(x,X0,Y0,X1,Y1,c,t){x.beginPath();x.moveTo(X0+c,Y0);x.lineTo(X1-c,Y0);x.lineTo(X1,Y0+c);x.lineTo(X1,Y1-t);x.lineTo((X0+X1)/2,Y1);x.lineTo(X0,Y1-t);x.lineTo(X0,Y0+c);x.closePath()}
   function metal(x,cols,y0,y1){const g=x.createLinearGradient(0,y0,0,y1);cols.forEach((c,i)=>g.addColorStop(i/(cols.length-1),c));return g}
-  async function drawCard(cv,n){
+  async function drawCard(out,n){
+    let cv=document.createElement("canvas");
     const [pid,mid,c,min,ev,pm,note]=n,m=D.matches.find(z=>z.id===mid),pl=D.players[pid],tk=cTier(note),T=CT[tk],x=cv.getContext("2d"),CC=(D.clubs[c]||{}).color||"#002395";
     const W=1080,H=1350;cv.width=W;cv.height=H;await fontsReady();
-    // fond de page
-    x.fillStyle="#04081A";x.fillRect(0,0,W,H);
-    let g=x.createRadialGradient(540,560,60,540,560,820);g.addColorStop(0,T.glow);g.addColorStop(1,"rgba(4,8,26,0)");x.fillStyle=g;x.fillRect(0,0,W,H);
+    let g;
     // carte : bord métal épais + filet intérieur
     const X0=86,Y0=30,X1=994,Y1=1250;
-    x.save();x.shadowColor="rgba(0,0,0,.7)";x.shadowBlur=60;x.shadowOffsetY=24;shield(x,X0,Y0,X1,Y1,80,128);x.fillStyle=metal(x,T.metal,Y0,Y1);x.fill();x.restore();
+    shield(x,X0,Y0,X1,Y1,80,128);x.fillStyle=metal(x,T.metal,Y0,Y1);x.fill();
     shield(x,X0+10,Y0+10,X1-10,Y1-14,74,122);x.lineWidth=2;x.strokeStyle="rgba(255,255,255,.55)";x.stroke();
     shield(x,X0+20,Y0+20,X1-20,Y1-28,70,116);
     g=x.createLinearGradient(0,Y0,0,Y1);g.addColorStop(0,T.body[0]);g.addColorStop(.55,T.body[1]);g.addColorStop(1,T.body[2]);x.fillStyle=g;x.fill();
@@ -907,11 +906,13 @@ button.gslot:disabled{cursor:default;opacity:.6}
     // match
     const home=m.home===c,us=home?m.hs:m.as,th=home?m.as:m.hs;
     const ml=`J${m.round}   ${D.clubs[m.home].name.toUpperCase()}  ${m.hs} – ${m.as}  ${D.clubs[m.away].name.toUpperCase()}`;
-    txt(x,ml,540,1134,{s:26,w:700,c:T.acc,a:"center",ls:5,max:640});
+    txt(x,ml,540,1120,{s:26,w:700,c:T.acc,a:"center",ls:5,max:640});
     x.save();x.letterSpacing="5px";x.font=`700 26px ${FD}`;const mw=Math.min(640,x.measureText(ml).width);x.restore();
-    g=x.createLinearGradient(0,0,1,0);[[540-mw/2-90,540-mw/2-24],[540+mw/2+24,540+mw/2+90]].forEach(([u,v],i)=>{const gg=x.createLinearGradient(u,0,v,0);gg.addColorStop(i?0:1,T.acc);gg.addColorStop(i?1:0,"rgba(0,0,0,0)");x.fillStyle=gg;x.fillRect(u,1125,v-u,2)});
+    g=x.createLinearGradient(0,0,1,0);[[540-mw/2-90,540-mw/2-24],[540+mw/2+24,540+mw/2+90]].forEach(([u,v],i)=>{const gg=x.createLinearGradient(u,0,v,0);gg.addColorStop(i?0:1,T.acc);gg.addColorStop(i?1:0,"rgba(0,0,0,0)");x.fillStyle=gg;x.fillRect(u,1111,v-u,2)});
     // pied : logo seul
-    const lg=await img("logo_white.png");if(lg){const lh=66,lw=lg.width*lh/lg.height;x.drawImage(lg,540-lw/2,1266,lw,lh)}}
+    const lg=await img("logo_white.png");if(lg){const lh=46,lw=lg.width*lh/lg.height;x.save();x.globalAlpha=.92;x.drawImage(lg,540-lw/2,1146,lw,lh);x.restore()}
+    // carte détourée : seul le cadre est gardé (PNG transparent autour)
+    out.width=X1-X0;out.height=Y1-Y0;const o=out.getContext("2d");o.clearRect(0,0,out.width,out.height);o.drawImage(cv,-X0,-Y0)}
   const cardName=n=>`carte_J${D.matches.find(z=>z.id===n[1]).round}_${D.players[n[0]].name.split(",")[0].normalize("NFD").replace(/[^A-Za-z0-9]+/g,"-").toUpperCase()}.png`;
   async function zipCards(L,name,say){
     const files=[];for(let i=0;i<L.length;i++){say(`Préparation ${i+1}/${L.length}…`);const cv=document.createElement("canvas");await drawCard(cv,L[i]);
@@ -922,7 +923,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
   async function cardsDlg(mid,pid){
     const m=D.matches.find(z=>z.id===mid),dlg=$("#dlg"),L=D.notes.filter(n=>n[1]===mid).sort((a,b)=>b[6]-a[6]||b[4]-a[4]);
     let cur=Math.max(0,L.findIndex(n=>n[0]===pid));
-    dlg.innerHTML=`<div class="dhead"><div><h3 id="dlg-title">Cartes joueurs · J${m.round}</h3><div class="label">${esc(D.clubs[m.home].name)} ${m.hs}-${m.as} ${esc(D.clubs[m.away].name)} · 1080 × 1350</div></div><button class="x" id="x" aria-label="Fermer">×</button></div>
+    dlg.innerHTML=`<div class="dhead"><div><h3 id="dlg-title">Cartes joueurs · J${m.round}</h3><div class="label">${esc(D.clubs[m.home].name)} ${m.hs}-${m.as} ${esc(D.clubs[m.away].name)} · PNG détouré</div></div><button class="x" id="x" aria-label="Fermer">×</button></div>
       <div class="dbody shr"><div class="cpick">${L.map((n,i)=>`<button data-ci="${i}" aria-pressed="${i===cur}">${face(n[0],n[2],"xs")}<span>${esc(D.players[n[0]].name.split(",")[0])}</span><b style="background:${NHEX(n[6])}">${fr(n[6])}</b></button>`).join("")}</div>
       <div class="vfig pvfig"><canvas id="pvc"></canvas></div>
       <div class="shrlinks"><button class="vbtn" id="pvdl">Télécharger la carte</button><button class="vbtn ghost" id="pvsh">Partager</button><button class="vbtn ghost" id="pvzip">Toutes les cartes du match (ZIP)</button></div>
