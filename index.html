@@ -1727,7 +1727,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
   document.addEventListener("click",e=>{const b=e.target.closest("[data-lang]");if(!b)return;const v=b.dataset.lang;if(v===LANG)return;LANG=v;try{localStorage.setItem("elflang",v)}catch(err){}
     const dl=$("#dlg"),pid=dl&&dl.open&&dl.dataset.pid;if(enObs){enObs.disconnect();enObs=null}fantasy();if(typeof dsRender==="function")dsRender();if(pid)player(pid);enApply()});
   /* ---------- Onglets Fantasy + textes de méthode repliés ---------- */
-  const FTABS=[["eq","👤","Mon équipe"],["prep","🎯","Préparer la journée"],["bil","📊","Bilan"],["out","🔧","Outils"]];
+  const FTABS=[["eq","👤","Mon équipe"],["prep","🎯","Préparer la journée"],["out","🔧","Outils"]];
   (()=>{let t="eq";try{t=localStorage.getItem("fxtab")||"eq"}catch(e){}FS.tab=FTABS.some(x=>x[0]===t)?t:"eq"})();
   function fxTab(k,scroll=true){FS.tab=k;try{localStorage.setItem("fxtab",k)}catch(e){}
     document.querySelectorAll("[data-ft]").forEach(d=>d.hidden=d.dataset.ft!==k);
@@ -1777,7 +1777,6 @@ button.gslot:disabled{cursor:default;opacity:.6}
       <div class="ft" data-ft="prep"><div class="panel fxtips" id="fxtips"></div>
       <div class="panel fxbest" id="fxbest" style="margin-top:18px"></div>
       <details class="panel fxcoach fxfold" style="margin-top:18px"><summary class="fxh">🧠 Tous les coachs</summary><div id="fxcoach"></div></details></div>
-      <div class="ft" data-ft="bil"><div class="panel fxbilan" id="fxbilan"></div></div>
       <div class="ft" data-ft="out"><div class="panel fxa"><h3 class="fxh">Analyse avant la journée</h3>
         <p class="gbsub">Choisis un joueur et son prochain adversaire : on regarde comment ce club a défendu sur le même poste lors des matchs précédents.</p>
         <div class="cgbar"><input id="fxp" list="fxpl" placeholder="Joueur (ex. Moneke)" autocomplete="off" value="${FS.ap&&D.players[FS.ap]?esc(D.players[FS.ap].name+" ("+D.players[FS.ap].club+")"):""}">
@@ -1798,7 +1797,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
         <p class="label" id="fxn" style="margin:0 0 6px"></p>
         <div class="scroll"><table class="grid fxt" id="fxt"></table></div><div id="fxtm"></div>
         <p class="gbsub" style="margin-top:8px">Valeur = évaluation moyenne par crédit. Δ dans l'analyse = écart avec la moyenne habituelle du joueur.</p></div></div></section>`;
-    fxLots();fxAuto();fxTips();fxBest();fxCoach();fxBilan();fxTable();fxDef();fxAna();fxTab(FS.tab,false);fxCompact();
+    fxLots();fxAuto();fxTips();fxBest();fxCoach();fxTable();fxDef();fxAna();fxTab(FS.tab,false);fxCompact();
     const pick=v=>{const z=X.pl.find(z=>D.players[z.p].name+" ("+z.club+")"===v);return z&&z.p};
     const setP=p=>{FS.ap=p;FS.apos=X.F[p][0];const z=X.pl.find(y=>y.p===p);if(z&&z.nx){FS.ao=z.nx.opp;$("#fxo").value=FS.ao}fxAna()};
     $("#fxp").addEventListener("change",e=>{const p=pick(e.target.value);if(p&&p!==FS.ap)setP(p)});
