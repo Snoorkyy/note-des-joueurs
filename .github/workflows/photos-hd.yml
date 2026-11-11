@@ -30,7 +30,7 @@ jobs:
           git config user.name "Robot EuroLeague France"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           for attempt in 1 2 3; do
-            git add photos-hd
+            git add photos-hd logos-hd
             git diff --cached --quiet && break
             git commit -q -m "Détourages joueurs (photos-hd)" && git pull -q --rebase origin main && git push -q origin HEAD:main && break
             sleep 10

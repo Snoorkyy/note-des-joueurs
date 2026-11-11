@@ -29,6 +29,22 @@ for p in sorted(want):
         im.save(f, "WEBP", quality=82, method=6); ok += 1
     except Exception as e:
         print(p, "erreur", e); miss += 1
+# écussons des clubs en HD (logos-hd/<code>.webp, 256 px, fond transparent)
+os.makedirs("logos-hd", exist_ok=True)
+try:
+    cj = get(f"https://api-live.euroleague.net/v2/competitions/E/seasons/{SEASON}/clubs")
+    for x in (cj.get("data", cj) if isinstance(cj, dict) else cj):
+        code, u = x.get("code"), (x.get("images") or {}).get("crest")
+        if not code or not u or code not in d["clubs"]: continue
+        f = f"logos-hd/{code}.webp"
+        if os.path.exists(f) and "--all" not in sys.argv: continue
+        try:
+            im = Image.open(io.BytesIO(get(u, True))).convert("RGBA"); im = im.crop(im.getchannel("A").getbbox() or (0, 0, im.width, im.height))
+            k = 256 / max(im.size); im = im.resize((max(1, round(im.width * k)), max(1, round(im.height * k))), Image.LANCZOS)
+            im.save(f, "WEBP", quality=88, method=6); print("écusson", code)
+        except Exception as e: print("écusson", code, "erreur", e)
+except Exception as e:
+    print("écussons indisponibles :", e)
 have = sorted(x[:-5] for x in os.listdir("photos-hd") if x.endswith(".webp"))
 json.dump(have, open("photos-hd/index.json", "w"), separators=(",", ":"))
 print(f"{ok} détourages ajoutés, {miss} sans détourage, {len(have)} au total")
