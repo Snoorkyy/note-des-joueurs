@@ -951,8 +951,10 @@ button.gslot:disabled{cursor:default;opacity:.6}
     x.beginPath();x.moveTo(40,H/2);x.lineTo(W-40,H/2);x.stroke();x.beginPath();x.arc(W/2,H/2,130,0,7);x.stroke();
     // rond central : score
     x.beginPath();x.arc(W/2,H/2,118,0,7);x.fillStyle="#0A0F2C";x.fill();
-    txt(x,`J${m.round}`,W/2,H/2-30,{s:40,w:800,c:"#F2C75C",a:"center",ls:6});
-    const lg=await img("logo_white.png");if(lg){const lh=46,lw=lg.width*lh/lg.height;x.save();x.globalAlpha=.85;x.drawImage(lg,W/2-lw/2,H/2-6,lw,lh);x.restore()}
+    const hw=m.hs>m.as,SC=(v,w)=>w?"#F2C75C":"rgba(255,255,255,.55)";
+    txt(x,String(m.hs),W/2,H/2-40,{s:52,w:800,c:SC(m.hs,hw),a:"center"});
+    txt(x,String(m.as),W/2,H/2+80,{s:52,w:800,c:SC(m.as,!hw),a:"center"});
+    const lg=await img("logo_white.png");if(lg){const lh=40,lw=lg.width*lh/lg.height;x.fillStyle="#0A0F2C";x.fillRect(W/2-lw/2-8,H/2-lh/2-4,lw+16,lh+8);x.save();x.globalAlpha=.9;x.drawImage(lg,W/2-lw/2,H/2-lh/2,lw,lh);x.restore()}
     let done=0;const tot=D.notes.filter(n=>n[1]===mid).length;
     for(const [c,top] of [[m.home,true],[m.away,false]]){
       const L=D.notes.filter(n=>n[1]===mid&&n[2]===c).sort((a,b)=>b[6]-a[6]||b[4]-a[4]);
