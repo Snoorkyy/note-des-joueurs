@@ -842,7 +842,7 @@ button.gslot:disabled{cursor:default;opacity:.6}
     if(!dlg.open)dlg.showModal();await draw()}
   /* ---------- Cartes joueurs (style FUT) : une carte par joueur noté et par match ---------- */
   const CT={legende:{lab:"ÉLITE",metal:["#FFF6CF","#E9C46A","#A8781F","#FFE9A6","#C8962E"],body:["#2A1450","#140A33","#07041A"],acc:"#F5D06F",glow:"rgba(245,208,111,.45)"},
-    or:{lab:"OR",metal:["#FFF3C4","#E2B651","#9C6B12","#F6D27A","#B9871F"],body:["#3A2A06","#1E1604","#0C0902"],acc:"#F2C75C",glow:"rgba(242,199,92,.35)"},
+    or:{lab:"OR",metal:["#FFF3C4","#E2B651","#9C6B12","#F6D27A","#B9871F"],body:["#2A1450","#140A33","#07041A"],acc:"#F2C75C",glow:"rgba(242,199,92,.35)"},
     argent:{lab:"ARGENT",metal:["#FFFFFF","#C9D2E3","#7D879C","#EEF2FA","#A3ADC2"],body:["#26324F","#151D33","#0A0F1E"],acc:"#D6DEEE",glow:"rgba(214,222,238,.28)"},
     bronze:{lab:"BRONZE",metal:["#FFE1C8","#D08C55","#7A4220","#F0B184","#A9622F"],body:["#3B2216","#21120B","#100805"],acc:"#E6A06B",glow:"rgba(230,160,107,.3)"}};
   const cTier=n=>n>=8.5?"legende":n>=7?"or":n>=5?"argent":"bronze";
@@ -913,27 +913,58 @@ button.gslot:disabled{cursor:default;opacity:.6}
     const lg=await img("logo_white.png");if(lg){const lh=46,lw=lg.width*lh/lg.height;x.save();x.globalAlpha=.92;x.drawImage(lg,540-lw/2,1146,lw,lh);x.restore()}
     // carte détourée : seul le cadre est gardé (PNG transparent autour)
     out.width=X1-X0;out.height=Y1-Y0;const o=out.getContext("2d");o.clearRect(0,0,out.width,out.height);o.drawImage(cv,-X0,-Y0)}
-  const cardName=n=>`carte_J${D.matches.find(z=>z.id===n[1]).round}_${D.players[n[0]].name.split(",")[0].normalize("NFD").replace(/[^A-Za-z0-9]+/g,"-").toUpperCase()}.png`;
-  async function zipCards(L,name,say){
-    const files=[];for(let i=0;i<L.length;i++){say(`Préparation ${i+1}/${L.length}…`);const cv=document.createElement("canvas");await drawCard(cv,L[i]);
-      const b=await new Promise(r=>cv.toBlob(r,"image/png"));files.push({name:cardName(L[i]),data:new Uint8Array(await b.arrayBuffer())})}
+  const CFMT={carte:{lab:"Carte seule",tag:"carte",info:"PNG détouré, fond transparent"},x:{lab:"X / Twitter",tag:"x",info:"1600 × 900"},story:{lab:"Story Instagram",tag:"story",info:"1080 × 1920"}};
+  const cardName=(n,f="carte")=>`carte_J${D.matches.find(z=>z.id===n[1]).round}_${D.players[n[0]].name.split(",")[0].normalize("NFD").replace(/[^A-Za-z0-9]+/g,"-").toUpperCase()}${f==="carte"?"":"_"+f}.png`;
+  async function cardBg(x,W,H,n){const T=CT[cTier(n[6])],CC=(D.clubs[n[2]]||{}).color||"#002395";
+    x.fillStyle="#070B22";x.fillRect(0,0,W,H);
+    let g=x.createRadialGradient(W*.85,H*.1,10,W*.85,H*.1,Math.max(W,H)*.7);g.addColorStop(0,CC+"66");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(0,0,W,H);
+    g=x.createRadialGradient(W*.2,H*.95,10,W*.2,H*.95,Math.max(W,H)*.7);g.addColorStop(0,"rgba(76,40,150,.55)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(0,0,W,H);
+    x.save();x.globalAlpha=.05;x.strokeStyle="#fff";x.lineWidth=2;for(let i=-H;i<W;i+=34){x.beginPath();x.moveTo(i,H);x.lineTo(i+H,0);x.stroke()}x.restore();return T}
+  async function drawCardFmt(out,n,f){
+    if(f==="carte")return drawCard(out,n);
+    const card=document.createElement("canvas");await drawCard(card,n);const m=D.matches.find(z=>z.id===n[1]);
+    const W=f==="x"?1600:1080,H=f==="x"?900:1920;out.width=W;out.height=H;const x=out.getContext("2d");const T=await cardBg(x,W,H,n);
+    const glow=(cx,cy,r)=>{const g=x.createRadialGradient(cx,cy,10,cx,cy,r);g.addColorStop(0,T.glow);g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(cx-r,cy-r,2*r,2*r)};
+    const put=(X,Y,h)=>{const w=card.width*h/card.height;x.save();x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=50;x.shadowOffsetY=20;x.drawImage(card,X,Y,w,h);x.restore();return w};
+    const lg=await img("logo_white.png"),ml=`J${m.round} · ${D.clubs[m.home].name.toUpperCase()} ${m.hs}-${m.as} ${D.clubs[m.away].name.toUpperCase()}`;
+    const [last,first]=D.players[n[0]].name.split(", ");
+    if(f==="x"){glow(420,450,520);const w=put(110,40,820);const L=110+w+90,R=W-90,cx=(L+R)/2;
+      if(lg){const lh=96,lw=lg.width*lh/lg.height;x.drawImage(lg,cx-lw/2,130,lw,lh)}
+      txt(x,"LA NOTE /10",cx,330,{s:34,w:800,c:T.acc,a:"center",ls:10});
+      txt(x,(first||"").toUpperCase(),cx,420,{s:40,w:700,c:"rgba(255,255,255,.85)",a:"center",ls:5,max:R-L});
+      txt(x,(last||"").toUpperCase(),cx,505,{s:96,w:800,c:"#fff",a:"center",max:R-L});
+      x.fillStyle=T.acc;x.fillRect(cx-60,540,120,3);
+      txt(x,ml,cx,605,{s:28,w:700,c:"rgba(255,255,255,.85)",a:"center",ls:3,max:R-L});
+      txt(x,"TOUTES LES NOTES SUR",cx,730,{s:24,w:700,c:"rgba(255,255,255,.55)",a:"center",ls:5});
+      txt(x,"EUROLEAGUE-FRANCE.COM",cx,775,{s:38,w:800,c:"#fff",a:"center",ls:4})}
+    else{if(lg){const lh=96,lw=lg.width*lh/lg.height;x.drawImage(lg,W/2-lw/2,150,lw,lh)}
+      txt(x,"LA NOTE /10",W/2,320,{s:34,w:800,c:T.acc,a:"center",ls:12});
+      glow(W/2,950,640);const h=1180,w=card.width*h/card.height;put(W/2-w/2,370,h);
+      txt(x,"TOUTES LES NOTES SUR",W/2,1680,{s:24,w:700,c:"rgba(255,255,255,.55)",a:"center",ls:5});
+      txt(x,"EUROLEAGUE-FRANCE.COM",W/2,1730,{s:40,w:800,c:"#fff",a:"center",ls:4})}}
+  async function zipCards(L,name,say,f="carte"){
+    const files=[];for(let i=0;i<L.length;i++){say(`Préparation ${i+1}/${L.length}…`);const cv=document.createElement("canvas");await drawCardFmt(cv,L[i],f);
+      const b=await new Promise(r=>cv.toBlob(r,"image/png"));files.push({name:cardName(L[i],f),data:new Uint8Array(await b.arrayBuffer())})}
     const z=makeZip(files);let dl=null;try{dl=window.claude&&window.claude.use?await window.claude.use("downloads"):null}catch(e){}
     if(dl){try{await dl.save({filename:name,data:z});say(`${L.length} cartes enregistrées : ${name}`);return}catch(e){if(e&&e.code==="declined"){say("Téléchargement annulé.");return}}}
     const u=URL.createObjectURL(z),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),8000);say(`${L.length} cartes téléchargées : ${name}`)}
+  let CF="carte";try{CF=localStorage.getItem("cfmt")||"carte"}catch(e){}if(!CFMT[CF])CF="carte";
   async function cardsDlg(mid,pid){
     const m=D.matches.find(z=>z.id===mid),dlg=$("#dlg"),L=D.notes.filter(n=>n[1]===mid).sort((a,b)=>b[6]-a[6]||b[4]-a[4]);
     let cur=Math.max(0,L.findIndex(n=>n[0]===pid));
-    dlg.innerHTML=`<div class="dhead"><div><h3 id="dlg-title">Cartes joueurs · J${m.round}</h3><div class="label">${esc(D.clubs[m.home].name)} ${m.hs}-${m.as} ${esc(D.clubs[m.away].name)} · PNG détouré</div></div><button class="x" id="x" aria-label="Fermer">×</button></div>
+    dlg.innerHTML=`<div class="dhead"><div><h3 id="dlg-title">Cartes joueurs · J${m.round}</h3><div class="label">${esc(D.clubs[m.home].name)} ${m.hs}-${m.as} ${esc(D.clubs[m.away].name)} · <span id="cfinfo">${CFMT[CF].info}</span></div></div><button class="x" id="x" aria-label="Fermer">×</button></div>
       <div class="dbody shr"><div class="cpick">${L.map((n,i)=>`<button data-ci="${i}" aria-pressed="${i===cur}">${face(n[0],n[2],"xs")}<span>${esc(D.players[n[0]].name.split(",")[0])}</span><b style="background:${NHEX(n[6])}">${fr(n[6])}</b></button>`).join("")}</div>
+      <span class="seg sm" role="group" aria-label="Format">${Object.entries(CFMT).map(([k,v])=>`<button data-cf="${k}" aria-pressed="${k===CF}">${v.lab}</button>`).join("")}</span>
       <div class="vfig pvfig"><canvas id="pvc"></canvas></div>
-      <div class="shrlinks"><button class="vbtn" id="pvdl">Télécharger la carte</button><button class="vbtn ghost" id="pvsh">Partager</button><button class="vbtn ghost" id="pvzip">Toutes les cartes du match (ZIP)</button></div>
+      <div class="shrlinks"><button class="vbtn" id="pvdl">Télécharger</button><button class="vbtn ghost" id="pvsh">Partager</button><button class="vbtn ghost" id="pvzip">Toutes les cartes du match (ZIP)</button></div>
       <p class="label" id="pvmsg" role="status" style="min-height:1.2em;text-transform:none;letter-spacing:0"></p></div>`;
-    const cv=$("#pvc"),say=t=>$("#pvmsg").textContent=t,draw=()=>drawCard(cv,L[cur]).catch(e=>console.error(e));
+    const cv=$("#pvc"),say=t=>$("#pvmsg").textContent=t,draw=()=>drawCardFmt(cv,L[cur],CF).catch(e=>console.error(e));
     $("#x").addEventListener("click",()=>dlg.close());
     dlg.querySelectorAll("[data-ci]").forEach(b=>b.addEventListener("click",()=>{cur=+b.dataset.ci;dlg.querySelectorAll("[data-ci]").forEach(z=>z.setAttribute("aria-pressed",z===b));say("");draw()}));
-    $("#pvdl").addEventListener("click",()=>downloadPNG(cv,cardName(L[cur]),say));
-    $("#pvsh").addEventListener("click",e=>shareCanvas(cv,cardName(L[cur]),e.currentTarget));
-    $("#pvzip").addEventListener("click",async e=>{const b=e.currentTarget;b.disabled=true;try{await zipCards(L,`cartes_J${m.round}_${m.home}-${m.away}.zip`,say)}finally{b.disabled=false}});
+    dlg.querySelectorAll("[data-cf]").forEach(b=>b.addEventListener("click",()=>{CF=b.dataset.cf;try{localStorage.setItem("cfmt",CF)}catch(e){}dlg.querySelectorAll("[data-cf]").forEach(z=>z.setAttribute("aria-pressed",z===b));$("#cfinfo").textContent=CFMT[CF].info;say("");draw()}));
+    $("#pvdl").addEventListener("click",()=>downloadPNG(cv,cardName(L[cur],CF),say));
+    $("#pvsh").addEventListener("click",e=>shareCanvas(cv,cardName(L[cur],CF),e.currentTarget));
+    $("#pvzip").addEventListener("click",async e=>{const b=e.currentTarget;b.disabled=true;try{await zipCards(L,`cartes_J${m.round}_${m.home}-${m.away}${CF==="carte"?"":"_"+CF}.zip`,say,CF)}finally{b.disabled=false}});
     if(!dlg.open)dlg.showModal();await draw()}
   /* ---------- Visuel « Infirmerie » : absents et incertains, classés par match de la prochaine journée ---------- */
   function injData(){const N=D.news,K={out:0,doubt:1,dtd:2},L=(N&&N.list||[]).filter(x=>D.clubs[x.c]&&x.s in K);
