@@ -878,24 +878,22 @@ button.gslot:disabled{cursor:default;opacity:.6}
     g=x.createLinearGradient(0,700,0,900);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.45,T.body[2]+"e6");g.addColorStop(1,T.body[2]);x.fillStyle=g;x.fillRect(X0,700,X1-X0,560);
     x.restore();
     // note géante en métal
-    x.save();x.font=`800 250px ${FD}`;let z=250;while(z>120&&x.measureText(fr(note)).width>300){z-=6;x.font=`800 ${z}px ${FD}`}
-    x.textAlign="center";x.shadowColor=T.glow;x.shadowBlur=40;x.fillStyle=metal(x,T.metal,90,330);x.fillText(fr(note),250,322);x.restore();
-    rr(x,175,350,150,40,20);x.fillStyle=metal(x,T.metal,350,390);x.fill();txt(x,T.lab,250,379,{s:24,w:800,c:"#1A1206",a:"center",ls:4});
-    // logo du club : grand, dans un rond blanc cerclé de métal
-    x.save();x.beginPath();x.arc(250,505,86,0,7);x.fillStyle=metal(x,T.metal,419,591);x.shadowColor="rgba(0,0,0,.5)";x.shadowBlur=24;x.fill();x.restore();
-    x.beginPath();x.arc(250,505,78,0,7);x.fillStyle="#fff";x.fill();contain(x,await img("logos/"+c+".webp"),250,505,124,124);
-    // tampon MVP
+    const NX=300;x.save();x.font=`800 250px ${FD}`;let z=250;while(z>120&&x.measureText(fr(note)).width>270){z-=6;x.font=`800 ${z}px ${FD}`}
+    x.textAlign="center";x.shadowColor=T.glow;x.shadowBlur=40;x.fillStyle=metal(x,T.metal,90,330);x.fillText(fr(note),NX,322);x.restore();
+    rr(x,NX-75,350,150,40,20);x.fillStyle=metal(x,T.metal,350,390);x.fill();txt(x,T.lab,NX,379,{s:24,w:800,c:"#1A1206",a:"center",ls:4});
+    // écusson détouré, fondu dans la carte
+    const cr=await img("logos-hd/"+c+".webp")||await img("logos/"+c+".webp");
+    if(cr){g=x.createRadialGradient(NX,515,10,NX,515,120);g.addColorStop(0,"rgba(255,255,255,.16)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(NX-130,385,260,260);
+      x.save();x.globalAlpha=.88;x.shadowColor="rgba(0,0,0,.45)";x.shadowBlur=18;contain(x,cr,NX,515,170,170);x.restore()}
+    // MVP : sceau sobre, filets métal
     const best=Math.max(...D.notes.filter(q=>q[1]===mid).map(q=>q[6]));
-    if(note===best){const sx=250,sy=690,R0=84,red="#E8263A";x.save();x.translate(sx,sy);x.rotate(-.21);x.globalAlpha=.94;
-      x.strokeStyle=red;x.lineWidth=7;x.beginPath();x.arc(0,0,R0,0,7);x.stroke();x.lineWidth=2.5;x.beginPath();x.arc(0,0,R0-13,0,7);x.stroke();
-      for(let i=0;i<24;i++){const a=i*Math.PI/12;if(Math.abs(Math.sin(a))>.5)continue;x.fillStyle=red;x.beginPath();x.arc(Math.cos(a)*(R0-6.5),Math.sin(a)*(R0-6.5),2,0,7);x.fill()}
-      x.fillStyle=red;[[-44,-42],[44,-42],[-44,46],[44,46],[0,52]].forEach(([u,v])=>{x.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*4*Math.PI/5;x.lineTo(u+Math.cos(a)*10,v+Math.sin(a)*10)}x.closePath();x.fill()});
-      rr(x,-R0-14,-26,2*R0+28,56,6);x.fill();
-      x.font=`800 54px ${FD}`;x.textAlign="center";x.textBaseline="middle";x.letterSpacing="6px";x.fillStyle="#fff";x.fillText("MVP",3,3);x.letterSpacing="0px";
-      x.textBaseline="alphabetic";
-      // usure du tampon
-      x.globalCompositeOperation="destination-out";let sd=7;const r=()=>(sd=(sd*1664525+1013904223)>>>0)/4294967296;for(let i=0;i<260;i++){x.beginPath();x.arc((r()*2-1)*(R0+16),(r()*2-1)*(R0+4),.6+1.8*r(),0,7);x.fill()}
-      x.restore()}
+    if(note===best){const sy=705,R0=70,MT=metal(x,CT.legende.metal,sy-R0,sy+R0);
+      x.save();x.beginPath();x.arc(NX,sy,R0,0,7);x.fillStyle="rgba(10,6,24,.55)";x.fill();
+      x.strokeStyle=MT;x.lineWidth=3;x.stroke();x.beginPath();x.arc(NX,sy,R0-9,0,7);x.lineWidth=1;x.stroke();x.restore();
+      x.save();x.font=`800 50px ${FD}`;x.letterSpacing="5px";x.textAlign="center";x.fillStyle=MT;x.fillText("MVP",NX+2.5,sy+17);x.letterSpacing="0px";x.restore();
+      x.fillStyle=MT;
+      x.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*4*Math.PI/5;x.lineTo(NX+Math.cos(a)*7,sy-34+Math.sin(a)*7)}x.closePath();x.fill();
+      x.fillRect(NX-22,sy+30,44,1.5)}
     // nom
     const [last,first]=pl.name.split(", ");
     if(first)txt(x,first.toUpperCase(),540,808,{s:42,w:700,c:T.acc,a:"center",ls:8,max:760});
@@ -908,7 +906,10 @@ button.gslot:disabled{cursor:default;opacity:.6}
       txt(x,v,tx+tw/2,1032,{s:76,w:800,c:"#fff",a:"center",max:tw-16});txt(x,l,tx+tw/2,1064,{s:24,w:800,c:T.acc,a:"center",ls:4})});
     // match
     const home=m.home===c,us=home?m.hs:m.as,th=home?m.as:m.hs;
-    txt(x,`J${m.round} · ${D.clubs[m.home].name.toUpperCase()} ${m.hs}-${m.as} ${D.clubs[m.away].name.toUpperCase()}`,540,1136,{s:32,w:700,c:"rgba(255,255,255,.9)",a:"center",max:700});
+    const ml=`J${m.round}   ${D.clubs[m.home].name.toUpperCase()}  ${m.hs} – ${m.as}  ${D.clubs[m.away].name.toUpperCase()}`;
+    txt(x,ml,540,1134,{s:26,w:700,c:T.acc,a:"center",ls:5,max:640});
+    x.save();x.letterSpacing="5px";x.font=`700 26px ${FD}`;const mw=Math.min(640,x.measureText(ml).width);x.restore();
+    g=x.createLinearGradient(0,0,1,0);[[540-mw/2-90,540-mw/2-24],[540+mw/2+24,540+mw/2+90]].forEach(([u,v],i)=>{const gg=x.createLinearGradient(u,0,v,0);gg.addColorStop(i?0:1,T.acc);gg.addColorStop(i?1:0,"rgba(0,0,0,0)");x.fillStyle=gg;x.fillRect(u,1125,v-u,2)});
     // pied : logo seul
     const lg=await img("logo_white.png");if(lg){const lh=66,lw=lg.width*lh/lg.height;x.drawImage(lg,540-lw/2,1266,lw,lh)}}
   const cardName=n=>`carte_J${D.matches.find(z=>z.id===n[1]).round}_${D.players[n[0]].name.split(",")[0].normalize("NFD").replace(/[^A-Za-z0-9]+/g,"-").toUpperCase()}.png`;
