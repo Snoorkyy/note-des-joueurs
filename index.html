@@ -963,11 +963,21 @@ button.gslot:disabled{cursor:default;opacity:.6}
       const cr=await img("logos-hd/"+c+".webp")||await img("logos/"+c+".webp"),hy=top?92:H-92;
       const nm=D.clubs[c].name.toUpperCase();x.save();x.font=`800 38px ${FD}`;x.letterSpacing="3px";const nw=Math.min(560,x.measureText(nm).width);x.restore();
       const gx=W/2-(64+18+nw)/2;if(cr)contain(x,cr,gx+32,hy-6,64,64);txt(x,nm,gx+82,hy+12,{s:38,w:800,c:"#fff",ls:3,max:560});
-      // rangées : les 5 meilleures notes puis le reste
-      const rows=[L.slice(0,5),L.slice(5,10),L.slice(10)].filter(r=>r.length),cw=230,gap=18,ch=cw*1220/908;
-      const rowY=top?[140,140+ch+16]:[H-140-2*ch-16,H-140-ch];
-      for(let r=0;r<Math.min(rows.length,2);r++){const R=rows[r],w=R.length*cw+(R.length-1)*gap;let X=W/2-w/2;
-        for(const n of R){say&&say(`Préparation ${++done}/${tot}…`);const ci=await cardImg(n);x.save();x.shadowColor="rgba(0,0,0,.55)";x.shadowBlur=24;x.shadowOffsetY=10;x.drawImage(ci,X,rowY[r],cw,ch);x.restore();X+=cw+gap}}}
+      // le cinq (5 meilleures notes) en grandes cartes, les autres sur le banc en mini-tuiles
+      const five=L.slice(0,5),bench=L.slice(5),cw=250,gap=20,ch=cw*1220/908;
+      const fy=top?140:H-140-ch,by=top?140+ch+30:H-140-ch-30-150;
+      let X=W/2-(five.length*cw+(five.length-1)*gap)/2;
+      for(const n of five){say&&say(`Préparation ${++done}/${tot}…`);const ci=await cardImg(n);x.save();x.shadowColor="rgba(0,0,0,.55)";x.shadowBlur=24;x.shadowOffsetY=10;x.drawImage(ci,X,fy,cw,ch);x.restore();X+=cw+gap}
+      if(bench.length){const tw=Math.min(176,(1340-(bench.length-1)*14)/bench.length),th=150;X=W/2-(bench.length*tw+(bench.length-1)*14)/2;
+        for(const n of bench){done++;const T=CT[cTier(n[6])];
+          rr(x,X,by,tw,th,18);x.fillStyle="rgba(255,255,255,.06)";x.fill();x.lineWidth=2;x.strokeStyle=T.acc+"66";x.stroke();
+          const cx=X+tw/2,cy=by+46,r=34;x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.fillStyle="#E8EFF8";x.fill();x.clip();
+          const ph=(D.photos||[]).includes(n[0])?(await img("photos-c/"+n[0]+".webp")||await img("photos/"+n[0]+".webp")):null;
+          if(ph)x.drawImage(ph,cx-r,cy-r,2*r,2*r);else contain(x,await img("logos/"+c+".webp"),cx,cy,r*1.4,r*1.4);x.restore();
+          x.beginPath();x.arc(cx,cy,r,0,7);x.lineWidth=2;x.strokeStyle=T.acc;x.stroke();
+          txt(x,D.players[n[0]].name.split(",")[0].toUpperCase(),cx,by+104,{s:22,w:800,c:"#fff",a:"center",max:tw-14});
+          rr(x,cx-34,by+114,68,28,8);x.fillStyle=NHEX(n[6]);x.fill();txt(x,fr(n[6]),cx,by+136,{s:24,w:800,c:"#fff",a:"center"});
+          X+=tw+14}}}
     txt(x,"EUROLEAGUE-FRANCE.COM",W-60,H-12,{s:18,w:700,c:"rgba(255,255,255,.35)",a:"right",ls:4})}
   async function zipCards(L,name,say,f="carte"){
     const files=[];for(let i=0;i<L.length;i++){say(`Préparation ${i+1}/${L.length}…`);const cv=document.createElement("canvas");await drawCardFmt(cv,L[i],f);
