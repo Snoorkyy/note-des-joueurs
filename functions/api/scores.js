@@ -28,7 +28,7 @@ async function sha(s) {
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 const autoPseudo = async dev => "Fan " + (parseInt((await sha(dev + "|pseudo")).slice(0, 6), 16) % 9000 + 1000);
-const LIMITE = 10;   // cartes gagnées par jour au maximum (toutes sources, pack compris)
+const LIMITE = 13;   // cartes gagnées par jour au maximum (toutes sources, pack compris)
 // minuit (heure de Paris) du jour en cours, en millisecondes
 function parisMidnight() {
   const now = new Date(), date = today();

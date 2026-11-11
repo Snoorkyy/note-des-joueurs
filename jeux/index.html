@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Les jeux · EuroLeague France</title>
-<meta name="description" content="Collectionne les cartes des joueurs d'EuroLeague : Plus ou moins, la grille du jour, titulaire-banc-vendu, le bon maillot, prono MVP… Les jeux EuroLeague France, avec classements.">
+<meta name="description" content="Collectionne les cartes des joueurs d'EuroLeague : Plus ou moins, la grille du jour, titulaire-banc-vendu, le bon maillot… Les jeux EuroLeague France, avec classements.">
 <meta property="og:title" content="Les jeux EuroLeague France">
-<meta property="og:description" content="Collectionne les cartes des joueurs, joue à Plus ou moins, à la grille du jour, au prono MVP… et partage ton score.">
+<meta property="og:description" content="Collectionne les cartes des joueurs, joue à Plus ou moins, à la grille du jour, au bon maillot… et partage ton score.">
 <meta property="og:image" content="https://note-des-joueurs.pages.dev/og/partage-accueil.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -772,7 +772,7 @@ async function drawBack(x,X,Y,W){
 function cardCanvas(p,w,o={}){const c=document.createElement("canvas");const r=Math.min(2,(window.devicePixelRatio||1))*w;c.width=Math.round(r);c.height=Math.round(r*1.4);c.style.width=w+"px";drawCard(c.getContext("2d"),p,0,0,c.width,o);return c}
 
 /* ---------- ma collection (stockée sur le serveur, copie locale) ---------- */
-let OWN=new Set(LS.get("jx-col",[]));let PACK_OK=false;const LIMIT=10;let TODAY=LS.get("jx-colday",{d:todayKey,n:0});if(TODAY.d!==todayKey)TODAY={d:todayKey,n:0};
+let OWN=new Set(LS.get("jx-col",[]));let PACK_OK=false;const LIMIT=13;let TODAY=LS.get("jx-colday",{d:todayKey,n:0});if(TODAY.d!==todayKey)TODAY={d:todayKey,n:0};
 const setToday=n=>{TODAY={d:todayKey,n};LS.set("jx-colday",TODAY)};
 const saveOwn=()=>LS.set("jx-col",[...OWN]);
 api("scores?collection=1&dev="+encodeURIComponent(DEV)).then(r=>{if(r&&r.pids){OWN=new Set(r.pids);saveOwn();PACK_OK=!!r.pack;if(typeof r.today==="number")setToday(r.today);colPill();if(CUR==="collection")collection()}});
@@ -1024,12 +1024,9 @@ const TABS=[
   {id:"plus-ou-moins",t:"Plus ou moins",f:pm},
   {id:"grille",t:"La grille",f:grille},
   {id:"trio",t:"Titulaire · banc · vendu",f:trio},
-  {id:"maillot",t:"Le bon maillot",f:maillot},
-  {id:"aveugle",t:"Classement à l’aveugle",f:aveugle},
-  {id:"cinq",t:"Mon 5 de la journée",f:cinq},
-  {id:"prono",t:"Prono MVP",f:prono}];
+  {id:"maillot",t:"Le bon maillot",f:maillot}];
 let CUR=null;
-const ALIAS={jeu:"aveugle",mystere:"collection",qui:"collection",intrus:"collection"};
+const ALIAS={jeu:"collection",aveugle:"collection",cinq:"collection",prono:"collection",mystere:"collection",qui:"collection",intrus:"collection"};
 function tabsHTML(){$("#tabs").innerHTML=TABS.map(x=>`<button class="tab${x.gold?" gold":""}" role="tab" id="t-${x.id}" data-t="${x.id}" aria-selected="false">${x.dot&&!LS.get("jx-myst-"+todayKey,{done:false}).done?'<span class="dot" aria-hidden="true"></span>':""}${esc(x.t)}</button>`).join("");$$(".tab").forEach(b=>b.onclick=()=>go(b.dataset.t,true))}
 function go(id,push){id=ALIAS[id]||id;const x=TABS.find(t=>t.id===id)||TABS[0];CUR=x.id;tabsHTML();colPill();$$(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===x.id));if(push)history.replaceState(null,"","#"+x.id);BOARD=null;x.f();const b=$("#t-"+x.id);if(b)b.scrollIntoView({block:"nearest",inline:"nearest"})}
 window.addEventListener("hashchange",()=>go(location.hash.slice(1)));
