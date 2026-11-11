@@ -880,20 +880,20 @@ button.gslot:disabled{cursor:default;opacity:.6}
     // note géante en métal
     const NX=300;x.save();x.font=`800 250px ${FD}`;let z=250;while(z>120&&x.measureText(fr(note)).width>270){z-=6;x.font=`800 ${z}px ${FD}`}
     x.textAlign="center";x.shadowColor=T.glow;x.shadowBlur=40;x.fillStyle=metal(x,T.metal,90,330);x.fillText(fr(note),NX,322);x.restore();
-    rr(x,NX-75,350,150,40,20);x.fillStyle=metal(x,T.metal,350,390);x.fill();txt(x,T.lab,NX,379,{s:24,w:800,c:"#1A1206",a:"center",ls:4});
+    rr(x,NX-75,374,150,40,20);x.fillStyle=metal(x,T.metal,374,414);x.fill();txt(x,T.lab,NX,403,{s:24,w:800,c:"#1A1206",a:"center",ls:4});
     // écusson détouré, fondu dans la carte
     const cr=await img("logos-hd/"+c+".webp")||await img("logos/"+c+".webp");
-    if(cr){g=x.createRadialGradient(NX,515,10,NX,515,120);g.addColorStop(0,"rgba(255,255,255,.16)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(NX-130,385,260,260);
-      x.save();x.globalAlpha=.88;x.shadowColor="rgba(0,0,0,.45)";x.shadowBlur=18;contain(x,cr,NX,515,170,170);x.restore()}
+    if(cr){g=x.createRadialGradient(NX,540,10,NX,540,120);g.addColorStop(0,"rgba(255,255,255,.16)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(NX-130,420,260,250);
+      x.save();x.globalAlpha=.88;x.shadowColor="rgba(0,0,0,.45)";x.shadowBlur=18;contain(x,cr,NX,540,160,160);x.restore()}
     // MVP : sceau sobre, filets métal
     const best=Math.max(...D.notes.filter(q=>q[1]===mid).map(q=>q[6]));
-    if(note===best){const sy=705,R0=70,MT=metal(x,CT.legende.metal,sy-R0,sy+R0);
-      x.save();x.beginPath();x.arc(NX,sy,R0,0,7);x.fillStyle="rgba(10,6,24,.55)";x.fill();
-      x.strokeStyle=MT;x.lineWidth=3;x.stroke();x.beginPath();x.arc(NX,sy,R0-9,0,7);x.lineWidth=1;x.stroke();x.restore();
-      x.save();x.font=`800 50px ${FD}`;x.letterSpacing="5px";x.textAlign="center";x.fillStyle=MT;x.fillText("MVP",NX+2.5,sy+17);x.letterSpacing="0px";x.restore();
-      x.fillStyle=MT;
-      x.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*4*Math.PI/5;x.lineTo(NX+Math.cos(a)*7,sy-34+Math.sin(a)*7)}x.closePath();x.fill();
-      x.fillRect(NX-22,sy+30,44,1.5)}
+    if(note===best){const sy=735,MT=metal(x,CT.legende.metal,-64,4);x.save();x.translate(NX,sy);x.rotate(-.08);
+      x.font=`800 84px ${FD}`;x.letterSpacing="6px";x.textAlign="center";const ox=3;
+      x.fillStyle="rgba(0,0,0,.65)";x.fillText("MVP",ox+4,5);                       // ombre portée (relief)
+      x.fillStyle="rgba(255,244,214,.35)";x.fillText("MVP",ox-1.5,-1.5);              // arête éclairée
+      x.shadowColor="rgba(245,208,111,.55)";x.shadowBlur=26;x.fillStyle=MT;x.fillText("MVP",ox,0);x.shadowBlur=0;
+      x.lineWidth=1.2;x.strokeStyle="rgba(90,60,10,.55)";x.strokeText("MVP",ox,0);
+      x.letterSpacing="0px";x.restore()}
     // nom
     const [last,first]=pl.name.split(", ");
     if(first)txt(x,first.toUpperCase(),540,808,{s:42,w:700,c:T.acc,a:"center",ls:8,max:760});
