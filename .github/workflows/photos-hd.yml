@@ -1,0 +1,37 @@
+name: Détourages joueurs (cartes)
+# Détourages officiels en haute définition pour les cartes joueurs (photos-hd/). Manuel, et chaque jeudi et vendredi soir
+# pour les nouveaux joueurs notés.
+on:
+  workflow_dispatch:
+    inputs:
+      all:
+        description: "Mettre « 1 » pour tout retélécharger"
+        required: false
+  schedule:
+    - cron: "15 23 * * 4,5"
+permissions:
+  contents: write
+concurrency:
+  group: robot-notes
+  cancel-in-progress: false
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q pillow
+      - name: Télécharger les détourages
+        env:
+          ALL: ${{ github.event.inputs.all }}
+        run: python3 robot/photos_hd.py ${ALL:+--all}
+      - name: Enregistrer
+        run: |
+          git config user.name "Robot EuroLeague France"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git add photos-hd
+            git diff --cached --quiet && break
+            git commit -q -m "Détourages joueurs (photos-hd)" && git pull -q --rebase origin main && git push -q origin HEAD:main && break
+            sleep 10
+          done
