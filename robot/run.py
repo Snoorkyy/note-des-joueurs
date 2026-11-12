@@ -186,7 +186,7 @@ def main():
         played_rounds = sorted({r for r, day in fx if day <= today})
         todo = [c for r in played_rounds for c in range(10 * (r - 1) + 1, 10 * r + 1) if f"{SEASON}-{c}" not in have]
     print("à examiner :", todo)
-    new, failed, nats = [], [], None
+    new, failed, nats, pending = [], [], None, 0
     # nationalités sportives corrigées à la main (sélection nationale, pas le passeport de la feuille de match)
     try:
         for pid, c in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "nat_fix.json"), encoding="utf-8")).items():
@@ -197,7 +197,7 @@ def main():
         try: g = extract(c)
         except Exception as e: print(c, "indisponible :", e); continue
         if g["live"] or not g["ended"] or not g["box"]:
-            print(c, g["A"], g["B"], "pas terminé (Live =", g["live"], ", fin =", g["ended"], ")"); continue
+            print(c, g["A"], g["B"], "pas terminé (Live =", g["live"], ", fin =", g["ended"], ")"); pending += 1; continue
         try: rows, err, box = rate(g)
         except Exception as e: rows, err, box = [], [f"données illisibles : {e}"], {}
         if err:
@@ -223,6 +223,7 @@ def main():
             import share; share.queue_add([share.build(d, g, box, rows)])
         except Exception as e: print("::warning::partage X non préparé pour", c, ":", e)
         print(c, g["A"], g["score"], g["B"], "→", len(rows), "notes")
+    open(os.path.join(ROOT, "robot", "pending.txt"), "w").write(str(pending))   # matchs en cours : le workflow repasse 2 min plus tard
     if new:
         rnd = max(g["round"] for g in new)
         try: d["standings"] = standings(max(rnd, d.get("standings", {}).get("round", 0)))
