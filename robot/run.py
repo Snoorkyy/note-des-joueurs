@@ -219,9 +219,8 @@ def main():
             try: d.setdefault("pts", {}).setdefault(pid, {})[str(c)] = int(br.get("pts", 0))
             except Exception: pass
         new.append(g)
-        try:                                   # post X « en un geste » (visuel + texte), sans jamais bloquer les notes
-            import share; share.queue_add([share.build(d, g, box, rows)])
-        except Exception as e: print("::warning::partage X non préparé pour", c, ":", e)
+        # 12/11/2026 : plus de post X ni de notification (décision de Démian) — le robot ne fait que mettre les notes à jour sur le site.
+        # Les visuels à publier sont les cartes joueurs téléchargeables sur le site. Pour réactiver : share.queue_add([share.build(d, g, box, rows)]).
         print(c, g["A"], g["score"], g["B"], "→", len(rows), "notes")
     open(os.path.join(ROOT, "robot", "pending.txt"), "w").write(str(pending))   # matchs en cours : le workflow repasse 2 min plus tard
     if new:

@@ -1,6 +1,6 @@
 name: Robot notes EuroLeague
 # Note automatiquement les matchs terminés, publie data.json (Cloudflare Pages redéploie le site),
-# prépare le post X de chaque match (visuel + page de partage) et envoie une notification ntfy « Publier sur X ».
+# et c'est tout (12/11/2026 : plus de post X, de notification ni de story).
 on:
   schedule:
     # mardi-vendredi seulement (seuls soirs de matchs EuroLeague 2026-27), toutes les 10 min de 18h à 1h heure de Paris (hiver) ;
@@ -35,7 +35,7 @@ jobs:
       - name: Contrôle (sans publication)
         if: ${{ github.event.inputs.check }}
         run: python3 robot/run.py --check "${{ github.event.inputs.check }}"
-      - name: Noter, préparer les posts X et publier (veille toutes les 2 min tant qu'un match est en cours)
+      - name: Noter et publier sur le site (veille toutes les 2 min tant qu'un match est en cours)
         if: ${{ !github.event.inputs.check }}
         env:
           CODES: ${{ github.event.inputs.codes }}
@@ -72,7 +72,6 @@ jobs:
               if git push -q origin HEAD:main; then echo "Publié."; published=1; break; fi
               echo "Conflit de publication, nouvel essai ($attempt)"; sleep 10
             done
-            if [ $published = 1 ] && [ -f robot/share_queue.json ] && [ -z "$STORY" ]; then python3 robot/share.py notify || echo "::warning::notification non envoyée"; fi
             [ -n "$CODES$SHARE$STORY" ] && break
             p=$(cat robot/pending.txt 2>/dev/null || echo 0)
             [ "$p" -gt 0 ] 2>/dev/null || break
@@ -81,11 +80,6 @@ jobs:
           done
           echo "RC=$final" >> "$GITHUB_ENV"
           exit $final
-      - name: Story Instagram (API Meta)
-        if: ${{ !github.event.inputs.check && !github.event.inputs.share && hashFiles('robot/share_queue.json') != '' }}
-        env:
-          IG_TOKEN: ${{ secrets.IG_TOKEN }}
-        run: python3 robot/share.py instagram
       - name: Signaler un match bloqué par les contrôles
         if: ${{ env.RC != '' && env.RC != '0' }}
         run: exit 1
